@@ -17,6 +17,7 @@ const tenant_routes_1 = __importDefault(require("./routes/tenant.routes"));
 const store_routes_1 = __importDefault(require("./routes/store.routes"));
 const user_routes_1 = __importDefault(require("./routes/user.routes"));
 const role_routes_1 = __importDefault(require("./routes/role.routes"));
+const permission_routes_1 = __importDefault(require("./routes/permission.routes"));
 const app = (0, express_1.default)();
 (0, models_1.setupAssociations)();
 (0, models_2.setupDbAssociations)();
@@ -70,6 +71,7 @@ app.use('/api/v1/tenants', tenant_routes_1.default);
 app.use('/api/v1/stores', store_routes_1.default);
 app.use('/api/v1/users', user_routes_1.default);
 app.use('/api/v1/roles', role_routes_1.default);
+app.use('/api/v1/permissions', permission_routes_1.default);
 if (process.env.NODE_ENV !== 'production') {
     const swaggerUi = require('swagger-ui-express');
     const swaggerDocument = require('../swagger.json');

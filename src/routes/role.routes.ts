@@ -29,4 +29,13 @@ router.put('/:id', requirePermission('role:update'), RoleController.updateRole);
 // DELETE /api/v1/roles/:id - Delete role
 router.delete('/:id', requirePermission('role:delete'), RoleController.deleteRole);
 
+// GET /api/v1/roles/:roleId/permissions - Get permissions for a role
+router.get('/:roleId/permissions', requirePermission('role:read'), RoleController.getRolePermissions);
+
+// POST /api/v1/roles/:roleId/permissions - Assign permissions to a role
+router.post('/:roleId/permissions', requirePermission('role:update'), RoleController.assignPermissionsToRole);
+
+// DELETE /api/v1/roles/:roleId/permissions/:permissionId - Remove permission from a role
+router.delete('/:roleId/permissions/:permissionId', requirePermission('role:update'), RoleController.removePermissionFromRole);
+
 export default router;

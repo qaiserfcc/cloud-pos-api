@@ -327,4 +327,180 @@ export class RoleController {
       next(error);
     }
   }
+
+  /**
+   * Get permissions for a role
+   */
+  static async getRolePermissions(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { roleId } = req.params;
+      const tenantId = req.user?.tenantId;
+
+      if (!roleId) {
+        res.status(400).json({
+          success: false,
+          error: 'Role ID is required',
+        });
+        return;
+      }
+
+      if (!tenantId) {
+        res.status(400).json({
+          success: false,
+          error: 'Tenant ID is required',
+        });
+        return;
+      }
+
+      const permissions = await RoleService.getRolePermissions(tenantId, roleId);
+
+      res.json({
+        success: true,
+        data: permissions,
+      });
+    } catch (error: any) {
+      logger.error('Get role permissions error:', error);
+
+      if (error.message === 'Role not found') {
+        res.status(404).json({
+          success: false,
+          error: error.message,
+        });
+        return;
+      }
+
+      next(error);
+    }
+  }
+
+  /**
+   * Assign permissions to a role
+   */
+  static async assignPermissionsToRole(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { roleId } = req.params;
+      const { permissionIds } = req.body;
+      const tenantId = req.user?.tenantId;
+
+      if (!roleId) {
+        res.status(400).json({
+          success: false,
+          error: 'Role ID is required',
+        });
+        return;
+      }
+
+      if (!tenantId) {
+        res.status(400).json({
+          success: false,
+          error: 'Tenant ID is required',
+        });
+        return;
+      }
+
+      if (!permissionIds || !Array.isArray(permissionIds) || permissionIds.length === 0) {
+        res.status(400).json({
+          success: false,
+          error: 'Permission IDs array is required',
+        });
+        return;
+      }
+
+      await RoleService.assignPermissionsToRole(tenantId, roleId, permissionIds);
+
+      res.json({
+        success: true,
+        message: 'Permissions assigned to role successfully',
+      });
+    } catch (error: any) {
+      logger.error('Assign permissions to role error:', error);
+
+      if (error.message === 'Role not found') {
+        res.status(404).json({
+          success: false,
+          error: error.message,
+        });
+        return;
+      }
+
+      if (error.message === 'Cannot modify permissions for system roles') {
+        res.status(403).json({
+          success: false,
+          error: error.message,
+        });
+        return;
+      }
+
+      if (error.message === 'One or more permissions not found') {
+        res.status(400).json({
+          success: false,
+          error: error.message,
+        });
+        return;
+      }
+
+      next(error);
+    }
+  }
+
+  /**
+   * Remove permission from a role
+   */
+  static async removePermissionFromRole(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { roleId, permissionId } = req.params;
+      const tenantId = req.user?.tenantId;
+
+      if (!roleId) {
+        res.status(400).json({
+          success: false,
+          error: 'Role ID is required',
+        });
+        return;
+      }
+
+      if (!permissionId) {
+        res.status(400).json({
+          success: false,
+          error: 'Permission ID is required',
+        });
+        return;
+      }
+
+      if (!tenantId) {
+        res.status(400).json({
+          success: false,
+          error: 'Tenant ID is required',
+        });
+        return;
+      }
+
+      await RoleService.removePermissionFromRole(tenantId, roleId, permissionId);
+
+      res.json({
+        success: true,
+        message: 'Permission removed from role successfully',
+      });
+    } catch (error: any) {
+      logger.error('Remove permission from role error:', error);
+
+      if (error.message === 'Role not found' || error.message === 'Permission not found') {
+        res.status(404).json({
+          success: false,
+          error: error.message,
+        });
+        return;
+      }
+
+      if (error.message === 'Cannot modify permissions for system roles') {
+        res.status(403).json({
+          success: false,
+          error: error.message,
+        });
+        return;
+      }
+
+      next(error);
+    }
+  }
 }

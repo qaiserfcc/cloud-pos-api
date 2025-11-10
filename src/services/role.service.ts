@@ -346,6 +346,118 @@ class RoleService {
       throw new Error('Failed to check role name availability');
     }
   }
+
+  /**
+   * Get permissions for a specific role
+   */
+  async getRolePermissions(tenantId: string, roleId: string): Promise<any[]> {
+    try {
+      const role = await Role.findOne({
+        where: {
+          id: roleId,
+          tenantId,
+        },
+        include: [
+          {
+            model: Permission,
+            as: 'permissions',
+            where: {
+              tenantId,
+            },
+            required: false,
+          },
+        ],
+      });
+
+      if (!role) {
+        throw new Error('Role not found');
+      }
+
+      return role.permissions || [];
+    } catch (error) {
+      logger.error('Error getting role permissions:', error);
+      throw new Error('Failed to retrieve role permissions');
+    }
+  }
+
+  /**
+   * Assign permissions to a role
+   */
+  async assignPermissionsToRole(tenantId: string, roleId: string, permissionIds: string[]): Promise<void> {
+    try {
+      const role = await Role.findOne({
+        where: {
+          id: roleId,
+          tenantId,
+        },
+      });
+
+      if (!role) {
+        throw new Error('Role not found');
+      }
+
+      if (role.is_system) {
+        throw new Error('Cannot modify permissions for system roles');
+      }
+
+      // Verify all permissions exist and belong to the tenant
+      const permissions = await Permission.findAll({
+        where: {
+          id: { [Op.in]: permissionIds },
+          tenantId,
+        },
+      });
+
+      if (permissions.length !== permissionIds.length) {
+        throw new Error('One or more permissions not found');
+      }
+
+      // Set the permissions for the role
+      await (role as any).setPermissions(permissions);
+    } catch (error) {
+      logger.error('Error assigning permissions to role:', error);
+      throw new Error('Failed to assign permissions to role');
+    }
+  }
+
+  /**
+   * Remove permission from a role
+   */
+  async removePermissionFromRole(tenantId: string, roleId: string, permissionId: string): Promise<void> {
+    try {
+      const role = await Role.findOne({
+        where: {
+          id: roleId,
+          tenantId,
+        },
+      });
+
+      if (!role) {
+        throw new Error('Role not found');
+      }
+
+      if (role.is_system) {
+        throw new Error('Cannot modify permissions for system roles');
+      }
+
+      const permission = await Permission.findOne({
+        where: {
+          id: permissionId,
+          tenantId,
+        },
+      });
+
+      if (!permission) {
+        throw new Error('Permission not found');
+      }
+
+      // Remove the permission from the role
+      await (role as any).removePermission(permission);
+    } catch (error) {
+      logger.error('Error removing permission from role:', error);
+      throw new Error('Failed to remove permission from role');
+    }
+  }
 }
 
 export default new RoleService();
