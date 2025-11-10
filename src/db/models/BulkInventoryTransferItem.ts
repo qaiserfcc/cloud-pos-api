@@ -16,19 +16,19 @@ export interface BulkInventoryTransferItemAttributes {
 export interface BulkInventoryTransferItemCreationAttributes extends Omit<BulkInventoryTransferItemAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
 class BulkInventoryTransferItem extends Model<BulkInventoryTransferItemAttributes, BulkInventoryTransferItemCreationAttributes> implements BulkInventoryTransferItemAttributes {
-  declare public id: string;
-  declare public bulkTransferId: string;
-  declare public productId: string;
-  declare public quantity: number;
-  declare public unitCost?: number;
-  declare public lineTotal?: number;
-  declare public notes?: string;
-  declare public readonly createdAt: Date;
-  declare public readonly updatedAt: Date;
+  declare id: string;
+  declare bulkTransferId: string;
+  declare productId: string;
+  declare quantity: number;
+  declare unitCost?: number;
+  declare lineTotal?: number;
+  declare notes?: string;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
 
   // Association mixins
-  declare public readonly bulkTransfer?: any;
-  declare public readonly product?: any;
+  declare readonly bulkTransfer?: any;
+  declare readonly product?: any;
 }
 
 BulkInventoryTransferItem.init(

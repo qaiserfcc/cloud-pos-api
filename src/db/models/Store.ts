@@ -19,22 +19,22 @@ export interface StoreAttributes {
 export interface StoreCreationAttributes extends Omit<StoreAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
 class Store extends Model<StoreAttributes, StoreCreationAttributes> implements StoreAttributes {
-  declare public id: string;
-  declare public tenantId: string;
-  declare public name: string;
-  declare public code: string;
-  declare public address: string;
-  declare public phone?: string;
-  declare public email?: string;
-  declare public settings: object;
-  declare public isActive: boolean;
-  declare public readonly createdAt: Date;
-  declare public readonly updatedAt: Date;
-  declare public readonly deletedAt?: Date;
+  declare id: string;
+  declare tenantId: string;
+  declare name: string;
+  declare code: string;
+  declare address: string;
+  declare phone?: string;
+  declare email?: string;
+  declare settings: object;
+  declare isActive: boolean;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
+  declare readonly deletedAt?: Date;
 
   // Association mixins
-  declare public readonly tenant?: any;
-  declare public readonly storeUsers?: any[];
+  declare readonly tenant?: any;
+  declare readonly storeUsers?: any[];
 }
 
 Store.init(

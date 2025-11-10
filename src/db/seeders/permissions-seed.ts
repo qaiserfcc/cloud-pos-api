@@ -88,6 +88,11 @@ export const seedMissingPermissions = async (): Promise<void> => {
 
       // Reports permissions
       { name: 'reports:read', resource: 'reports', action: 'read', description: 'Read reports and analytics' },
+
+      // Audit permissions
+      { name: 'audit:view', resource: 'audit', action: 'view', description: 'View audit logs and trails' },
+      { name: 'audit:compliance', resource: 'audit', action: 'compliance', description: 'Generate compliance reports' },
+      { name: 'audit:manage', resource: 'audit', action: 'manage', description: 'Manage audit logs and cleanup' },
     ];
 
     let createdCount = 0;

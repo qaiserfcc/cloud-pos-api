@@ -24,36 +24,36 @@ export interface UserAttributes {
 export interface UserCreationAttributes extends Omit<UserAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
 class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
-  declare public id: string;
-  declare public tenantId: string;
-  declare public defaultStoreId?: string;
-  declare public email: string;
-  declare public password: string;
-  declare public firstName: string;
-  declare public lastName: string;
-  declare public phone?: string;
-  declare public avatar?: string;
-  declare public isActive: boolean;
-  declare public lastLoginAt?: Date;
-  declare public passwordChangedAt?: Date;
-  declare public loginAttempts: number;
-  declare public lockoutUntil?: Date;
-  declare public readonly createdAt: Date;
-  declare public readonly updatedAt: Date;
-  declare public readonly deletedAt?: Date;
+  declare id: string;
+  declare tenantId: string;
+  declare defaultStoreId?: string;
+  declare email: string;
+  declare password: string;
+  declare firstName: string;
+  declare lastName: string;
+  declare phone?: string;
+  declare avatar?: string;
+  declare isActive: boolean;
+  declare lastLoginAt?: Date;
+  declare passwordChangedAt?: Date;
+  declare loginAttempts: number;
+  declare lockoutUntil?: Date;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
+  declare readonly deletedAt?: Date;
 
   // Association mixins
-  declare public readonly tenant?: any;
-  declare public readonly defaultStore?: any;
-  declare public readonly roles?: any[];
+  declare readonly tenant?: any;
+  declare readonly defaultStore?: any;
+  declare readonly roles?: any[];
 
   // Many-to-many association mixins for roles
-  declare public addRole: (role: any) => Promise<void>;
-  declare public removeRole: (role: any) => Promise<void>;
-  declare public addRoles: (roles: any[]) => Promise<void>;
-  declare public removeRoles: (roles: any[]) => Promise<void>;
-  declare public setRoles: (roles: any[]) => Promise<void>;
-  declare public getRoles: () => Promise<any[]>;
+  declare addRole: (role: any) => Promise<void>;
+  declare removeRole: (role: any) => Promise<void>;
+  declare addRoles: (roles: any[]) => Promise<void>;
+  declare removeRoles: (roles: any[]) => Promise<void>;
+  declare setRoles: (roles: any[]) => Promise<void>;
+  declare getRoles: () => Promise<any[]>;
 }
 
 User.init(

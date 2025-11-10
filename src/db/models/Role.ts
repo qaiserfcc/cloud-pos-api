@@ -15,35 +15,35 @@ export interface RoleAttributes {
 export interface RoleCreationAttributes extends Omit<RoleAttributes, 'id' | 'created_at' | 'updated_at'> {}
 
 class Role extends Model<RoleAttributes, RoleCreationAttributes> implements RoleAttributes {
-  declare public id: string;
-  declare public tenantId: string;
-  declare public name: string;
-  declare public description: string;
-  declare public is_system: boolean;
-  declare public readonly created_at: Date;
-  declare public readonly updated_at: Date;
-  declare public readonly deleted_at?: Date;
+  declare id: string;
+  declare tenantId: string;
+  declare name: string;
+  declare description: string;
+  declare is_system: boolean;
+  declare readonly created_at: Date;
+  declare readonly updated_at: Date;
+  declare readonly deleted_at?: Date;
 
   // Association mixins
-  declare public readonly tenant?: any;
-  declare public readonly users?: any[];
-  declare public readonly permissions?: any[];
+  declare readonly tenant?: any;
+  declare readonly users?: any[];
+  declare readonly permissions?: any[];
 
   // Many-to-many association mixins for users
-  declare public addUser: (user: any) => Promise<void>;
-  declare public removeUser: (user: any) => Promise<void>;
-  declare public addUsers: (users: any[]) => Promise<void>;
-  declare public removeUsers: (users: any[]) => Promise<void>;
-  declare public setUsers: (users: any[]) => Promise<void>;
-  declare public getUsers: () => Promise<any[]>;
+  declare addUser: (user: any) => Promise<void>;
+  declare removeUser: (user: any) => Promise<void>;
+  declare addUsers: (users: any[]) => Promise<void>;
+  declare removeUsers: (users: any[]) => Promise<void>;
+  declare setUsers: (users: any[]) => Promise<void>;
+  declare getUsers: () => Promise<any[]>;
 
   // Many-to-many association mixins for permissions
-  declare public addPermission: (permission: any) => Promise<void>;
-  declare public removePermission: (permission: any) => Promise<void>;
-  declare public addPermissions: (permissions: any[]) => Promise<void>;
-  declare public removePermissions: (permissions: any[]) => Promise<void>;
-  declare public setPermissions: (permissions: any[]) => Promise<void>;
-  declare public getPermissions: () => Promise<any[]>;
+  declare addPermission: (permission: any) => Promise<void>;
+  declare removePermission: (permission: any) => Promise<void>;
+  declare addPermissions: (permissions: any[]) => Promise<void>;
+  declare removePermissions: (permissions: any[]) => Promise<void>;
+  declare setPermissions: (permissions: any[]) => Promise<void>;
+  declare getPermissions: () => Promise<any[]>;
 }
 
 Role.init(
@@ -96,12 +96,6 @@ Role.init(
     createdAt: 'created_at',
     updatedAt: 'updated_at',
     deletedAt: 'deleted_at',
-    indexes: [
-      {
-        unique: true,
-        fields: ['tenantId', 'name'],
-      },
-    ],
   }
 );
 

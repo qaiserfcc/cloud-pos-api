@@ -3,6 +3,7 @@ import sequelize from '../config/database';
 
 export interface RoleAttributes {
   id: string;
+  tenantId: string;
   name: string;
   description?: string;
   isSystem: boolean;
@@ -13,16 +14,18 @@ export interface RoleAttributes {
 export interface RoleCreationAttributes extends Optional<RoleAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
 export class Role extends Model<RoleAttributes, RoleCreationAttributes> implements RoleAttributes {
-  declare public id: string;
-  declare public name: string;
-  declare public description?: string;
-  declare public isSystem: boolean;
-  declare public readonly createdAt: Date;
-  declare public readonly updatedAt: Date;
+  declare id: string;
+  declare tenantId: string;
+  declare name: string;
+  declare description?: string;
+  declare isSystem: boolean;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
 
   // Association mixins
-  declare public readonly users?: any[];
-  declare public readonly permissions?: any[];
+  declare readonly tenant?: any;
+  declare readonly users?: any[];
+  declare readonly permissions?: any[];
 }
 
 Role.init(
@@ -32,10 +35,19 @@ Role.init(
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
+    tenantId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      references: {
+        model: 'tenants',
+        key: 'id',
+      },
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
     name: {
       type: DataTypes.STRING(50),
       allowNull: false,
-      unique: true,
     },
     description: {
       type: DataTypes.TEXT,

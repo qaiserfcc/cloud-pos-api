@@ -30,36 +30,36 @@ export interface AutomatedReorderRuleAttributes {
 export interface AutomatedReorderRuleCreationAttributes extends Omit<AutomatedReorderRuleAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
 class AutomatedReorderRule extends Model<AutomatedReorderRuleAttributes, AutomatedReorderRuleCreationAttributes> implements AutomatedReorderRuleAttributes {
-  declare public id: string;
-  declare public tenantId: string;
-  declare public ruleName: string;
-  declare public description?: string;
-  declare public productId?: string;
-  declare public categoryId?: string;
-  declare public storeIds?: string[];
-  declare public regionId?: string;
-  declare public minStockLevel: number;
-  declare public maxStockLevel: number;
-  declare public reorderQuantity: number;
-  declare public reorderPoint: number;
-  declare public leadTimeDays: number;
-  declare public safetyStockDays: number;
-  declare public isActive: boolean;
-  declare public priority: 'low' | 'normal' | 'high';
-  declare public lastTriggeredAt?: Date;
-  declare public nextCheckAt?: Date;
-  declare public checkFrequencyHours: number;
-  declare public createdBy: string;
-  declare public readonly createdAt: Date;
-  declare public readonly updatedAt: Date;
-  declare public readonly deletedAt?: Date;
+  declare id: string;
+  declare tenantId: string;
+  declare ruleName: string;
+  declare description?: string;
+  declare productId?: string;
+  declare categoryId?: string;
+  declare storeIds?: string[];
+  declare regionId?: string;
+  declare minStockLevel: number;
+  declare maxStockLevel: number;
+  declare reorderQuantity: number;
+  declare reorderPoint: number;
+  declare leadTimeDays: number;
+  declare safetyStockDays: number;
+  declare isActive: boolean;
+  declare priority: 'low' | 'normal' | 'high';
+  declare lastTriggeredAt?: Date;
+  declare nextCheckAt?: Date;
+  declare checkFrequencyHours: number;
+  declare createdBy: string;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
+  declare readonly deletedAt?: Date;
 
   // Association mixins
-  declare public readonly tenant?: any;
-  declare public readonly product?: any;
-  declare public readonly category?: any;
-  declare public readonly region?: any;
-  declare public readonly creator?: any;
+  declare readonly tenant?: any;
+  declare readonly product?: any;
+  declare readonly category?: any;
+  declare readonly region?: any;
+  declare readonly creator?: any;
 }
 
 AutomatedReorderRule.init(

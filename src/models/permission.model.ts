@@ -3,6 +3,7 @@ import sequelize from '../config/database';
 
 export interface PermissionAttributes {
   id: string;
+  tenantId: string;
   name: string;
   resource: string;
   action: string;
@@ -14,16 +15,17 @@ export interface PermissionAttributes {
 export interface PermissionCreationAttributes extends Optional<PermissionAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
 export class Permission extends Model<PermissionAttributes, PermissionCreationAttributes> implements PermissionAttributes {
-  declare public id: string;
-  declare public name: string;
-  declare public resource: string;
-  declare public action: string;
-  declare public description?: string;
-  declare public readonly createdAt: Date;
-  declare public readonly updatedAt: Date;
+  declare id: string;
+  declare tenantId: string;
+  declare name: string;
+  declare resource: string;
+  declare action: string;
+  declare description?: string;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
 
   // Association mixins
-  declare public readonly roles?: any[];
+  declare readonly roles?: any[];
 }
 
 Permission.init(
@@ -33,10 +35,19 @@ Permission.init(
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
+    tenantId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      references: {
+        model: 'tenants',
+        key: 'id',
+      },
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
     name: {
       type: DataTypes.STRING(100),
       allowNull: false,
-      unique: true,
     },
     resource: {
       type: DataTypes.STRING(50),
@@ -65,11 +76,6 @@ Permission.init(
     tableName: 'permissions',
     timestamps: true,
     paranoid: false,
-    indexes: [
-      {
-        fields: ['resource', 'action'],
-      },
-    ],
   }
 );
 

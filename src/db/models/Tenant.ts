@@ -15,18 +15,18 @@ export interface TenantAttributes {
 export interface TenantCreationAttributes extends Omit<TenantAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
 class Tenant extends Model<TenantAttributes, TenantCreationAttributes> implements TenantAttributes {
-  declare public id: string;
-  declare public name: string;
-  declare public domain: string;
-  declare public settings: object;
-  declare public isActive: boolean;
-  declare public readonly createdAt: Date;
-  declare public readonly updatedAt: Date;
-  declare public readonly deletedAt?: Date;
+  declare id: string;
+  declare name: string;
+  declare domain: string;
+  declare settings: object;
+  declare isActive: boolean;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
+  declare readonly deletedAt?: Date;
 
   // Association mixins
-  declare public readonly stores?: any[];
-  declare public readonly users?: any[];
+  declare readonly stores?: any[];
+  declare readonly users?: any[];
 }
 
 Tenant.init(

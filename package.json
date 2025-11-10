@@ -78,6 +78,7 @@
     "nodemon": "^3.1.10",
     "prettier": "^3.1.0",
     "sequelize-cli": "^6.6.2",
+    "ts-jest": "^29.4.5",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.3.2"
   },

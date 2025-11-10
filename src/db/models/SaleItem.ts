@@ -20,24 +20,24 @@ export interface SaleItemAttributes {
 export interface SaleItemCreationAttributes extends Omit<SaleItemAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
 class SaleItem extends Model<SaleItemAttributes, SaleItemCreationAttributes> implements SaleItemAttributes {
-  declare public id: string;
-  declare public tenantId: string;
-  declare public saleId: string;
-  declare public productId: string;
-  declare public quantity: number;
-  declare public unitPrice: number;
-  declare public discountAmount: number;
-  declare public taxAmount: number;
-  declare public totalAmount: number;
-  declare public notes?: string;
-  declare public readonly createdAt: Date;
-  declare public readonly updatedAt: Date;
-  declare public readonly deletedAt?: Date;
+  declare id: string;
+  declare tenantId: string;
+  declare saleId: string;
+  declare productId: string;
+  declare quantity: number;
+  declare unitPrice: number;
+  declare discountAmount: number;
+  declare taxAmount: number;
+  declare totalAmount: number;
+  declare notes?: string;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
+  declare readonly deletedAt?: Date;
 
   // Association mixins
-  declare public readonly tenant?: any;
-  declare public readonly sale?: any;
-  declare public readonly product?: any;
+  declare readonly tenant?: any;
+  declare readonly sale?: any;
+  declare readonly product?: any;
 }
 
 SaleItem.init(

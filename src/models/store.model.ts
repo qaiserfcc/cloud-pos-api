@@ -15,20 +15,20 @@ export interface StoreAttributes {
 export interface StoreCreationAttributes extends Optional<StoreAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
 export class Store extends Model<StoreAttributes, StoreCreationAttributes> implements StoreAttributes {
-  declare public id: string;
-  declare public tenantId: string;
-  declare public name: string;
-  declare public address?: object;
-  declare public settings?: object;
-  declare public isActive: boolean;
-  declare public readonly createdAt: Date;
-  declare public readonly updatedAt: Date;
+  declare id: string;
+  declare tenantId: string;
+  declare name: string;
+  declare address?: object;
+  declare settings?: object;
+  declare isActive: boolean;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
 
   // Association mixins
-  declare public readonly tenant?: any;
-  declare public readonly users?: any[];
-  declare public readonly products?: any[];
-  declare public readonly orders?: any[];
+  declare readonly tenant?: any;
+  declare readonly users?: any[];
+  declare readonly products?: any[];
+  declare readonly orders?: any[];
 }
 
 Store.init(

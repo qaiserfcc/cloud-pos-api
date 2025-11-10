@@ -17,28 +17,28 @@ export interface PermissionAttributes {
 export interface PermissionCreationAttributes extends Omit<PermissionAttributes, 'id' | 'created_at' | 'updated_at'> {}
 
 class Permission extends Model<PermissionAttributes, PermissionCreationAttributes> implements PermissionAttributes {
-  declare public id: string;
-  declare public tenantId: string;
-  declare public name: string;
-  declare public resource: string;
-  declare public action: string;
-  declare public description: string;
-  declare public is_system: boolean;
-  declare public readonly created_at: Date;
-  declare public readonly updated_at: Date;
-  declare public readonly deleted_at?: Date;
+  declare id: string;
+  declare tenantId: string;
+  declare name: string;
+  declare resource: string;
+  declare action: string;
+  declare description: string;
+  declare is_system: boolean;
+  declare readonly created_at: Date;
+  declare readonly updated_at: Date;
+  declare readonly deleted_at?: Date;
 
   // Association mixins
-  declare public readonly tenant?: any;
-  declare public readonly roles?: any[];
+  declare readonly tenant?: any;
+  declare readonly roles?: any[];
 
   // Many-to-many association mixins for roles
-  declare public addRole: (role: any) => Promise<void>;
-  declare public removeRole: (role: any) => Promise<void>;
-  declare public addRoles: (roles: any[]) => Promise<void>;
-  declare public removeRoles: (roles: any[]) => Promise<void>;
-  declare public setRoles: (roles: any[]) => Promise<void>;
-  declare public getRoles: () => Promise<any[]>;
+  declare addRole: (role: any) => Promise<void>;
+  declare removeRole: (role: any) => Promise<void>;
+  declare addRoles: (roles: any[]) => Promise<void>;
+  declare removeRoles: (roles: any[]) => Promise<void>;
+  declare setRoles: (roles: any[]) => Promise<void>;
+  declare getRoles: () => Promise<any[]>;
 }
 
 Permission.init(
@@ -99,15 +99,6 @@ Permission.init(
     createdAt: 'created_at',
     updatedAt: 'updated_at',
     deletedAt: 'deleted_at',
-    indexes: [
-      {
-        unique: true,
-        fields: ['tenantId', 'name'],
-      },
-      {
-        fields: ['tenantId', 'resource', 'action'],
-      },
-    ],
   }
 );
 

@@ -28,31 +28,31 @@ export interface CustomerAttributes {
 export interface CustomerCreationAttributes extends Omit<CustomerAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
 class Customer extends Model<CustomerAttributes, CustomerCreationAttributes> implements CustomerAttributes {
-  declare public id: string;
-  declare public tenantId: string;
-  declare public firstName: string;
-  declare public lastName: string;
-  declare public email?: string;
-  declare public phone?: string;
-  declare public address?: string;
-  declare public city?: string;
-  declare public state?: string;
-  declare public zipCode?: string;
-  declare public country?: string;
-  declare public dateOfBirth?: Date;
-  declare public gender?: 'male' | 'female' | 'other';
-  declare public loyaltyPoints: number;
-  declare public totalSpent: number;
-  declare public lastPurchaseAt?: Date;
-  declare public isActive: boolean;
-  declare public notes?: string;
-  declare public readonly createdAt: Date;
-  declare public readonly updatedAt: Date;
-  declare public readonly deletedAt?: Date;
+  declare id: string;
+  declare tenantId: string;
+  declare firstName: string;
+  declare lastName: string;
+  declare email?: string;
+  declare phone?: string;
+  declare address?: string;
+  declare city?: string;
+  declare state?: string;
+  declare zipCode?: string;
+  declare country?: string;
+  declare dateOfBirth?: Date;
+  declare gender?: 'male' | 'female' | 'other';
+  declare loyaltyPoints: number;
+  declare totalSpent: number;
+  declare lastPurchaseAt?: Date;
+  declare isActive: boolean;
+  declare notes?: string;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
+  declare readonly deletedAt?: Date;
 
   // Association mixins
-  declare public readonly tenant?: any;
-  declare public readonly sales?: any[];
+  declare readonly tenant?: any;
+  declare readonly sales?: any[];
 }
 
 Customer.init(

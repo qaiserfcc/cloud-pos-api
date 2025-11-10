@@ -31,7 +31,8 @@ import customerRoutes from './routes/customer.routes';
 // import paymentRoutes from './routes/payment.routes';
 import dashboardRoutes from './routes/dashboard.routes';
 // import syncRoutes from './routes/sync.routes';
-// import auditRoutes from './routes/audit.routes';
+import auditRoutes from './routes/audit.routes';
+import approvalRoutes from './routes/approval.routes';
 import reportRoutes from './routes/report.routes';
 import automatedReorderRuleRoutes from './routes/automated-reorder-rule.routes';
 
@@ -125,7 +126,8 @@ app.use('/api/v1/customers', customerRoutes);
 // app.use('/api/v1/payments', paymentRoutes);
 app.use('/api/v1/dashboard', dashboardRoutes);
 // app.use('/api/v1/sync', syncRoutes);
-// app.use('/api/v1/audit', auditRoutes);
+app.use('/api/v1/audit', auditRoutes);
+app.use('/api/v1/approvals', approvalRoutes);
 app.use('/api/v1/reports', reportRoutes);
 app.use('/api/v1/automated-reorder-rules', automatedReorderRuleRoutes);
 

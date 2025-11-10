@@ -24,31 +24,31 @@ export interface SaleAttributes {
 export interface SaleCreationAttributes extends Omit<SaleAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
 class Sale extends Model<SaleAttributes, SaleCreationAttributes> implements SaleAttributes {
-  declare public id: string;
-  declare public tenantId: string;
-  declare public storeId: string;
-  declare public customerId?: string;
-  declare public userId: string;
-  declare public saleNumber: string;
-  declare public status: 'pending' | 'completed' | 'cancelled' | 'refunded';
-  declare public subtotal: number;
-  declare public taxAmount: number;
-  declare public discountAmount: number;
-  declare public totalAmount: number;
-  declare public paymentStatus: 'pending' | 'paid' | 'partially_paid' | 'refunded';
-  declare public notes?: string;
-  declare public saleDate: Date;
-  declare public readonly createdAt: Date;
-  declare public readonly updatedAt: Date;
-  declare public readonly deletedAt?: Date;
+  declare id: string;
+  declare tenantId: string;
+  declare storeId: string;
+  declare customerId?: string;
+  declare userId: string;
+  declare saleNumber: string;
+  declare status: 'pending' | 'completed' | 'cancelled' | 'refunded';
+  declare subtotal: number;
+  declare taxAmount: number;
+  declare discountAmount: number;
+  declare totalAmount: number;
+  declare paymentStatus: 'pending' | 'paid' | 'partially_paid' | 'refunded';
+  declare notes?: string;
+  declare saleDate: Date;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
+  declare readonly deletedAt?: Date;
 
   // Association mixins
-  declare public readonly tenant?: any;
-  declare public readonly store?: any;
-  declare public readonly customer?: any;
-  declare public readonly user?: any;
-  declare public readonly saleItems?: any[];
-  declare public readonly payments?: any[];
+  declare readonly tenant?: any;
+  declare readonly store?: any;
+  declare readonly customer?: any;
+  declare readonly user?: any;
+  declare readonly saleItems?: any[];
+  declare readonly payments?: any[];
 }
 
 Sale.init(

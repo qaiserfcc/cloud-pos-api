@@ -25,29 +25,29 @@ export interface InventoryAttributes {
 export interface InventoryCreationAttributes extends Omit<InventoryAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
 class Inventory extends Model<InventoryAttributes, InventoryCreationAttributes> implements InventoryAttributes {
-  declare public id: string;
-  declare public tenantId: string;
-  declare public storeId: string;
-  declare public productId: string;
-  declare public quantityOnHand: number;
-  declare public quantityReserved: number;
-  declare public quantityAvailable: number;
-  declare public reorderPoint: number;
-  declare public reorderQuantity: number;
-  declare public lastStockTakeDate?: Date;
-  declare public lastStockTakeQuantity?: number;
-  declare public unitCost?: number;
-  declare public location?: string;
-  declare public batchNumber?: string;
-  declare public expiryDate?: Date;
-  declare public readonly createdAt: Date;
-  declare public readonly updatedAt: Date;
-  declare public readonly deletedAt?: Date;
+  declare id: string;
+  declare tenantId: string;
+  declare storeId: string;
+  declare productId: string;
+  declare quantityOnHand: number;
+  declare quantityReserved: number;
+  declare quantityAvailable: number;
+  declare reorderPoint: number;
+  declare reorderQuantity: number;
+  declare lastStockTakeDate?: Date;
+  declare lastStockTakeQuantity?: number;
+  declare unitCost?: number;
+  declare location?: string;
+  declare batchNumber?: string;
+  declare expiryDate?: Date;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
+  declare readonly deletedAt?: Date;
 
   // Association mixins
-  declare public readonly tenant?: any;
-  declare public readonly store?: any;
-  declare public readonly product?: any;
+  declare readonly tenant?: any;
+  declare readonly store?: any;
+  declare readonly product?: any;
 }
 
 Inventory.init(

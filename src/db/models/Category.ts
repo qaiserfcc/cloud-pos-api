@@ -19,24 +19,24 @@ export interface CategoryAttributes {
 export interface CategoryCreationAttributes extends Omit<CategoryAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
 class Category extends Model<CategoryAttributes, CategoryCreationAttributes> implements CategoryAttributes {
-  declare public id: string;
-  declare public tenantId: string;
-  declare public name: string;
-  declare public description?: string;
-  declare public color?: string;
-  declare public icon?: string;
-  declare public sortOrder: number;
-  declare public isActive: boolean;
-  declare public parentId?: string;
-  declare public readonly createdAt: Date;
-  declare public readonly updatedAt: Date;
-  declare public readonly deletedAt?: Date;
+  declare id: string;
+  declare tenantId: string;
+  declare name: string;
+  declare description?: string;
+  declare color?: string;
+  declare icon?: string;
+  declare sortOrder: number;
+  declare isActive: boolean;
+  declare parentId?: string;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
+  declare readonly deletedAt?: Date;
 
   // Association mixins
-  declare public readonly tenant?: any;
-  declare public readonly parent?: any;
-  declare public readonly subcategories?: any[];
-  declare public readonly products?: any[];
+  declare readonly tenant?: any;
+  declare readonly parent?: any;
+  declare readonly subcategories?: any[];
+  declare readonly products?: any[];
 }
 
 Category.init(

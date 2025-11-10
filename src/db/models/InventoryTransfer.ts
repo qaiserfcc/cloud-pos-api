@@ -26,33 +26,33 @@ export interface InventoryTransferAttributes {
 export interface InventoryTransferCreationAttributes extends Omit<InventoryTransferAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
 class InventoryTransfer extends Model<InventoryTransferAttributes, InventoryTransferCreationAttributes> implements InventoryTransferAttributes {
-  declare public id: string;
-  declare public tenantId: string;
-  declare public transferNumber: string;
-  declare public sourceStoreId: string;
-  declare public destinationStoreId: string;
-  declare public productId: string;
-  declare public quantity: number;
-  declare public unitCost?: number;
-  declare public status: 'pending' | 'approved' | 'rejected' | 'in_transit' | 'cancelled' | 'completed';
-  declare public requestedBy: string;
-  declare public approvedBy?: string;
-  declare public approvedAt?: Date;
-  declare public shippedAt?: Date;
-  declare public receivedAt?: Date;
-  declare public notes?: string;
-  declare public reference?: string;
-  declare public readonly createdAt: Date;
-  declare public readonly updatedAt: Date;
-  declare public readonly deletedAt?: Date;
+  declare id: string;
+  declare tenantId: string;
+  declare transferNumber: string;
+  declare sourceStoreId: string;
+  declare destinationStoreId: string;
+  declare productId: string;
+  declare quantity: number;
+  declare unitCost?: number;
+  declare status: 'pending' | 'approved' | 'rejected' | 'in_transit' | 'cancelled' | 'completed';
+  declare requestedBy: string;
+  declare approvedBy?: string;
+  declare approvedAt?: Date;
+  declare shippedAt?: Date;
+  declare receivedAt?: Date;
+  declare notes?: string;
+  declare reference?: string;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
+  declare readonly deletedAt?: Date;
 
   // Association mixins
-  declare public readonly tenant?: any;
-  declare public readonly sourceStore?: any;
-  declare public readonly destinationStore?: any;
-  declare public readonly product?: any;
-  declare public readonly requester?: any;
-  declare public readonly approver?: any;
+  declare readonly tenant?: any;
+  declare readonly sourceStore?: any;
+  declare readonly destinationStore?: any;
+  declare readonly product?: any;
+  declare readonly requester?: any;
+  declare readonly approver?: any;
 }
 
 InventoryTransfer.init(

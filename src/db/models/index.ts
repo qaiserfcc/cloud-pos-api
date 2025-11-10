@@ -18,6 +18,8 @@ import BulkInventoryTransfer from './BulkInventoryTransfer';
 import BulkInventoryTransferItem from './BulkInventoryTransferItem';
 import InventoryRegion from './InventoryRegion';
 import AutomatedReorderRule from './AutomatedReorderRule';
+import ApprovalRule from './ApprovalRule';
+import ApprovalRequest from './ApprovalRequest';
 
 // Tenant associations
 Tenant.hasMany(Store, {
@@ -460,6 +462,58 @@ AutomatedReorderRule.belongsTo(Product, {
   as: 'product',
 });
 
+// Approval Rule associations
+ApprovalRule.belongsTo(Tenant, {
+  foreignKey: 'tenantId',
+  as: 'tenant',
+});
+
+Tenant.hasMany(ApprovalRule, {
+  foreignKey: 'tenantId',
+  as: 'approvalRules',
+});
+
+// Approval Request associations
+ApprovalRequest.belongsTo(Tenant, {
+  foreignKey: 'tenantId',
+  as: 'tenant',
+});
+
+ApprovalRequest.belongsTo(Store, {
+  foreignKey: 'storeId',
+  as: 'store',
+});
+
+ApprovalRequest.belongsTo(User, {
+  foreignKey: 'requestedById',
+  as: 'requestedBy',
+});
+
+ApprovalRequest.belongsTo(ApprovalRule, {
+  foreignKey: 'approvalRuleId',
+  as: 'approvalRule',
+});
+
+Tenant.hasMany(ApprovalRequest, {
+  foreignKey: 'tenantId',
+  as: 'approvalRequests',
+});
+
+Store.hasMany(ApprovalRequest, {
+  foreignKey: 'storeId',
+  as: 'approvalRequests',
+});
+
+User.hasMany(ApprovalRequest, {
+  foreignKey: 'requestedById',
+  as: 'requestedApprovals',
+});
+
+ApprovalRule.hasMany(ApprovalRequest, {
+  foreignKey: 'approvalRuleId',
+  as: 'approvalRequests',
+});
+
 export {
   sequelize,
   Tenant,
@@ -480,6 +534,8 @@ export {
   BulkInventoryTransferItem,
   InventoryRegion,
   AutomatedReorderRule,
+  ApprovalRule,
+  ApprovalRequest,
   UserRole,
   RolePermission,
 };

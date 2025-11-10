@@ -23,27 +23,27 @@ export interface InventoryRegionAttributes {
 export interface InventoryRegionCreationAttributes extends Omit<InventoryRegionAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
 class InventoryRegion extends Model<InventoryRegionAttributes, InventoryRegionCreationAttributes> implements InventoryRegionAttributes {
-  declare public id: string;
-  declare public tenantId: string;
-  declare public regionCode: string;
-  declare public regionName: string;
-  declare public description?: string;
-  declare public managerId?: string;
-  declare public isActive: boolean;
-  declare public address?: string;
-  declare public city?: string;
-  declare public state?: string;
-  declare public postalCode?: string;
-  declare public country?: string;
-  declare public timezone?: string;
-  declare public readonly createdAt: Date;
-  declare public readonly updatedAt: Date;
-  declare public readonly deletedAt?: Date;
+  declare id: string;
+  declare tenantId: string;
+  declare regionCode: string;
+  declare regionName: string;
+  declare description?: string;
+  declare managerId?: string;
+  declare isActive: boolean;
+  declare address?: string;
+  declare city?: string;
+  declare state?: string;
+  declare postalCode?: string;
+  declare country?: string;
+  declare timezone?: string;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
+  declare readonly deletedAt?: Date;
 
   // Association mixins
-  declare public readonly tenant?: any;
-  declare public readonly manager?: any;
-  declare public readonly stores?: any[];
+  declare readonly tenant?: any;
+  declare readonly manager?: any;
+  declare readonly stores?: any[];
 }
 
 InventoryRegion.init(

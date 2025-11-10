@@ -23,29 +23,29 @@ export interface UserAttributes {
 export interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'createdAt' | 'updatedAt' | 'loginAttempts'> {}
 
 export class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
-  declare public id: string;
-  declare public tenantId: string;
-  declare public email: string;
-  declare public password: string;
-  declare public firstName: string;
-  declare public lastName: string;
-  declare public phone?: string;
-  declare public avatar?: string;
-  declare public defaultStoreId?: string;
-  declare public isActive: boolean;
-  declare public lastLoginAt?: Date;
-  declare public passwordChangedAt?: Date;
-  declare public loginAttempts: number;
-  declare public lockoutUntil?: Date;
-  declare public readonly createdAt: Date;
-  declare public readonly updatedAt: Date;
+  declare id: string;
+  declare tenantId: string;
+  declare email: string;
+  declare password: string;
+  declare firstName: string;
+  declare lastName: string;
+  declare phone?: string;
+  declare avatar?: string;
+  declare defaultStoreId?: string;
+  declare isActive: boolean;
+  declare lastLoginAt?: Date;
+  declare passwordChangedAt?: Date;
+  declare loginAttempts: number;
+  declare lockoutUntil?: Date;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
 
   // Association mixins
-  declare public readonly tenant?: any;
-  declare public readonly defaultStore?: any;
-  declare public readonly roles?: any[];
-  declare public readonly orders?: any[];
-  declare public readonly auditLogs?: any[];
+  declare readonly tenant?: any;
+  declare readonly defaultStore?: any;
+  declare readonly roles?: any[];
+  declare readonly orders?: any[];
+  declare readonly auditLogs?: any[];
 }
 
 User.init(

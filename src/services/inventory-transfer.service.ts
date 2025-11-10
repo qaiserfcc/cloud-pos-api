@@ -1,6 +1,7 @@
 import { InventoryTransfer, Inventory, Store, Product, User, Tenant } from '../db/models';
 import { Op, Transaction } from 'sequelize';
 import { InventoryService } from './inventory.service';
+import ApprovalService from './approval.service';
 import logger from '../config/logger';
 
 export interface CreateTransferData {
@@ -58,6 +59,7 @@ export interface TransferWithDetails {
 }
 
 export class InventoryTransferService {
+  private static approvalService = new ApprovalService();
   /**
    * Generate a unique transfer number
    */
@@ -156,6 +158,33 @@ export class InventoryTransferService {
       // Get unit cost from source inventory
       const unitCost = sourceInventory.unitCost ? parseFloat(sourceInventory.unitCost.toString()) : undefined;
 
+      // Check if approval is required for this transfer
+      const approvalData: any = {
+        amount: unitCost ? unitCost * transferData.quantity : 0,
+        currency: 'USD', // Default currency, could be made configurable
+        details: {
+          sourceStoreId: transferData.sourceStoreId,
+          destinationStoreId: transferData.destinationStoreId,
+          productId: transferData.productId,
+          quantity: transferData.quantity,
+          unitCost,
+          productName: product.name,
+          sourceStoreName: sourceStore.name,
+          destinationStoreName: destinationStore.name,
+        },
+        metadata: {
+          transferType: 'inventory_transfer',
+          productSku: product.sku,
+        },
+      };
+
+      const approvalRequired = await this.approvalService.isApprovalRequired(
+        transferData.tenantId,
+        'inventory_transfer',
+        approvalData,
+        transferData.sourceStoreId
+      );
+
       // Generate transfer number
       const transferNumber = await this.generateTransferNumber(transferData.tenantId);
 
@@ -165,12 +194,27 @@ export class InventoryTransferService {
         ...transferDataWithCost,
         transferNumber,
         requestedBy,
-        status: 'pending',
+        status: approvalRequired ? 'pending' : 'approved', // Auto-approve if no approval required
       }, { transaction });
+
+      // Create approval request if required
+      if (approvalRequired) {
+        await this.approvalService.createApprovalRequest({
+          tenantId: transferData.tenantId,
+          storeId: transferData.sourceStoreId,
+          requestedById: requestedBy,
+          objectType: 'inventory_transfer',
+          objectId: transfer.id,
+          title: `Inventory Transfer Request: ${product.name}`,
+          description: `Transfer ${transferData.quantity} units of ${product.name} from ${sourceStore.name} to ${destinationStore.name}`,
+          priority: 'medium',
+          approvalData,
+        });
+      }
 
       await transaction.commit();
 
-      logger.info(`Inventory transfer created: ${transferNumber} from store ${transferData.sourceStoreId} to ${transferData.destinationStoreId}`);
+      logger.info(`Inventory transfer created: ${transferNumber} from store ${transferData.sourceStoreId} to ${transferData.destinationStoreId}${approvalRequired ? ' (approval required)' : ' (auto-approved)'}`);
 
       // Return transfer with details
       return await this.getTransferById(transfer.id, transferData.tenantId);
@@ -182,8 +226,15 @@ export class InventoryTransferService {
   }
 
   /**
-   * Approve a transfer request
+   * Handle approval decision for inventory transfer
    */
+  static async handleApprovalDecision(transferId: string, tenantId: string, decision: 'approved' | 'rejected', approverId: string, comments?: string): Promise<TransferWithDetails> {
+    if (decision === 'approved') {
+      return await this.approveTransfer(transferId, tenantId, approverId);
+    } else {
+      return await this.rejectTransfer(transferId, tenantId, approverId, comments || 'Rejected via approval workflow');
+    }
+  }
   static async approveTransfer(transferId: string, tenantId: string, approvedBy: string): Promise<TransferWithDetails> {
     const transaction = await InventoryTransfer.sequelize!.transaction();
 

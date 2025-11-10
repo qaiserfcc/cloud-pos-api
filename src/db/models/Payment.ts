@@ -21,25 +21,25 @@ export interface PaymentAttributes {
 export interface PaymentCreationAttributes extends Omit<PaymentAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
 class Payment extends Model<PaymentAttributes, PaymentCreationAttributes> implements PaymentAttributes {
-  declare public id: string;
-  declare public tenantId: string;
-  declare public saleId: string;
-  declare public paymentMethod: 'cash' | 'card' | 'bank_transfer' | 'digital_wallet' | 'check' | 'gift_card' | 'loyalty_points';
-  declare public amount: number;
-  declare public referenceNumber?: string;
-  declare public transactionId?: string;
-  declare public paymentDate: Date;
-  declare public status: 'pending' | 'completed' | 'failed' | 'cancelled' | 'refunded';
-  declare public notes?: string;
-  declare public processedBy: string;
-  declare public readonly createdAt: Date;
-  declare public readonly updatedAt: Date;
-  declare public readonly deletedAt?: Date;
+  declare id: string;
+  declare tenantId: string;
+  declare saleId: string;
+  declare paymentMethod: 'cash' | 'card' | 'bank_transfer' | 'digital_wallet' | 'check' | 'gift_card' | 'loyalty_points';
+  declare amount: number;
+  declare referenceNumber?: string;
+  declare transactionId?: string;
+  declare paymentDate: Date;
+  declare status: 'pending' | 'completed' | 'failed' | 'cancelled' | 'refunded';
+  declare notes?: string;
+  declare processedBy: string;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
+  declare readonly deletedAt?: Date;
 
   // Association mixins
-  declare public readonly tenant?: any;
-  declare public readonly sale?: any;
-  declare public readonly user?: any;
+  declare readonly tenant?: any;
+  declare readonly sale?: any;
+  declare readonly user?: any;
 }
 
 Payment.init(

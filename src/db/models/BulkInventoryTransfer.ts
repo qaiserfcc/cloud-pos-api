@@ -32,39 +32,39 @@ export interface BulkInventoryTransferAttributes {
 export interface BulkInventoryTransferCreationAttributes extends Omit<BulkInventoryTransferAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
 class BulkInventoryTransfer extends Model<BulkInventoryTransferAttributes, BulkInventoryTransferCreationAttributes> implements BulkInventoryTransferAttributes {
-  declare public id: string;
-  declare public tenantId: string;
-  declare public bulkTransferNumber: string;
-  declare public sourceStoreId: string;
-  declare public destinationStoreId: string;
-  declare public title: string;
-  declare public description?: string;
-  declare public status: 'draft' | 'pending' | 'approved' | 'partially_shipped' | 'shipped' | 'partially_received' | 'completed' | 'cancelled' | 'rejected';
-  declare public priority: 'low' | 'normal' | 'high' | 'urgent';
-  declare public transferType: 'replenishment' | 'allocation' | 'return' | 'adjustment' | 'emergency';
-  declare public requestedBy: string;
-  declare public approvedBy?: string;
-  declare public approvedAt?: Date;
-  declare public scheduledShipDate?: Date;
-  declare public actualShipDate?: Date;
-  declare public scheduledReceiveDate?: Date;
-  declare public actualReceiveDate?: Date;
-  declare public totalItems: number;
-  declare public totalQuantity: number;
-  declare public totalValue?: number;
-  declare public notes?: string;
-  declare public reference?: string;
-  declare public readonly createdAt: Date;
-  declare public readonly updatedAt: Date;
-  declare public readonly deletedAt?: Date;
+  declare id: string;
+  declare tenantId: string;
+  declare bulkTransferNumber: string;
+  declare sourceStoreId: string;
+  declare destinationStoreId: string;
+  declare title: string;
+  declare description?: string;
+  declare status: 'draft' | 'pending' | 'approved' | 'partially_shipped' | 'shipped' | 'partially_received' | 'completed' | 'cancelled' | 'rejected';
+  declare priority: 'low' | 'normal' | 'high' | 'urgent';
+  declare transferType: 'replenishment' | 'allocation' | 'return' | 'adjustment' | 'emergency';
+  declare requestedBy: string;
+  declare approvedBy?: string;
+  declare approvedAt?: Date;
+  declare scheduledShipDate?: Date;
+  declare actualShipDate?: Date;
+  declare scheduledReceiveDate?: Date;
+  declare actualReceiveDate?: Date;
+  declare totalItems: number;
+  declare totalQuantity: number;
+  declare totalValue?: number;
+  declare notes?: string;
+  declare reference?: string;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
+  declare readonly deletedAt?: Date;
 
   // Association mixins
-  declare public readonly tenant?: any;
-  declare public readonly sourceStore?: any;
-  declare public readonly destinationStore?: any;
-  declare public readonly requester?: any;
-  declare public readonly approver?: any;
-  declare public readonly transferItems?: any[];
+  declare readonly tenant?: any;
+  declare readonly sourceStore?: any;
+  declare readonly destinationStore?: any;
+  declare readonly requester?: any;
+  declare readonly approver?: any;
+  declare readonly transferItems?: any[];
 }
 
 BulkInventoryTransfer.init(
