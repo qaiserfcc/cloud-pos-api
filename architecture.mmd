@@ -1,0 +1,151 @@
+%% Cloud POS API – Full AI Agent Flow & Endpoint Blueprint
+flowchart TD
+    %% Top-level Hierarchy
+    SuperAdmin[SuperAdmin (Full Access)] --> Tenant[Tenant Admin / Users]
+    Tenant --> Store[Store Users & POS Data]
+    SuperAdmin --> Roles[Roles & Permissions]
+
+    %% Middleware
+    subgraph Middleware
+        TSC[Tenant & Store Context Middleware]
+        RBAC[RBAC & Permission Check Middleware]
+        VAL[Input Validation Middleware]
+    end
+
+    %% Controllers & Services
+    subgraph Controllers
+        POSC[POS Controller → SaleService / InventoryService]
+        PROD[Products Controller → ProductService]
+        USERC[User Controller → UserService]
+        ROLEC[Role & Permission Controller]
+        DASHC[Dashboard Controller → WidgetService]
+        SYNC[Sync Controller → SyncService]
+        CRM[CRM Controller → CustomerService]
+        REPORT[Reports Controller → ReportService]
+    end
+
+    %% Hooks & Queues
+    subgraph Hooks
+        AUDIT[Audit Logging Hook]
+        CHANGEQ[Change Queue Hook]
+    end
+
+    %% Database Tables
+    subgraph DB
+        TENANT[Tenants]
+        STORE_TBL[Stores]
+        USER_TBL[Users]
+        ROLE_TBL[Roles]
+        PERM_TBL[Permissions]
+        PRODUCT[Products]
+        VARIANT[Product Variants]
+        INVENTORY[Inventory]
+        SALE[Sales]
+        SALEITEM[Sale Items]
+        CUSTOMER[Customers / CRM]
+        AUDITLOG[Audit Logs]
+        CHANGES[Change Queue]
+        DASH[Dashboard Widgets]
+    end
+
+    %% Sync / Desktop
+    subgraph SyncFlow
+        DESKTOP[Desktop / SQLite DB]
+    end
+
+    %% AI Agent Responsibilities
+    subgraph AI_Agent
+        AA[Generate Models & Migrations]
+        AB[Generate Controllers & Services]
+        AC[Generate Routes & Middleware]
+        AD[Inject Tenant/Store Context]
+        AE[Apply RBAC Checks]
+        AF[Generate Audit & Change Queue Hooks]
+        AG[Sync Service Logic & Conflict Resolution]
+        AH[Generate OpenAPI / Swagger Docs]
+    end
+
+    %% Endpoint flows
+    Client[Client / Desktop / Mobile App] -->|POST /api/pos/sales| POSC
+    Client -->|GET /api/products| PROD
+    Client -->|POST /api/users| USERC
+    Client -->|POST /api/roles| ROLEC
+    Client -->|GET /api/dashboard/widgets| DASHC
+    Client -->|POST /api/sync/upload| SYNC
+    Client -->|GET /api/sync/download| SYNC
+    Client -->|GET /api/reports| REPORT
+    Client -->|POST /api/customers| CRM
+
+    %% Middleware connections
+    POSC --> TSC --> RBAC --> VAL
+    PROD --> TSC --> RBAC --> VAL
+    USERC --> TSC --> RBAC --> VAL
+    ROLEC --> TSC --> RBAC --> VAL
+    DASHC --> TSC --> RBAC --> VAL
+    SYNC --> TSC --> RBAC --> VAL
+    REPORT --> TSC --> RBAC --> VAL
+    CRM --> TSC --> RBAC --> VAL
+
+    %% Controller → DB mapping
+    POSC --> SALE
+    POSC --> SALEITEM
+    POSC --> INVENTORY
+    PROD --> PRODUCT
+    PROD --> VARIANT
+    USERC --> USER_TBL
+    ROLEC --> ROLE_TBL
+    ROLEC --> PERM_TBL
+    DASHC --> DASH
+    CRM --> CUSTOMER
+
+    %% Hooks
+    POSC --> AUDIT
+    POSC --> CHANGEQ
+    USERC --> AUDIT
+    USERC --> CHANGEQ
+    ROLEC --> AUDIT
+    ROLEC --> CHANGEQ
+    PROD --> AUDIT
+    PROD --> CHANGEQ
+    CRM --> AUDIT
+    CRM --> CHANGEQ
+
+    AUDIT --> AUDITLOG
+    CHANGEQ --> CHANGES
+    CHANGES --> DESKTOP
+    SYNC --> CHANGES
+    SYNC --> DESKTOP
+
+    %% AI Agent connections
+    AA -.-> TENANT
+    AA -.-> STORE_TBL
+    AA -.-> USER_TBL
+    AA -.-> ROLE_TBL
+    AA -.-> PERM_TBL
+    AA -.-> PRODUCT
+    AA -.-> VARIANT
+    AA -.-> INVENTORY
+    AA -.-> SALE
+    AA -.-> SALEITEM
+    AA -.-> CUSTOMER
+    AA -.-> DASH
+
+    AB -.-> POSC
+    AB -.-> PROD
+    AB -.-> USERC
+    AB -.-> ROLEC
+    AB -.-> DASHC
+    AB -.-> SYNC
+    AB -.-> CRM
+    AB -.-> REPORT
+
+    AC -.-> TSC
+    AC -.-> RBAC
+    AC -.-> VAL
+
+    AD -.-> TSC
+    AE -.-> RBAC
+    AF -.-> AUDIT
+    AF -.-> CHANGEQ
+    AG -.-> SYNC
+    AH -.-> Client
