@@ -12,6 +12,7 @@ import Sale from './Sale';
 import SaleItem from './SaleItem';
 import Payment from './Payment';
 import Inventory from './Inventory';
+import DashboardWidget from './DashboardWidget';
 
 // Tenant associations
 Tenant.hasMany(Store, {
@@ -302,6 +303,17 @@ Inventory.belongsTo(Product, {
   as: 'product',
 });
 
+// DashboardWidget associations
+DashboardWidget.belongsTo(Tenant, {
+  foreignKey: 'tenantId',
+  as: 'tenant',
+});
+
+DashboardWidget.belongsTo(Store, {
+  foreignKey: 'storeId',
+  as: 'store',
+});
+
 export {
   sequelize,
   Tenant,
@@ -316,6 +328,7 @@ export {
   SaleItem,
   Payment,
   Inventory,
+  DashboardWidget,
   UserRole,
   RolePermission,
 };

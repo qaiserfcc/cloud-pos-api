@@ -26,10 +26,10 @@ import saleRoutes from './routes/sale.routes';
 import customerRoutes from './routes/customer.routes';
 // import orderRoutes from './routes/order.routes';
 // import paymentRoutes from './routes/payment.routes';
-// import dashboardRoutes from './routes/dashboard.routes';
+import dashboardRoutes from './routes/dashboard.routes';
 // import syncRoutes from './routes/sync.routes';
 // import auditRoutes from './routes/audit.routes';
-// import reportRoutes from './routes/report.routes';
+import reportRoutes from './routes/report.routes';
 
 // Import middlewares
 // import { errorHandler } from './middlewares/error.middleware';
@@ -116,10 +116,10 @@ app.use('/api/v1/inventory', inventoryRoutes);
 app.use('/api/v1/sales', saleRoutes);
 app.use('/api/v1/customers', customerRoutes);
 // app.use('/api/v1/payments', paymentRoutes);
-// app.use('/api/v1/dashboard', dashboardRoutes);
+app.use('/api/v1/dashboard', dashboardRoutes);
 // app.use('/api/v1/sync', syncRoutes);
 // app.use('/api/v1/audit', auditRoutes);
-// app.use('/api/v1/reports', reportRoutes);
+app.use('/api/v1/reports', reportRoutes);
 
 // Swagger documentation
 if (process.env.NODE_ENV !== 'production') {
