@@ -85,7 +85,7 @@ export class InventoryTransferService {
 
     let sequence = 1;
     if (lastTransfer) {
-      const lastNumber = lastTransfer.transferNumber;
+      const lastNumber = lastTransfer.dataValues.transferNumber;
       const parts = lastNumber.split('-');
       if (parts.length === 2 && parts[1]) {
         sequence = parseInt(parts[1]) + 1;
@@ -150,13 +150,13 @@ export class InventoryTransferService {
         throw new Error('Product not available in source store');
       }
 
-      const availableQuantity = parseFloat(sourceInventory.quantityAvailable.toString());
+      const availableQuantity = parseFloat(sourceInventory.dataValues.quantityAvailable.toString());
       if (availableQuantity < transferData.quantity) {
         throw new Error(`Insufficient inventory. Available: ${availableQuantity}, Requested: ${transferData.quantity}`);
       }
 
       // Get unit cost from source inventory
-      const unitCost = sourceInventory.unitCost ? parseFloat(sourceInventory.unitCost.toString()) : undefined;
+      const unitCost = sourceInventory.dataValues.unitCost ? parseFloat(sourceInventory.dataValues.unitCost.toString()) : undefined;
 
       // Check if approval is required for this transfer
       const approvalData: any = {
@@ -168,13 +168,13 @@ export class InventoryTransferService {
           productId: transferData.productId,
           quantity: transferData.quantity,
           unitCost,
-          productName: product.name,
-          sourceStoreName: sourceStore.name,
-          destinationStoreName: destinationStore.name,
+          productName: product.dataValues.name,
+          sourceStoreName: sourceStore.dataValues.name,
+          destinationStoreName: destinationStore.dataValues.name,
         },
         metadata: {
           transferType: 'inventory_transfer',
-          productSku: product.sku,
+          productSku: product.dataValues.sku,
         },
       };
 
@@ -204,9 +204,9 @@ export class InventoryTransferService {
           storeId: transferData.sourceStoreId,
           requestedById: requestedBy,
           objectType: 'inventory_transfer',
-          objectId: transfer.id,
-          title: `Inventory Transfer Request: ${product.name}`,
-          description: `Transfer ${transferData.quantity} units of ${product.name} from ${sourceStore.name} to ${destinationStore.name}`,
+          objectId: transfer.dataValues.id,
+          title: `Inventory Transfer Request: ${product.dataValues.name}`,
+          description: `Transfer ${transferData.quantity} units of ${product.dataValues.name} from ${sourceStore.dataValues.name} to ${destinationStore.dataValues.name}`,
           priority: 'medium',
           approvalData,
         });
@@ -217,7 +217,7 @@ export class InventoryTransferService {
       logger.info(`Inventory transfer created: ${transferNumber} from store ${transferData.sourceStoreId} to ${transferData.destinationStoreId}${approvalRequired ? ' (approval required)' : ' (auto-approved)'}`);
 
       // Return transfer with details
-      return await this.getTransferById(transfer.id, transferData.tenantId);
+      return await this.getTransferById(transfer.dataValues.id, transferData.tenantId);
     } catch (error: any) {
       await transaction.rollback();
       logger.error('Error creating inventory transfer:', error);
@@ -251,10 +251,10 @@ export class InventoryTransferService {
 
       // Reserve inventory in source store
       await InventoryService.reserveInventory(
-        transfer.sourceStoreId,
+        transfer.dataValues.sourceStoreId,
         tenantId,
-        transfer.productId,
-        parseFloat(transfer.quantity.toString())
+        transfer.dataValues.productId,
+        parseFloat(transfer.dataValues.quantity.toString())
       );
 
       // Update transfer status
@@ -272,7 +272,7 @@ export class InventoryTransferService {
 
       await transaction.commit();
 
-      logger.info(`Inventory transfer approved: ${transfer.transferNumber}`);
+      logger.info(`Inventory transfer approved: ${transfer.dataValues.transferNumber}`);
 
       return await this.getTransferById(transferId, tenantId);
     } catch (error: any) {
@@ -357,55 +357,55 @@ export class InventoryTransferService {
         throw new Error('Transfer not found or not in transit status');
       }
 
-      const quantity = parseFloat(transfer.quantity.toString());
+      const quantity = parseFloat(transfer.dataValues.quantity.toString());
 
       // Reduce inventory from source store
       await InventoryService.adjustInventory(
-        transfer.sourceStoreId,
+        transfer.dataValues.sourceStoreId,
         tenantId,
         {
-          productId: transfer.productId,
+          productId: transfer.dataValues.productId,
           quantity: -quantity, // Reduce quantity
           reason: 'transfer',
-          reference: transfer.transferNumber,
+          reference: transfer.dataValues.transferNumber,
         }
       );
 
-      // Add inventory to destination store
-      const destinationInventory = await Inventory.findOne({
-        where: {
-          productId: transfer.productId,
-          storeId: transfer.destinationStoreId,
-          tenantId,
-        },
-        transaction,
-      });
+        // Add inventory to destination store
+        const destinationInventory = await Inventory.findOne({
+          where: {
+            productId: transfer.dataValues.productId,
+            storeId: transfer.dataValues.destinationStoreId,
+            tenantId,
+          },
+          transaction,
+        });
 
-      if (destinationInventory) {
-        // Update existing inventory
-        await InventoryService.adjustInventory(
-          transfer.destinationStoreId,
-          tenantId,
-          {
-            productId: transfer.productId,
-            quantity: quantity, // Add quantity
-            reason: 'transfer',
-            reference: transfer.transferNumber,
+        if (destinationInventory) {
+          // Update existing inventory
+          await InventoryService.adjustInventory(
+            transfer.dataValues.destinationStoreId,
+            tenantId,
+            {
+              productId: transfer.dataValues.productId,
+              quantity: quantity, // Add quantity
+              reason: 'transfer',
+              reference: transfer.dataValues.transferNumber,
+            }
+          );
+        } else {
+          // Create new inventory record
+          const inventoryData: any = {
+            tenantId,
+            storeId: transfer.dataValues.destinationStoreId,
+            productId: transfer.dataValues.productId,
+            quantityOnHand: quantity,
+          };
+          if (transfer.dataValues.unitCost !== undefined) {
+            inventoryData.unitCost = transfer.dataValues.unitCost;
           }
-        );
-      } else {
-        // Create new inventory record
-        const inventoryData: any = {
-          tenantId,
-          storeId: transfer.destinationStoreId,
-          productId: transfer.productId,
-          quantityOnHand: quantity,
-        };
-        if (transfer.unitCost !== undefined) {
-          inventoryData.unitCost = transfer.unitCost;
+          await InventoryService.createOrUpdateInventory(inventoryData);
         }
-        await InventoryService.createOrUpdateInventory(inventoryData);
-      }
 
       // Update transfer status
       await InventoryTransfer.update(
@@ -421,7 +421,7 @@ export class InventoryTransferService {
 
       await transaction.commit();
 
-      logger.info(`Inventory transfer completed: ${transfer.transferNumber}`);
+      logger.info(`Inventory transfer completed: ${transfer.dataValues.transferNumber}`);
 
       return await this.getTransferById(transferId, tenantId);
     } catch (error: any) {
@@ -449,12 +449,12 @@ export class InventoryTransferService {
       }
 
       // If approved, release reserved inventory
-      if (transfer.status === 'approved') {
+      if (transfer.dataValues.status === 'approved') {
         await InventoryService.releaseReservedInventory(
-          transfer.sourceStoreId,
+          transfer.dataValues.sourceStoreId,
           tenantId,
-          transfer.productId,
-          parseFloat(transfer.quantity.toString())
+          transfer.dataValues.productId,
+          parseFloat(transfer.dataValues.quantity.toString())
         );
       }
 
@@ -462,8 +462,8 @@ export class InventoryTransferService {
       const updateData: any = {
         status: 'cancelled',
       };
-      if (notes || transfer.notes) {
-        updateData.notes = notes || transfer.notes;
+      if (notes || transfer.dataValues.notes) {
+        updateData.notes = notes || transfer.dataValues.notes;
       }
       await InventoryTransfer.update(
         updateData,
@@ -526,47 +526,47 @@ export class InventoryTransferService {
       }
 
       return {
-        id: transfer.id,
-        tenantId: transfer.tenantId,
-        transferNumber: transfer.transferNumber,
-        sourceStoreId: transfer.sourceStoreId,
-        destinationStoreId: transfer.destinationStoreId,
-        productId: transfer.productId,
-        quantity: parseFloat(transfer.quantity.toString()),
-        unitCost: transfer.unitCost ? parseFloat(transfer.unitCost.toString()) : undefined,
-        status: transfer.status,
-        requestedBy: transfer.requestedBy,
-        approvedBy: transfer.approvedBy,
-        approvedAt: transfer.approvedAt,
-        shippedAt: transfer.shippedAt,
-        receivedAt: transfer.receivedAt,
-        notes: transfer.notes,
-        reference: transfer.reference,
-        sourceStore: transfer.sourceStore ? {
-          id: transfer.sourceStore.id,
-          name: transfer.sourceStore.name,
+        id: transfer.dataValues.id,
+        tenantId: transfer.dataValues.tenantId,
+        transferNumber: transfer.dataValues.transferNumber,
+        sourceStoreId: transfer.dataValues.sourceStoreId,
+        destinationStoreId: transfer.dataValues.destinationStoreId,
+        productId: transfer.dataValues.productId,
+        quantity: parseFloat(transfer.dataValues.quantity.toString()),
+        unitCost: transfer.dataValues.unitCost ? parseFloat(transfer.dataValues.unitCost.toString()) : undefined,
+        status: transfer.dataValues.status,
+        requestedBy: transfer.dataValues.requestedBy,
+        approvedBy: transfer.dataValues.approvedBy,
+        approvedAt: transfer.dataValues.approvedAt,
+        shippedAt: transfer.dataValues.shippedAt,
+        receivedAt: transfer.dataValues.receivedAt,
+        notes: transfer.dataValues.notes,
+        reference: transfer.dataValues.reference,
+        sourceStore: (transfer as any).sourceStore ? {
+          id: (transfer as any).sourceStore.dataValues.id,
+          name: (transfer as any).sourceStore.dataValues.name,
         } : undefined,
-        destinationStore: transfer.destinationStore ? {
-          id: transfer.destinationStore.id,
-          name: transfer.destinationStore.name,
+        destinationStore: (transfer as any).destinationStore ? {
+          id: (transfer as any).destinationStore.dataValues.id,
+          name: (transfer as any).destinationStore.dataValues.name,
         } : undefined,
-        product: transfer.product ? {
-          id: transfer.product.id,
-          name: transfer.product.name,
-          sku: transfer.product.sku,
+        product: (transfer as any).product ? {
+          id: (transfer as any).product.dataValues.id,
+          name: (transfer as any).product.dataValues.name,
+          sku: (transfer as any).product.dataValues.sku,
         } : undefined,
-        requester: transfer.requester ? {
-          id: transfer.requester.id,
-          name: transfer.requester.name,
-          email: transfer.requester.email,
+        requester: (transfer as any).requester ? {
+          id: (transfer as any).requester.dataValues.id,
+          name: (transfer as any).requester.dataValues.name,
+          email: (transfer as any).requester.dataValues.email,
         } : undefined,
-        approver: transfer.approver ? {
-          id: transfer.approver.id,
-          name: transfer.approver.name,
-          email: transfer.approver.email,
+        approver: (transfer as any).approver ? {
+          id: (transfer as any).approver.dataValues.id,
+          name: (transfer as any).approver.dataValues.name,
+          email: (transfer as any).approver.dataValues.email,
         } : undefined,
-        createdAt: transfer.createdAt,
-        updatedAt: transfer.updatedAt,
+        createdAt: transfer.dataValues.createdAt,
+        updatedAt: transfer.dataValues.updatedAt,
       } as TransferWithDetails;
     } catch (error) {
       logger.error('Error getting transfer by ID:', error);
@@ -659,47 +659,47 @@ export class InventoryTransferService {
       });
 
       const transferDetails = transfers.map(transfer => ({
-        id: transfer.id,
-        tenantId: transfer.tenantId,
-        transferNumber: transfer.transferNumber,
-        sourceStoreId: transfer.sourceStoreId,
-        destinationStoreId: transfer.destinationStoreId,
-        productId: transfer.productId,
-        quantity: parseFloat(transfer.quantity.toString()),
-        unitCost: transfer.unitCost ? parseFloat(transfer.unitCost.toString()) : undefined,
-        status: transfer.status,
-        requestedBy: transfer.requestedBy,
-        approvedBy: transfer.approvedBy,
-        approvedAt: transfer.approvedAt,
-        shippedAt: transfer.shippedAt,
-        receivedAt: transfer.receivedAt,
-        notes: transfer.notes,
-        reference: transfer.reference,
-        sourceStore: transfer.sourceStore ? {
-          id: transfer.sourceStore.id,
-          name: transfer.sourceStore.name,
+        id: transfer.dataValues.id,
+        tenantId: transfer.dataValues.tenantId,
+        transferNumber: transfer.dataValues.transferNumber,
+        sourceStoreId: transfer.dataValues.sourceStoreId,
+        destinationStoreId: transfer.dataValues.destinationStoreId,
+        productId: transfer.dataValues.productId,
+        quantity: parseFloat(transfer.dataValues.quantity.toString()),
+        unitCost: transfer.dataValues.unitCost ? parseFloat(transfer.dataValues.unitCost.toString()) : undefined,
+        status: transfer.dataValues.status,
+        requestedBy: transfer.dataValues.requestedBy,
+        approvedBy: transfer.dataValues.approvedBy,
+        approvedAt: transfer.dataValues.approvedAt,
+        shippedAt: transfer.dataValues.shippedAt,
+        receivedAt: transfer.dataValues.receivedAt,
+        notes: transfer.dataValues.notes,
+        reference: transfer.dataValues.reference,
+        sourceStore: (transfer as any).sourceStore ? {
+          id: (transfer as any).sourceStore.dataValues.id,
+          name: (transfer as any).sourceStore.dataValues.name,
         } : undefined,
-        destinationStore: transfer.destinationStore ? {
-          id: transfer.destinationStore.id,
-          name: transfer.destinationStore.name,
+        destinationStore: (transfer as any).destinationStore ? {
+          id: (transfer as any).destinationStore.dataValues.id,
+          name: (transfer as any).destinationStore.dataValues.name,
         } : undefined,
-        product: transfer.product ? {
-          id: transfer.product.id,
-          name: transfer.product.name,
-          sku: transfer.product.sku,
+        product: (transfer as any).product ? {
+          id: (transfer as any).product.dataValues.id,
+          name: (transfer as any).product.dataValues.name,
+          sku: (transfer as any).product.dataValues.sku,
         } : undefined,
-        requester: transfer.requester ? {
-          id: transfer.requester.id,
-          name: transfer.requester.name,
-          email: transfer.requester.email,
+        requester: (transfer as any).requester ? {
+          id: (transfer as any).requester.dataValues.id,
+          name: (transfer as any).requester.dataValues.name,
+          email: (transfer as any).requester.dataValues.email,
         } : undefined,
-        approver: transfer.approver ? {
-          id: transfer.approver.id,
-          name: transfer.approver.name,
-          email: transfer.approver.email,
+        approver: (transfer as any).approver ? {
+          id: (transfer as any).approver.dataValues.id,
+          name: (transfer as any).approver.dataValues.name,
+          email: (transfer as any).approver.dataValues.email,
         } : undefined,
-        createdAt: transfer.createdAt,
-        updatedAt: transfer.updatedAt,
+        createdAt: transfer.dataValues.createdAt,
+        updatedAt: transfer.dataValues.updatedAt,
       })) as TransferWithDetails[];
 
       return { transfers: transferDetails, total };

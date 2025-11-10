@@ -58,20 +58,20 @@ class RoleService {
       });
 
       return roles.map(role => ({
-        id: role.id,
-        tenantId: role.tenantId,
-        name: role.name,
-        description: role.description,
-        is_system: role.is_system,
+        id: role.dataValues.id,
+        tenantId: role.dataValues.tenantId,
+        name: role.dataValues.name,
+        description: role.dataValues.description,
+        is_system: role.dataValues.is_system,
         permissions: role.permissions?.map(permission => ({
-          id: permission.id,
-          name: permission.name,
-          resource: permission.resource,
-          action: permission.action,
-          description: permission.description,
+          id: permission.dataValues.id,
+          name: permission.dataValues.name,
+          resource: permission.dataValues.resource,
+          action: permission.dataValues.action,
+          description: permission.dataValues.description,
         })) || [],
-        created_at: role.created_at,
-        updated_at: role.updated_at,
+        created_at: role.dataValues.created_at,
+        updated_at: role.dataValues.updated_at,
       }));
     } catch (error) {
       logger.error('Error getting all roles:', error);
@@ -109,20 +109,20 @@ class RoleService {
       }
 
       return {
-        id: role.id,
-        tenantId: role.tenantId,
-        name: role.name,
-        description: role.description,
-        is_system: role.is_system,
+        id: role.dataValues.id,
+        tenantId: role.dataValues.tenantId,
+        name: role.dataValues.name,
+        description: role.dataValues.description,
+        is_system: role.dataValues.is_system,
         permissions: role.permissions?.map(permission => ({
-          id: permission.id,
-          name: permission.name,
-          resource: permission.resource,
-          action: permission.action,
-          description: permission.description,
+          id: permission.dataValues.id,
+          name: permission.dataValues.name,
+          resource: permission.dataValues.resource,
+          action: permission.dataValues.action,
+          description: permission.dataValues.description,
         })) || [],
-        created_at: role.created_at,
-        updated_at: role.updated_at,
+        created_at: role.dataValues.created_at,
+        updated_at: role.dataValues.updated_at,
       };
     } catch (error) {
       logger.error('Error getting role by ID:', error);
@@ -174,7 +174,7 @@ class RoleService {
       }
 
       // Return the created role with permissions
-      return await this.getRoleById(role.id, tenantId) as RoleWithPermissions;
+      return await this.getRoleById(role.dataValues.id, tenantId) as RoleWithPermissions;
     } catch (error) {
       logger.error('Error creating role:', error);
       throw error;
@@ -198,12 +198,12 @@ class RoleService {
       }
 
       // Prevent updating system roles
-      if (role.is_system) {
+      if (role.dataValues.is_system) {
         throw new Error('Cannot update system roles');
       }
 
       // Check name uniqueness if name is being updated
-      if (data.name && data.name !== role.name) {
+      if (data.name && data.name !== role.dataValues.name) {
         const existingRole = await Role.findOne({
           where: {
             tenantId,
@@ -271,7 +271,7 @@ class RoleService {
       }
 
       // Prevent deleting system roles
-      if (role.is_system) {
+      if (role.dataValues.is_system) {
         throw new Error('Cannot delete system roles');
       }
 
@@ -396,7 +396,7 @@ class RoleService {
         throw new Error('Role not found');
       }
 
-      if (role.is_system) {
+      if (role.dataValues.is_system) {
         throw new Error('Cannot modify permissions for system roles');
       }
 
@@ -436,7 +436,7 @@ class RoleService {
         throw new Error('Role not found');
       }
 
-      if (role.is_system) {
+      if (role.dataValues.is_system) {
         throw new Error('Cannot modify permissions for system roles');
       }
 

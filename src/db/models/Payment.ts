@@ -20,26 +20,7 @@ export interface PaymentAttributes {
 
 export interface PaymentCreationAttributes extends Omit<PaymentAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
-class Payment extends Model<PaymentAttributes, PaymentCreationAttributes> implements PaymentAttributes {
-  declare id: string;
-  declare tenantId: string;
-  declare saleId: string;
-  declare paymentMethod: 'cash' | 'card' | 'bank_transfer' | 'digital_wallet' | 'check' | 'gift_card' | 'loyalty_points';
-  declare amount: number;
-  declare referenceNumber?: string;
-  declare transactionId?: string;
-  declare paymentDate: Date;
-  declare status: 'pending' | 'completed' | 'failed' | 'cancelled' | 'refunded';
-  declare notes?: string;
-  declare processedBy: string;
-  declare readonly createdAt: Date;
-  declare readonly updatedAt: Date;
-  declare readonly deletedAt?: Date;
-
-  // Association mixins
-  declare readonly tenant?: any;
-  declare readonly sale?: any;
-  declare readonly user?: any;
+class Payment extends Model<PaymentAttributes, PaymentCreationAttributes> {
 }
 
 Payment.init(

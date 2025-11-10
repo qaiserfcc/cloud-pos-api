@@ -63,17 +63,17 @@ export class StoreService {
     });
 
     return stores.map((store) => ({
-      id: store.id,
-      tenantId: store.tenantId,
-      name: store.name,
-      code: store.code,
-      address: store.address,
-      phone: store.phone || '',
-      email: store.email || '',
-      settings: store.settings || {},
-      isActive: store.isActive,
-      createdAt: store.createdAt,
-      updatedAt: store.updatedAt,
+      id: store.dataValues.id,
+      tenantId: store.dataValues.tenantId,
+      name: store.dataValues.name,
+      code: store.dataValues.code,
+      address: store.dataValues.address,
+      phone: store.dataValues.phone || '',
+      email: store.dataValues.email || '',
+      settings: store.dataValues.settings || {},
+      isActive: store.dataValues.isActive,
+      createdAt: store.dataValues.createdAt,
+      updatedAt: store.dataValues.updatedAt,
       userCount: store.storeUsers?.length || 0,
       tenantName: store.tenant?.name,
     }));
@@ -111,17 +111,17 @@ export class StoreService {
     }
 
     return {
-      id: store.id,
-      tenantId: store.tenantId,
-      name: store.name,
-      code: store.code,
-      address: store.address,
-      phone: store.phone || '',
-      email: store.email || '',
-      settings: store.settings || {},
-      isActive: store.isActive,
-      createdAt: store.createdAt,
-      updatedAt: store.updatedAt,
+      id: store.dataValues.id,
+      tenantId: store.dataValues.tenantId,
+      name: store.dataValues.name,
+      code: store.dataValues.code,
+      address: store.dataValues.address,
+      phone: store.dataValues.phone || '',
+      email: store.dataValues.email || '',
+      settings: store.dataValues.settings || {},
+      isActive: store.dataValues.isActive,
+      createdAt: store.dataValues.createdAt,
+      updatedAt: store.dataValues.updatedAt,
       userCount: store.storeUsers?.length || 0,
       tenantName: store.tenant?.name,
     };
@@ -161,7 +161,7 @@ export class StoreService {
     });
 
     logger.info(`New store created: ${data.name}`, {
-      storeId: store.id,
+      storeId: store.dataValues.id,
       tenantId: data.tenantId,
       code: data.code,
     });
@@ -182,7 +182,7 @@ export class StoreService {
     }
 
     // Check code uniqueness if being updated
-    if (data.code && data.code !== store.code) {
+    if (data.code && data.code !== store.dataValues.code) {
       const existingStore = await Store.findOne({
         where: {
           tenantId,
@@ -191,24 +191,24 @@ export class StoreService {
         paranoid: false,
       });
 
-      if (existingStore && existingStore.id !== storeId) {
+      if (existingStore && existingStore.dataValues.id !== storeId) {
         throw new Error('Store with this code already exists for this tenant');
       }
     }
 
     // Update fields
-    if (data.name !== undefined) store.name = data.name;
-    if (data.code !== undefined) store.code = data.code;
-    if (data.address !== undefined) store.address = data.address;
-    if (data.phone !== undefined) store.phone = data.phone;
-    if (data.email !== undefined) store.email = data.email;
-    if (data.settings !== undefined) store.settings = data.settings;
-    if (data.isActive !== undefined) store.isActive = data.isActive;
+    if (data.name !== undefined) (store as any).name = data.name;
+    if (data.code !== undefined) (store as any).code = data.code;
+    if (data.address !== undefined) (store as any).address = data.address;
+    if (data.phone !== undefined) (store as any).phone = data.phone;
+    if (data.email !== undefined) (store as any).email = data.email;
+    if (data.settings !== undefined) (store as any).settings = data.settings;
+    if (data.isActive !== undefined) (store as any).isActive = data.isActive;
 
     await store.save();
 
-    logger.info(`Store updated: ${store.name}`, {
-      storeId: store.id,
+    logger.info(`Store updated: ${store.dataValues.name}`, {
+      storeId: store.dataValues.id,
       tenantId,
       changes: data,
     });
@@ -239,8 +239,8 @@ export class StoreService {
 
     await store.destroy();
 
-    logger.info(`Store deleted: ${store.name}`, {
-      storeId: store.id,
+    logger.info(`Store deleted: ${store.dataValues.name}`, {
+      storeId: store.dataValues.id,
       tenantId,
     });
   }

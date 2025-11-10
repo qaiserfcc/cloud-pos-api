@@ -27,32 +27,7 @@ export interface CustomerAttributes {
 
 export interface CustomerCreationAttributes extends Omit<CustomerAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
-class Customer extends Model<CustomerAttributes, CustomerCreationAttributes> implements CustomerAttributes {
-  declare id: string;
-  declare tenantId: string;
-  declare firstName: string;
-  declare lastName: string;
-  declare email?: string;
-  declare phone?: string;
-  declare address?: string;
-  declare city?: string;
-  declare state?: string;
-  declare zipCode?: string;
-  declare country?: string;
-  declare dateOfBirth?: Date;
-  declare gender?: 'male' | 'female' | 'other';
-  declare loyaltyPoints: number;
-  declare totalSpent: number;
-  declare lastPurchaseAt?: Date;
-  declare isActive: boolean;
-  declare notes?: string;
-  declare readonly createdAt: Date;
-  declare readonly updatedAt: Date;
-  declare readonly deletedAt?: Date;
-
-  // Association mixins
-  declare readonly tenant?: any;
-  declare readonly sales?: any[];
+class Customer extends Model<CustomerAttributes, CustomerCreationAttributes> {
 }
 
 Customer.init(

@@ -16,21 +16,7 @@ export interface DashboardWidgetAttributes {
 
 export interface DashboardWidgetCreationAttributes extends Omit<DashboardWidgetAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
-class DashboardWidget extends Model<DashboardWidgetAttributes, DashboardWidgetCreationAttributes> implements DashboardWidgetAttributes {
-  declare id: string;
-  declare tenantId?: string;
-  declare storeId?: string;
-  declare widgetKey: string;
-  declare config: object;
-  declare roles: string[];
-  declare permissions: string[];
-  declare position?: object;
-  declare readonly createdAt: Date;
-  declare readonly updatedAt: Date;
-
-  // Association mixins
-  declare readonly tenant?: any;
-  declare readonly store?: any;
+class DashboardWidget extends Model<DashboardWidgetAttributes, DashboardWidgetCreationAttributes> {
 }
 
 DashboardWidget.init(

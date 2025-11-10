@@ -24,30 +24,7 @@ export interface InventoryAttributes {
 
 export interface InventoryCreationAttributes extends Omit<InventoryAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
-class Inventory extends Model<InventoryAttributes, InventoryCreationAttributes> implements InventoryAttributes {
-  declare id: string;
-  declare tenantId: string;
-  declare storeId: string;
-  declare productId: string;
-  declare quantityOnHand: number;
-  declare quantityReserved: number;
-  declare quantityAvailable: number;
-  declare reorderPoint: number;
-  declare reorderQuantity: number;
-  declare lastStockTakeDate?: Date;
-  declare lastStockTakeQuantity?: number;
-  declare unitCost?: number;
-  declare location?: string;
-  declare batchNumber?: string;
-  declare expiryDate?: Date;
-  declare readonly createdAt: Date;
-  declare readonly updatedAt: Date;
-  declare readonly deletedAt?: Date;
-
-  // Association mixins
-  declare readonly tenant?: any;
-  declare readonly store?: any;
-  declare readonly product?: any;
+class Inventory extends Model<InventoryAttributes, InventoryCreationAttributes> {
 }
 
 Inventory.init(

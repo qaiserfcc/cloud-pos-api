@@ -23,32 +23,7 @@ export interface SaleAttributes {
 
 export interface SaleCreationAttributes extends Omit<SaleAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
-class Sale extends Model<SaleAttributes, SaleCreationAttributes> implements SaleAttributes {
-  declare id: string;
-  declare tenantId: string;
-  declare storeId: string;
-  declare customerId?: string;
-  declare userId: string;
-  declare saleNumber: string;
-  declare status: 'pending' | 'completed' | 'cancelled' | 'refunded';
-  declare subtotal: number;
-  declare taxAmount: number;
-  declare discountAmount: number;
-  declare totalAmount: number;
-  declare paymentStatus: 'pending' | 'paid' | 'partially_paid' | 'refunded';
-  declare notes?: string;
-  declare saleDate: Date;
-  declare readonly createdAt: Date;
-  declare readonly updatedAt: Date;
-  declare readonly deletedAt?: Date;
-
-  // Association mixins
-  declare readonly tenant?: any;
-  declare readonly store?: any;
-  declare readonly customer?: any;
-  declare readonly user?: any;
-  declare readonly saleItems?: any[];
-  declare readonly payments?: any[];
+class Sale extends Model<SaleAttributes, SaleCreationAttributes> {
 }
 
 Sale.init(

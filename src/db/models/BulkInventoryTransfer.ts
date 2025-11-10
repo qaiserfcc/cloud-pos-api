@@ -31,40 +31,7 @@ export interface BulkInventoryTransferAttributes {
 
 export interface BulkInventoryTransferCreationAttributes extends Omit<BulkInventoryTransferAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
-class BulkInventoryTransfer extends Model<BulkInventoryTransferAttributes, BulkInventoryTransferCreationAttributes> implements BulkInventoryTransferAttributes {
-  declare id: string;
-  declare tenantId: string;
-  declare bulkTransferNumber: string;
-  declare sourceStoreId: string;
-  declare destinationStoreId: string;
-  declare title: string;
-  declare description?: string;
-  declare status: 'draft' | 'pending' | 'approved' | 'partially_shipped' | 'shipped' | 'partially_received' | 'completed' | 'cancelled' | 'rejected';
-  declare priority: 'low' | 'normal' | 'high' | 'urgent';
-  declare transferType: 'replenishment' | 'allocation' | 'return' | 'adjustment' | 'emergency';
-  declare requestedBy: string;
-  declare approvedBy?: string;
-  declare approvedAt?: Date;
-  declare scheduledShipDate?: Date;
-  declare actualShipDate?: Date;
-  declare scheduledReceiveDate?: Date;
-  declare actualReceiveDate?: Date;
-  declare totalItems: number;
-  declare totalQuantity: number;
-  declare totalValue?: number;
-  declare notes?: string;
-  declare reference?: string;
-  declare readonly createdAt: Date;
-  declare readonly updatedAt: Date;
-  declare readonly deletedAt?: Date;
-
-  // Association mixins
-  declare readonly tenant?: any;
-  declare readonly sourceStore?: any;
-  declare readonly destinationStore?: any;
-  declare readonly requester?: any;
-  declare readonly approver?: any;
-  declare readonly transferItems?: any[];
+class BulkInventoryTransfer extends Model<BulkInventoryTransferAttributes, BulkInventoryTransferCreationAttributes> {
 }
 
 BulkInventoryTransfer.init(

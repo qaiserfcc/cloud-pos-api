@@ -193,18 +193,18 @@ export class DashboardService {
       const widgets: WidgetData[] = [];
 
       for (const widgetKey of availableWidgets) {
-        const config = widgetConfigs.find(w => w.widgetKey === widgetKey);
+        const config = widgetConfigs.find(w => w.dataValues.widgetKey === widgetKey);
         const definition = this.WIDGET_DEFINITIONS[widgetKey as keyof typeof this.WIDGET_DEFINITIONS];
 
         if (definition) {
-          const data = await this.getWidgetData(widgetKey, tenantId, storeId, config?.config);
+          const data = await this.getWidgetData(widgetKey, tenantId, storeId, config?.dataValues.config);
 
           widgets.push({
             key: widgetKey,
             title: definition.title,
             type: definition.type,
             data,
-            config: config?.config || {},
+            config: config?.dataValues.config || {},
           });
         }
       }
@@ -313,7 +313,7 @@ export class DashboardService {
 
       await widget.update(updateData);
 
-      logger.info(`Updated widget configuration ${widget.widgetKey} for tenant ${tenantId}`);
+      logger.info(`Updated widget configuration ${widget.dataValues.widgetKey} for tenant ${tenantId}`);
 
       const updatedWidget = await DashboardWidget.findByPk(widgetId);
       return updatedWidget ? this.formatWidgetResponse(updatedWidget) : null;
@@ -341,7 +341,7 @@ export class DashboardService {
 
       await widget.destroy();
 
-      logger.info(`Deleted widget configuration ${widget.widgetKey} for tenant ${tenantId}`);
+      logger.info(`Deleted widget configuration ${widget.dataValues.widgetKey} for tenant ${tenantId}`);
 
       return true;
     } catch (error: any) {
@@ -573,16 +573,16 @@ export class DashboardService {
    */
   private static formatWidgetResponse(widget: any): WidgetWithConfig {
     return {
-      id: widget.id,
-      tenantId: widget.tenantId,
-      storeId: widget.storeId,
-      widgetKey: widget.widgetKey,
-      config: widget.config,
-      roles: widget.roles,
-      permissions: widget.permissions,
-      position: widget.position,
-      createdAt: widget.createdAt,
-      updatedAt: widget.updatedAt,
+      id: widget.dataValues.id,
+      tenantId: widget.dataValues.tenantId,
+      storeId: widget.dataValues.storeId,
+      widgetKey: widget.dataValues.widgetKey,
+      config: widget.dataValues.config,
+      roles: widget.dataValues.roles,
+      permissions: widget.dataValues.permissions,
+      position: widget.dataValues.position,
+      createdAt: widget.dataValues.createdAt,
+      updatedAt: widget.dataValues.updatedAt,
     };
   }
 }

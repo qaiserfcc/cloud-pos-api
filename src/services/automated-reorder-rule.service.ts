@@ -169,7 +169,7 @@ class AutomatedReorderRuleService {
 
       await transaction.commit();
 
-      logger.info(`Updated automated reorder rule ${rule.ruleName}`);
+      logger.info(`Updated automated reorder rule ${rule.dataValues.ruleName}`);
 
       return rule;
     } catch (error: any) {
@@ -203,7 +203,7 @@ class AutomatedReorderRuleService {
 
       await transaction.commit();
 
-      logger.info(`Deleted automated reorder rule ${rule.ruleName}`);
+      logger.info(`Deleted automated reorder rule ${rule.dataValues.ruleName}`);
     } catch (error: any) {
       await transaction.rollback();
       logger.error('Delete reorder rule error:', error);
@@ -376,12 +376,12 @@ class AutomatedReorderRuleService {
           if (!options?.dryRun) {
             await rule.update({
               lastTriggeredAt: new Date(),
-              nextCheckAt: new Date(Date.now() + rule.checkFrequencyHours * 60 * 60 * 1000),
+              nextCheckAt: new Date(Date.now() + rule.dataValues.checkFrequencyHours * 60 * 60 * 1000),
             });
           }
         } catch (error: any) {
-          result.errors.push(`Rule ${rule.ruleName}: ${error.message}`);
-          logger.error(`Error checking rule ${rule.id}:`, error);
+          result.errors.push(`Rule ${rule.dataValues.ruleName}: ${error.message}`);
+          logger.error(`Error checking rule ${rule.dataValues.id}:`, error);
         }
       }
 
@@ -424,25 +424,25 @@ class AutomatedReorderRuleService {
             // Check current inventory
             const inventory = await Inventory.findOne({
               where: {
-                tenantId: rule.tenantId,
-                storeId: store.id,
-                productId: product.id,
+                tenantId: rule.dataValues.tenantId,
+                storeId: store.dataValues.id,
+                productId: product.dataValues.id,
               },
             });
 
-            const currentStock = inventory ? parseFloat(inventory.quantityAvailable.toString()) : 0;
-            const reorderPoint = parseFloat(rule.reorderPoint.toString());
+            const currentStock = inventory ? parseFloat(inventory.dataValues.quantityAvailable.toString()) : 0;
+            const reorderPoint = parseFloat(rule.dataValues.reorderPoint.toString());
 
             const result: ReorderTriggerResult = {
-              ruleId: rule.id,
-              ruleName: rule.ruleName,
-              productId: product.id,
-              productName: product.name,
-              storeId: store.id,
-              storeName: store.name,
+              ruleId: rule.dataValues.id,
+              ruleName: rule.dataValues.ruleName,
+              productId: product.dataValues.id,
+              productName: product.dataValues.name,
+              storeId: store.dataValues.id,
+              storeName: store.dataValues.name,
               currentStock,
               reorderPoint,
-              reorderQuantity: parseFloat(rule.reorderQuantity.toString()),
+              reorderQuantity: parseFloat(rule.dataValues.reorderQuantity.toString()),
               transferCreated: false,
             };
 
@@ -452,9 +452,9 @@ class AutomatedReorderRuleService {
                 try {
                   // Find source store with sufficient inventory
                   const sourceStore = await this.findSourceStoreForReorder(
-                    rule.tenantId,
-                    product.id,
-                    store.id,
+                    rule.dataValues.tenantId,
+                    product.dataValues.id,
+                    store.dataValues.id,
                     result.reorderQuantity
                   );
 
@@ -462,19 +462,19 @@ class AutomatedReorderRuleService {
                     // Create inventory transfer
                     const transferNumber = `AUTO-${Date.now()}-${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
                     const transfer = await InventoryTransfer.create({
-                      tenantId: rule.tenantId,
+                      tenantId: rule.dataValues.tenantId,
                       transferNumber,
-                      sourceStoreId: sourceStore.id,
-                      destinationStoreId: store.id,
-                      productId: product.id,
+                      sourceStoreId: sourceStore.dataValues.id,
+                      destinationStoreId: store.dataValues.id,
+                      productId: product.dataValues.id,
                       quantity: result.reorderQuantity,
                       status: 'pending',
-                      requestedBy: rule.createdBy, // Use rule creator as requester
-                      notes: `Automated reorder triggered by rule: ${rule.ruleName}`,
+                      requestedBy: rule.dataValues.createdBy, // Use rule creator as requester
+                      notes: `Automated reorder triggered by rule: ${rule.dataValues.ruleName}`,
                     });
 
                     result.transferCreated = true;
-                    result.transferId = transfer.id;
+                    result.transferId = transfer.dataValues.id;
                     transfersCreated++;
                   } else {
                     result.error = 'No source store with sufficient inventory found';
@@ -491,15 +491,15 @@ class AutomatedReorderRuleService {
             results.push(result);
           } catch (productError: any) {
             results.push({
-              ruleId: rule.id,
-              ruleName: rule.ruleName,
-              productId: product.id,
-              productName: product.name,
-              storeId: store.id,
-              storeName: store.name,
+              ruleId: rule.dataValues.id,
+              ruleName: rule.dataValues.ruleName,
+              productId: product.dataValues.id,
+              productName: product.dataValues.name,
+              storeId: store.dataValues.id,
+              storeName: store.dataValues.name,
               currentStock: 0,
-              reorderPoint: parseFloat(rule.reorderPoint.toString()),
-              reorderQuantity: parseFloat(rule.reorderQuantity.toString()),
+              reorderPoint: parseFloat(rule.dataValues.reorderPoint.toString()),
+              reorderQuantity: parseFloat(rule.dataValues.reorderQuantity.toString()),
               transferCreated: false,
               error: productError.message,
             });
@@ -507,7 +507,7 @@ class AutomatedReorderRuleService {
         }
       }
     } catch (error: any) {
-      logger.error(`Error checking rule ${rule.id}:`, error);
+      logger.error(`Error checking rule ${rule.dataValues.id}:`, error);
     }
 
     return results;
@@ -519,12 +519,12 @@ class AutomatedReorderRuleService {
   private static async getApplicableStoresForRule(rule: AutomatedReorderRule): Promise<Store[]> {
     let storeIds: string[] = [];
 
-    if (rule.storeIds && rule.storeIds.length > 0) {
+    if (rule.dataValues.storeIds && rule.dataValues.storeIds.length > 0) {
       // Specific stores
-      storeIds = rule.storeIds;
-    } else if (rule.regionId) {
+      storeIds = rule.dataValues.storeIds;
+    } else if (rule.dataValues.regionId) {
       // All stores in the region
-      const region = await AutomatedReorderRule.findByPk(rule.regionId, {
+      const region = await AutomatedReorderRule.findByPk(rule.dataValues.regionId, {
         include: [{
           model: Store,
           as: 'stores',
@@ -533,22 +533,22 @@ class AutomatedReorderRuleService {
       });
 
       if (region && (region as any).stores) {
-        storeIds = (region as any).stores.map((store: any) => store.id);
+        storeIds = (region as any).stores.map((store: any) => store.dataValues.id);
       }
     } else {
       // All stores for the tenant
       const stores = await Store.findAll({
-        where: { tenantId: rule.tenantId },
+        where: { tenantId: rule.dataValues.tenantId },
         attributes: ['id'],
       });
-      storeIds = stores.map(store => store.id);
+      storeIds = stores.map(store => store.dataValues.id);
     }
 
     // Fetch full store details
     const stores = await Store.findAll({
       where: {
         id: { [Op.in]: storeIds },
-        tenantId: rule.tenantId,
+        tenantId: rule.dataValues.tenantId,
       },
       attributes: ['id', 'name'],
     });
@@ -562,33 +562,33 @@ class AutomatedReorderRuleService {
   private static async getApplicableProductsForRule(rule: AutomatedReorderRule): Promise<Product[]> {
     let productIds: string[] = [];
 
-    if (rule.productId) {
+    if (rule.dataValues.productId) {
       // Specific product
-      productIds = [rule.productId];
-    } else if (rule.categoryId) {
+      productIds = [rule.dataValues.productId];
+    } else if (rule.dataValues.categoryId) {
       // All products in the category
       const products = await Product.findAll({
         where: {
-          tenantId: rule.tenantId,
-          categoryId: rule.categoryId,
+          tenantId: rule.dataValues.tenantId,
+          categoryId: rule.dataValues.categoryId,
         },
         attributes: ['id'],
       });
-      productIds = products.map(product => product.id);
+      productIds = products.map(product => product.dataValues.id);
     } else {
       // All products for the tenant
       const products = await Product.findAll({
-        where: { tenantId: rule.tenantId },
+        where: { tenantId: rule.dataValues.tenantId },
         attributes: ['id'],
       });
-      productIds = products.map(product => product.id);
+      productIds = products.map(product => product.dataValues.id);
     }
 
     // Fetch full product details
     const products = await Product.findAll({
       where: {
         id: { [Op.in]: productIds },
-        tenantId: rule.tenantId,
+        tenantId: rule.dataValues.tenantId,
       },
       attributes: ['id', 'name', 'sku'],
     });
@@ -622,8 +622,8 @@ class AutomatedReorderRuleService {
         order: [['quantityAvailable', 'DESC']], // Prefer stores with more inventory
       });
 
-      const inventoryWithStore = inventories.find(inv => inv.store);
-      return inventoryWithStore ? inventoryWithStore.store : null;
+      const inventoryWithStore = inventories.find(inv => (inv as any).store);
+      return inventoryWithStore ? (inventoryWithStore as any).store : null;
     } catch (error) {
       logger.error('Find source store for reorder error:', error);
       return null;

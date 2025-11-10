@@ -9,7 +9,7 @@ import logger from './config/logger';
 import { testConnection } from './config/database';
 
 // Import models and setup associations
-import { setupAssociations } from './models';
+// import { setupAssociations } from './models';
 import { setupDbAssociations } from './db/models';
 
 // Import routes
@@ -34,6 +34,7 @@ import dashboardRoutes from './routes/dashboard.routes';
 import auditRoutes from './routes/audit.routes';
 import approvalRoutes from './routes/approval.routes';
 import reportRoutes from './routes/report.routes';
+import reportTemplateRoutes from './routes/report-template.routes';
 import automatedReorderRuleRoutes from './routes/automated-reorder-rule.routes';
 
 // Import middlewares
@@ -43,7 +44,7 @@ import automatedReorderRuleRoutes from './routes/automated-reorder-rule.routes';
 const app = express();
 
 // Setup database associations
-setupAssociations();
+// setupAssociations();
 setupDbAssociations();
 
 // Trust proxy for rate limiting behind reverse proxy
@@ -129,6 +130,7 @@ app.use('/api/v1/dashboard', dashboardRoutes);
 app.use('/api/v1/audit', auditRoutes);
 app.use('/api/v1/approvals', approvalRoutes);
 app.use('/api/v1/reports', reportRoutes);
+app.use('/api/v1/report-templates', reportTemplateRoutes);
 app.use('/api/v1/automated-reorder-rules', automatedReorderRuleRoutes);
 
 // Swagger documentation

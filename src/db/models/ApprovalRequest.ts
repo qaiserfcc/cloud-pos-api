@@ -2,6 +2,11 @@ import { DataTypes, Model } from 'sequelize';
 import sequelize from '../../config/database';
 
 class ApprovalRequest extends Model {
+  // Association mixins
+  readonly tenant?: any;
+  readonly store?: any;
+  readonly requestedBy?: any;
+  readonly approvalRule?: any;
 }
 
 ApprovalRequest.init(

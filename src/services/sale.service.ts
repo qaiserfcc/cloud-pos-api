@@ -174,7 +174,7 @@ export class SaleService {
         // Check inventory availability
         const inventory = await InventoryService.getInventoryByProduct(item.productId, saleData.storeId, saleData.tenantId);
         if (!inventory || inventory.quantityAvailable < item.quantity) {
-          throw new Error(`Insufficient inventory for product ${product.name}`);
+          throw new Error(`Insufficient inventory for product ${product.dataValues.name}`);
         }
 
         const itemTotal = (item.unitPrice * item.quantity) - (item.discountAmount || 0) + (item.taxAmount || 0);
@@ -215,7 +215,7 @@ export class SaleService {
 
         const saleItemData: any = {
           tenantId: saleData.tenantId,
-          saleId: sale.id,
+          saleId: sale.dataValues.id,
           productId: itemData.productId,
           quantity: itemData.quantity,
           unitPrice: itemData.unitPrice,
@@ -235,19 +235,19 @@ export class SaleService {
 
         const product = await Product.findByPk(itemData.productId, { transaction });
         saleItems.push({
-          id: saleItem.id,
-          productId: saleItem.productId,
-          quantity: parseFloat(saleItem.quantity.toString()),
-          unitPrice: parseFloat(saleItem.unitPrice.toString()),
-          discountAmount: parseFloat(saleItem.discountAmount.toString()),
-          taxAmount: parseFloat(saleItem.taxAmount.toString()),
-          totalAmount: parseFloat(saleItem.totalAmount.toString()),
-          notes: saleItem.notes,
+          id: saleItem.dataValues.id,
+          productId: saleItem.dataValues.productId,
+          quantity: parseFloat(saleItem.dataValues.quantity.toString()),
+          unitPrice: parseFloat(saleItem.dataValues.unitPrice.toString()),
+          discountAmount: parseFloat(saleItem.dataValues.discountAmount.toString()),
+          taxAmount: parseFloat(saleItem.dataValues.taxAmount.toString()),
+          totalAmount: parseFloat(saleItem.dataValues.totalAmount.toString()),
+          notes: saleItem.dataValues.notes,
           product: product ? {
-            id: product.id,
-            name: product.name,
-            sku: product.sku || undefined,
-            barcode: product.barcode || undefined,
+            id: product.dataValues.id,
+            name: product.dataValues.name,
+            sku: product.dataValues.sku || undefined,
+            barcode: product.dataValues.barcode || undefined,
           } : undefined,
         });
       }
@@ -256,7 +256,7 @@ export class SaleService {
 
       logger.info(`Sale created: ${saleNumber} for tenant ${saleData.tenantId}, store ${saleData.storeId}`);
 
-      const result = await this.getSaleById(sale.id, saleData.tenantId);
+      const result = await this.getSaleById(sale.dataValues.id, saleData.tenantId);
       return result!;
     } catch (error: any) {
       await transaction.rollback();
@@ -312,71 +312,71 @@ export class SaleService {
       }
 
       // Calculate total paid and balance due
-      const payments = sale.payments || [];
+      const payments = (sale as any).payments || [];
       const totalPaid = payments
-        .filter(p => p.status === 'completed')
-        .reduce((sum, p) => sum + parseFloat(p.amount.toString()), 0);
+        .filter((p: any) => p.status === 'completed')
+        .reduce((sum: number, p: any) => sum + parseFloat(p.amount.toString()), 0);
 
-      const totalAmount = parseFloat(sale.totalAmount.toString());
+      const totalAmount = parseFloat(sale.dataValues.totalAmount.toString());
       const balanceDue = totalAmount - totalPaid;
 
       return {
-        id: sale.id,
-        tenantId: sale.tenantId,
-        storeId: sale.storeId,
-        customerId: sale.customerId || undefined,
-        userId: sale.userId,
-        saleNumber: sale.saleNumber,
-        status: sale.status,
-        subtotal: parseFloat(sale.subtotal.toString()),
-        taxAmount: parseFloat(sale.taxAmount.toString()),
-        discountAmount: parseFloat(sale.discountAmount.toString()),
+        id: sale.dataValues.id,
+        tenantId: sale.dataValues.tenantId,
+        storeId: sale.dataValues.storeId,
+        customerId: sale.dataValues.customerId || undefined,
+        userId: sale.dataValues.userId,
+        saleNumber: sale.dataValues.saleNumber,
+        status: sale.dataValues.status,
+        subtotal: parseFloat(sale.dataValues.subtotal.toString()),
+        taxAmount: parseFloat(sale.dataValues.taxAmount.toString()),
+        discountAmount: parseFloat(sale.dataValues.discountAmount.toString()),
         totalAmount,
-        paymentStatus: sale.paymentStatus,
-        notes: sale.notes || undefined,
-        saleDate: sale.saleDate,
-        customer: sale.customer ? {
-          id: sale.customer.id,
-          name: sale.customer.name,
-          email: sale.customer.email || undefined,
-          phone: sale.customer.phone || undefined,
+        paymentStatus: sale.dataValues.paymentStatus,
+        notes: sale.dataValues.notes || undefined,
+        saleDate: sale.dataValues.saleDate,
+        customer: (sale as any).customer ? {
+          id: (sale as any).customer.dataValues.id,
+          name: (sale as any).customer.dataValues.name,
+          email: (sale as any).customer.dataValues.email || undefined,
+          phone: (sale as any).customer.dataValues.phone || undefined,
         } : undefined,
         user: {
-          id: sale.user.id,
-          name: sale.user.name,
-          email: sale.user.email,
+          id: (sale as any).user.dataValues.id,
+          name: (sale as any).user.dataValues.name,
+          email: (sale as any).user.dataValues.email,
         },
-        saleItems: sale.saleItems?.map(item => ({
-          id: item.id,
-          productId: item.productId,
-          quantity: parseFloat(item.quantity.toString()),
-          unitPrice: parseFloat(item.unitPrice.toString()),
-          discountAmount: parseFloat(item.discountAmount.toString()),
-          taxAmount: parseFloat(item.taxAmount.toString()),
-          totalAmount: parseFloat(item.totalAmount.toString()),
-          notes: item.notes || undefined,
+        saleItems: (sale as any).saleItems?.map((item: any) => ({
+          id: item.dataValues.id,
+          productId: item.dataValues.productId,
+          quantity: parseFloat(item.dataValues.quantity.toString()),
+          unitPrice: parseFloat(item.dataValues.unitPrice.toString()),
+          discountAmount: parseFloat(item.dataValues.discountAmount.toString()),
+          taxAmount: parseFloat(item.dataValues.taxAmount.toString()),
+          totalAmount: parseFloat(item.dataValues.totalAmount.toString()),
+          notes: item.dataValues.notes || undefined,
           product: item.product ? {
-            id: item.product.id,
-            name: item.product.name,
-            sku: item.product.sku || undefined,
-            barcode: item.product.barcode || undefined,
+            id: item.product.dataValues.id,
+            name: item.product.dataValues.name,
+            sku: item.product.dataValues.sku || undefined,
+            barcode: item.product.dataValues.barcode || undefined,
           } : undefined,
         })) as SaleItemWithProduct[],
-        payments: payments.map(payment => ({
-          id: payment.id,
-          paymentMethod: payment.paymentMethod,
-          amount: parseFloat(payment.amount.toString()),
-          referenceNumber: payment.referenceNumber || undefined,
-          transactionId: payment.transactionId || undefined,
-          paymentDate: payment.paymentDate,
-          status: payment.status,
-          notes: payment.notes || undefined,
-          processedBy: payment.processedBy,
+        payments: payments.map((payment: any) => ({
+          id: payment.dataValues.id,
+          paymentMethod: payment.dataValues.paymentMethod,
+          amount: parseFloat(payment.dataValues.amount.toString()),
+          referenceNumber: payment.dataValues.referenceNumber || undefined,
+          transactionId: payment.dataValues.transactionId || undefined,
+          paymentDate: payment.dataValues.paymentDate,
+          status: payment.dataValues.status,
+          notes: payment.dataValues.notes || undefined,
+          processedBy: payment.dataValues.processedBy,
         })),
         totalPaid,
         balanceDue,
-        createdAt: sale.createdAt,
-        updatedAt: sale.updatedAt,
+        createdAt: sale.dataValues.createdAt,
+        updatedAt: sale.dataValues.updatedAt,
       };
     } catch (error) {
       logger.error('Error getting sale by ID:', error);
@@ -438,7 +438,7 @@ export class SaleService {
 
       const sales = await Promise.all(
         rows.map(async (sale) => {
-          const fullSale = await this.getSaleById(sale.id, tenantId);
+          const fullSale = await this.getSaleById(sale.dataValues.id, tenantId);
           return fullSale!;
         })
       );
@@ -517,14 +517,14 @@ export class SaleService {
         throw new Error('Sale not found');
       }
 
-      if (sale.status === 'cancelled' || sale.status === 'refunded') {
+      if (sale.dataValues.status === 'cancelled' || sale.dataValues.status === 'refunded') {
         throw new Error('Cannot process payment for cancelled or refunded sale');
       }
 
       // Calculate current total paid
-      const currentPayments = sale.payments || [];
-      const totalPaid = currentPayments.reduce((sum, p) => sum + parseFloat(p.amount.toString()), 0);
-      const totalAmount = parseFloat(sale.totalAmount.toString());
+      const currentPayments = (sale as any).payments || [];
+      const totalPaid = currentPayments.reduce((sum: number, p: any) => sum + parseFloat(p.dataValues.amount.toString()), 0);
+      const totalAmount = parseFloat(sale.dataValues.totalAmount.toString());
 
       if (totalPaid + paymentData.amount > totalAmount) {
         throw new Error('Payment amount exceeds outstanding balance');
@@ -562,7 +562,7 @@ export class SaleService {
       if (newTotalPaid >= totalAmount) {
         newPaymentStatus = 'paid';
         // If fully paid and sale is pending, complete it
-        if (sale.status === 'pending') {
+        if (sale.dataValues.status === 'pending') {
           await Sale.update(
             { status: 'completed' as const, paymentStatus: newPaymentStatus },
             { where: { id: saleId, tenantId }, transaction }
@@ -618,11 +618,11 @@ export class SaleService {
       }
 
       // Convert reserved inventory to actual sales
-      if (sale.saleItems) {
-        for (const item of sale.saleItems) {
-          await InventoryService.adjustInventory(sale.storeId, tenantId, {
-            productId: item.productId,
-            quantity: -parseFloat(item.quantity.toString()),
+      if ((sale as any).saleItems) {
+        for (const item of (sale as any).saleItems) {
+          await InventoryService.adjustInventory(sale.dataValues.storeId, tenantId, {
+            productId: item.dataValues.productId,
+            quantity: -parseFloat(item.dataValues.quantity.toString()),
             reason: 'sale',
             reference: saleId,
           });
@@ -671,13 +671,13 @@ export class SaleService {
       }
 
       // Release reserved inventory
-      if (sale.saleItems) {
-        for (const item of sale.saleItems) {
+      if ((sale as any).saleItems) {
+        for (const item of (sale as any).saleItems) {
           await InventoryService.releaseReservedInventory(
-            sale.storeId,
+            sale.dataValues.storeId,
             tenantId,
-            item.productId,
-            parseFloat(item.quantity.toString())
+            item.dataValues.productId,
+            parseFloat(item.dataValues.quantity.toString())
           );
         }
       }
@@ -729,8 +729,8 @@ export class SaleService {
         throw new Error('Sale not found or not in completed status');
       }
 
-      const totalPaid = (sale.payments || []).reduce((sum, p) => sum + parseFloat(p.amount.toString()), 0);
-      const totalAmount = parseFloat(sale.totalAmount.toString());
+      const totalPaid = ((sale as any).payments || []).reduce((sum: number, p: any) => sum + parseFloat(p.dataValues.amount.toString()), 0);
+      const totalAmount = parseFloat(sale.dataValues.totalAmount.toString());
 
       if (refundAmount > totalPaid) {
         throw new Error('Refund amount cannot exceed total paid amount');
@@ -768,11 +768,11 @@ export class SaleService {
 
       // Return inventory if applicable (partial refunds might need proportional returns)
       // This is a simplified implementation - in practice, you'd need to specify which items to return
-      if (sale.saleItems && refundAmount === totalAmount) {
-        for (const item of sale.saleItems) {
-          await InventoryService.adjustInventory(sale.storeId, tenantId, {
-            productId: item.productId,
-            quantity: parseFloat(item.quantity.toString()),
+      if ((sale as any).saleItems && refundAmount === totalAmount) {
+        for (const item of (sale as any).saleItems) {
+          await InventoryService.adjustInventory(sale.dataValues.storeId, tenantId, {
+            productId: item.dataValues.productId,
+            quantity: parseFloat(item.dataValues.quantity.toString()),
             reason: 'return',
             reference: saleId,
           });
@@ -1052,7 +1052,7 @@ export class SaleService {
       const turnoverData: { [key: string]: any } = {};
 
       for (const sale of productSales) {
-        const storeId = sale.storeId;
+        const storeId = sale.dataValues.storeId;
         if (!turnoverData[storeId]) {
           turnoverData[storeId] = {
             storeId,
@@ -1061,9 +1061,9 @@ export class SaleService {
           };
         }
 
-        for (const item of sale.saleItems || []) {
-          const productId = item.productId;
-          const quantity = parseFloat(item.quantity.toString());
+        for (const item of (sale as any).saleItems || []) {
+          const productId = item.dataValues.productId;
+          const quantity = parseFloat(item.dataValues.quantity.toString());
 
           if (!turnoverData[storeId].productsSold[productId]) {
             turnoverData[storeId].productsSold[productId] = {
@@ -1124,7 +1124,7 @@ export class SaleService {
       const profitabilityData: { [key: string]: any } = {};
 
       for (const sale of salesData) {
-        const storeId = sale.storeId;
+        const storeId = sale.dataValues.storeId;
         if (!profitabilityData[storeId]) {
           profitabilityData[storeId] = {
             storeId,
@@ -1136,15 +1136,15 @@ export class SaleService {
           };
         }
 
-        profitabilityData[storeId].totalRevenue += parseFloat(sale.totalAmount.toString());
-        profitabilityData[storeId].totalTax += parseFloat(sale.taxAmount.toString());
-        profitabilityData[storeId].totalDiscount += parseFloat(sale.discountAmount.toString());
+        profitabilityData[storeId].totalRevenue += parseFloat(sale.dataValues.totalAmount.toString());
+        profitabilityData[storeId].totalTax += parseFloat(sale.dataValues.taxAmount.toString());
+        profitabilityData[storeId].totalDiscount += parseFloat(sale.dataValues.discountAmount.toString());
         profitabilityData[storeId].totalSales += 1;
 
         // Calculate cost of goods sold
-        for (const item of sale.saleItems || []) {
-          const quantity = parseFloat(item.quantity.toString());
-          const unitCost = parseFloat(item.product?.unitCost?.toString() || '0');
+        for (const item of (sale as any).saleItems || []) {
+          const quantity = parseFloat(item.dataValues.quantity.toString());
+          const unitCost = parseFloat(item.product?.dataValues.unitCost?.toString() || '0');
           profitabilityData[storeId].totalCost += quantity * unitCost;
         }
       }

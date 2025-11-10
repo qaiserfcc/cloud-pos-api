@@ -29,37 +29,7 @@ export interface AutomatedReorderRuleAttributes {
 
 export interface AutomatedReorderRuleCreationAttributes extends Omit<AutomatedReorderRuleAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
-class AutomatedReorderRule extends Model<AutomatedReorderRuleAttributes, AutomatedReorderRuleCreationAttributes> implements AutomatedReorderRuleAttributes {
-  declare id: string;
-  declare tenantId: string;
-  declare ruleName: string;
-  declare description?: string;
-  declare productId?: string;
-  declare categoryId?: string;
-  declare storeIds?: string[];
-  declare regionId?: string;
-  declare minStockLevel: number;
-  declare maxStockLevel: number;
-  declare reorderQuantity: number;
-  declare reorderPoint: number;
-  declare leadTimeDays: number;
-  declare safetyStockDays: number;
-  declare isActive: boolean;
-  declare priority: 'low' | 'normal' | 'high';
-  declare lastTriggeredAt?: Date;
-  declare nextCheckAt?: Date;
-  declare checkFrequencyHours: number;
-  declare createdBy: string;
-  declare readonly createdAt: Date;
-  declare readonly updatedAt: Date;
-  declare readonly deletedAt?: Date;
-
-  // Association mixins
-  declare readonly tenant?: any;
-  declare readonly product?: any;
-  declare readonly category?: any;
-  declare readonly region?: any;
-  declare readonly creator?: any;
+class AutomatedReorderRule extends Model<AutomatedReorderRuleAttributes, AutomatedReorderRuleCreationAttributes> {
 }
 
 AutomatedReorderRule.init(

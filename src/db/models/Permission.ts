@@ -1,44 +1,10 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../../config/database';
 
-export interface PermissionAttributes {
-  id: string;
-  tenantId: string;
-  name: string;
-  resource: string;
-  action: string;
-  description: string;
-  is_system: boolean;
-  created_at: Date;
-  updated_at: Date;
-  deleted_at?: Date;
-}
-
-export interface PermissionCreationAttributes extends Omit<PermissionAttributes, 'id' | 'created_at' | 'updated_at'> {}
-
-class Permission extends Model<PermissionAttributes, PermissionCreationAttributes> implements PermissionAttributes {
-  declare id: string;
-  declare tenantId: string;
-  declare name: string;
-  declare resource: string;
-  declare action: string;
-  declare description: string;
-  declare is_system: boolean;
-  declare readonly created_at: Date;
-  declare readonly updated_at: Date;
-  declare readonly deleted_at?: Date;
-
+class Permission extends Model {
   // Association mixins
-  declare readonly tenant?: any;
-  declare readonly roles?: any[];
-
-  // Many-to-many association mixins for roles
-  declare addRole: (role: any) => Promise<void>;
-  declare removeRole: (role: any) => Promise<void>;
-  declare addRoles: (roles: any[]) => Promise<void>;
-  declare removeRoles: (roles: any[]) => Promise<void>;
-  declare setRoles: (roles: any[]) => Promise<void>;
-  declare getRoles: () => Promise<any[]>;
+  readonly tenant?: any;
+  readonly roles?: any[];
 }
 
 Permission.init(

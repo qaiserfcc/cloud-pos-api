@@ -95,30 +95,30 @@ export class InventoryService {
       });
 
       return inventories.map(inventory => ({
-        id: inventory.id,
-        tenantId: inventory.tenantId,
-        storeId: inventory.storeId,
-        productId: inventory.productId,
-        quantityOnHand: parseFloat(inventory.quantityOnHand.toString()),
-        quantityReserved: parseFloat(inventory.quantityReserved.toString()),
-        quantityAvailable: parseFloat(inventory.quantityAvailable.toString()),
-        reorderPoint: parseFloat(inventory.reorderPoint.toString()),
-        reorderQuantity: parseFloat(inventory.reorderQuantity.toString()),
-        lastStockTakeDate: inventory.lastStockTakeDate,
-        lastStockTakeQuantity: inventory.lastStockTakeQuantity ? parseFloat(inventory.lastStockTakeQuantity.toString()) : undefined,
-        unitCost: inventory.unitCost ? parseFloat(inventory.unitCost.toString()) : undefined,
-        location: inventory.location,
-        batchNumber: inventory.batchNumber,
-        expiryDate: inventory.expiryDate,
-        product: inventory.product ? {
-          id: inventory.product.id,
-          name: inventory.product.name,
-          sku: inventory.product.sku,
-          barcode: inventory.product.barcode,
+        id: inventory.dataValues.id,
+        tenantId: inventory.dataValues.tenantId,
+        storeId: inventory.dataValues.storeId,
+        productId: inventory.dataValues.productId,
+        quantityOnHand: parseFloat(inventory.dataValues.quantityOnHand.toString()),
+        quantityReserved: parseFloat(inventory.dataValues.quantityReserved.toString()),
+        quantityAvailable: parseFloat(inventory.dataValues.quantityAvailable.toString()),
+        reorderPoint: parseFloat(inventory.dataValues.reorderPoint.toString()),
+        reorderQuantity: parseFloat(inventory.dataValues.reorderQuantity.toString()),
+        lastStockTakeDate: inventory.dataValues.lastStockTakeDate,
+        lastStockTakeQuantity: inventory.dataValues.lastStockTakeQuantity ? parseFloat(inventory.dataValues.lastStockTakeQuantity.toString()) : undefined,
+        unitCost: inventory.dataValues.unitCost ? parseFloat(inventory.dataValues.unitCost.toString()) : undefined,
+        location: inventory.dataValues.location,
+        batchNumber: inventory.dataValues.batchNumber,
+        expiryDate: inventory.dataValues.expiryDate,
+        product: (inventory as any).product ? {
+          id: (inventory as any).product.dataValues.id,
+          name: (inventory as any).product.dataValues.name,
+          sku: (inventory as any).product.dataValues.sku,
+          barcode: (inventory as any).product.dataValues.barcode,
         } : undefined,
-        isLowStock: parseFloat(inventory.quantityAvailable.toString()) <= parseFloat(inventory.reorderPoint.toString()),
-        createdAt: inventory.createdAt,
-        updatedAt: inventory.updatedAt,
+        isLowStock: parseFloat(inventory.dataValues.quantityAvailable.toString()) <= parseFloat(inventory.dataValues.reorderPoint.toString()),
+        createdAt: inventory.dataValues.createdAt,
+        updatedAt: inventory.dataValues.updatedAt,
       })) as InventoryWithProduct[];
     } catch (error) {
       logger.error('Error getting store inventory:', error);
@@ -148,30 +148,30 @@ export class InventoryService {
       }
 
       return {
-        id: inventory.id,
-        tenantId: inventory.tenantId,
-        storeId: inventory.storeId,
-        productId: inventory.productId,
-        quantityOnHand: parseFloat(inventory.quantityOnHand.toString()),
-        quantityReserved: parseFloat(inventory.quantityReserved.toString()),
-        quantityAvailable: parseFloat(inventory.quantityAvailable.toString()),
-        reorderPoint: parseFloat(inventory.reorderPoint.toString()),
-        reorderQuantity: parseFloat(inventory.reorderQuantity.toString()),
-        lastStockTakeDate: inventory.lastStockTakeDate,
-        lastStockTakeQuantity: inventory.lastStockTakeQuantity ? parseFloat(inventory.lastStockTakeQuantity.toString()) : undefined,
-        unitCost: inventory.unitCost ? parseFloat(inventory.unitCost.toString()) : undefined,
-        location: inventory.location,
-        batchNumber: inventory.batchNumber,
-        expiryDate: inventory.expiryDate,
-        product: inventory.product ? {
-          id: inventory.product.id,
-          name: inventory.product.name,
-          sku: inventory.product.sku,
-          barcode: inventory.product.barcode,
+        id: inventory.dataValues.id,
+        tenantId: inventory.dataValues.tenantId,
+        storeId: inventory.dataValues.storeId,
+        productId: inventory.dataValues.productId,
+        quantityOnHand: parseFloat(inventory.dataValues.quantityOnHand.toString()),
+        quantityReserved: parseFloat(inventory.dataValues.quantityReserved.toString()),
+        quantityAvailable: parseFloat(inventory.dataValues.quantityAvailable.toString()),
+        reorderPoint: parseFloat(inventory.dataValues.reorderPoint.toString()),
+        reorderQuantity: parseFloat(inventory.dataValues.reorderQuantity.toString()),
+        lastStockTakeDate: inventory.dataValues.lastStockTakeDate,
+        lastStockTakeQuantity: inventory.dataValues.lastStockTakeQuantity ? parseFloat(inventory.dataValues.lastStockTakeQuantity.toString()) : undefined,
+        unitCost: inventory.dataValues.unitCost ? parseFloat(inventory.dataValues.unitCost.toString()) : undefined,
+        location: inventory.dataValues.location,
+        batchNumber: inventory.dataValues.batchNumber,
+        expiryDate: inventory.dataValues.expiryDate,
+        product: (inventory as any).product ? {
+          id: (inventory as any).product.dataValues.id,
+          name: (inventory as any).product.dataValues.name,
+          sku: (inventory as any).product.dataValues.sku,
+          barcode: (inventory as any).product.dataValues.barcode,
         } : undefined,
-        isLowStock: parseFloat(inventory.quantityAvailable.toString()) <= parseFloat(inventory.reorderPoint.toString()),
-        createdAt: inventory.createdAt,
-        updatedAt: inventory.updatedAt,
+        isLowStock: parseFloat(inventory.dataValues.quantityAvailable.toString()) <= parseFloat(inventory.dataValues.reorderPoint.toString()),
+        createdAt: inventory.dataValues.createdAt,
+        updatedAt: inventory.dataValues.updatedAt,
       } as InventoryWithProduct;
     } catch (error) {
       logger.error('Error getting inventory by product:', error);
@@ -202,8 +202,8 @@ export class InventoryService {
         reorderQuantity: inventoryData.reorderQuantity || 0,
       });
 
-      logger.info(`Inventory ${created ? 'created' : 'updated'}: ${inventory.id}`);
-      const result = await this.getInventoryByProduct(inventory.productId, inventory.storeId, inventory.tenantId);
+      logger.info(`Inventory ${created ? 'created' : 'updated'}: ${inventory.dataValues.id}`);
+      const result = await this.getInventoryByProduct(inventory.dataValues.productId, inventory.dataValues.storeId, inventory.dataValues.tenantId);
       return result!;
     } catch (error: any) {
       logger.error('Error creating/updating inventory:', error);
@@ -236,7 +236,7 @@ export class InventoryService {
         });
 
         if (inventory) {
-          const availableQuantity = parseFloat(inventory.quantityOnHand.toString()) - parseFloat(inventory.quantityReserved.toString());
+          const availableQuantity = parseFloat(inventory.dataValues.quantityOnHand.toString()) - parseFloat(inventory.dataValues.quantityReserved.toString());
           await Inventory.update(
             { quantityAvailable: availableQuantity },
             { where: { productId, storeId, tenantId } }
@@ -270,8 +270,8 @@ export class InventoryService {
         throw new Error('Inventory record not found');
       }
 
-      const currentOnHand = parseFloat(inventory.quantityOnHand.toString());
-      const currentReserved = parseFloat(inventory.quantityReserved.toString());
+      const currentOnHand = parseFloat(inventory.dataValues.quantityOnHand.toString());
+      const currentReserved = parseFloat(inventory.dataValues.quantityReserved.toString());
       const newOnHand = currentOnHand + adjustmentData.quantity;
 
       if (newOnHand < 0) {
@@ -320,13 +320,13 @@ export class InventoryService {
         throw new Error('Inventory record not found');
       }
 
-      const currentAvailable = parseFloat(inventory.quantityAvailable.toString());
+      const currentAvailable = parseFloat(inventory.dataValues.quantityAvailable.toString());
 
       if (currentAvailable < quantity) {
         throw new Error('Insufficient available inventory');
       }
 
-      const newReserved = parseFloat(inventory.quantityReserved.toString()) + quantity;
+      const newReserved = parseFloat(inventory.dataValues.quantityReserved.toString()) + quantity;
       const newAvailable = currentAvailable - quantity;
 
       await Inventory.update(
@@ -369,14 +369,14 @@ export class InventoryService {
         throw new Error('Inventory record not found');
       }
 
-      const currentReserved = parseFloat(inventory.quantityReserved.toString());
+      const currentReserved = parseFloat(inventory.dataValues.quantityReserved.toString());
 
       if (currentReserved < quantity) {
         throw new Error('Cannot release more than reserved quantity');
       }
 
       const newReserved = currentReserved - quantity;
-      const newAvailable = parseFloat(inventory.quantityAvailable.toString()) + quantity;
+      const newAvailable = parseFloat(inventory.dataValues.quantityAvailable.toString()) + quantity;
 
       await Inventory.update(
         {
@@ -418,13 +418,13 @@ export class InventoryService {
         throw new Error('Inventory record not found');
       }
 
-      const currentOnHand = parseFloat(inventory.quantityOnHand.toString());
+      const currentOnHand = parseFloat(inventory.dataValues.quantityOnHand.toString());
       const adjustment = stockTakeData.actualQuantity - currentOnHand;
 
       await Inventory.update(
         {
           quantityOnHand: stockTakeData.actualQuantity,
-          quantityAvailable: stockTakeData.actualQuantity - parseFloat(inventory.quantityReserved.toString()),
+          quantityAvailable: stockTakeData.actualQuantity - parseFloat(inventory.dataValues.quantityReserved.toString()),
           lastStockTakeDate: new Date(),
           lastStockTakeQuantity: stockTakeData.actualQuantity,
         },
@@ -475,30 +475,30 @@ export class InventoryService {
       });
 
       return inventories.map(inventory => ({
-        id: inventory.id,
-        tenantId: inventory.tenantId,
-        storeId: inventory.storeId,
-        productId: inventory.productId,
-        quantityOnHand: parseFloat(inventory.quantityOnHand.toString()),
-        quantityReserved: parseFloat(inventory.quantityReserved.toString()),
-        quantityAvailable: parseFloat(inventory.quantityAvailable.toString()),
-        reorderPoint: parseFloat(inventory.reorderPoint.toString()),
-        reorderQuantity: parseFloat(inventory.reorderQuantity.toString()),
-        lastStockTakeDate: inventory.lastStockTakeDate,
-        lastStockTakeQuantity: inventory.lastStockTakeQuantity ? parseFloat(inventory.lastStockTakeQuantity.toString()) : undefined,
-        unitCost: inventory.unitCost ? parseFloat(inventory.unitCost.toString()) : undefined,
-        location: inventory.location,
-        batchNumber: inventory.batchNumber,
-        expiryDate: inventory.expiryDate,
-        product: inventory.product ? {
-          id: inventory.product.id,
-          name: inventory.product.name,
-          sku: inventory.product.sku,
-          barcode: inventory.product.barcode,
+        id: inventory.dataValues.id,
+        tenantId: inventory.dataValues.tenantId,
+        storeId: inventory.dataValues.storeId,
+        productId: inventory.dataValues.productId,
+        quantityOnHand: parseFloat(inventory.dataValues.quantityOnHand.toString()),
+        quantityReserved: parseFloat(inventory.dataValues.quantityReserved.toString()),
+        quantityAvailable: parseFloat(inventory.dataValues.quantityAvailable.toString()),
+        reorderPoint: parseFloat(inventory.dataValues.reorderPoint.toString()),
+        reorderQuantity: parseFloat(inventory.dataValues.reorderQuantity.toString()),
+        lastStockTakeDate: inventory.dataValues.lastStockTakeDate,
+        lastStockTakeQuantity: inventory.dataValues.lastStockTakeQuantity ? parseFloat(inventory.dataValues.lastStockTakeQuantity.toString()) : undefined,
+        unitCost: inventory.dataValues.unitCost ? parseFloat(inventory.dataValues.unitCost.toString()) : undefined,
+        location: inventory.dataValues.location,
+        batchNumber: inventory.dataValues.batchNumber,
+        expiryDate: inventory.dataValues.expiryDate,
+        product: (inventory as any).product ? {
+          id: (inventory as any).product.dataValues.id,
+          name: (inventory as any).product.dataValues.name,
+          sku: (inventory as any).product.dataValues.sku,
+          barcode: (inventory as any).product.dataValues.barcode,
         } : undefined,
         isLowStock: true,
-        createdAt: inventory.createdAt,
-        updatedAt: inventory.updatedAt,
+        createdAt: inventory.dataValues.createdAt,
+        updatedAt: inventory.dataValues.updatedAt,
       })) as InventoryWithProduct[];
     } catch (error) {
       logger.error('Error getting low stock items:', error);
@@ -539,30 +539,30 @@ export class InventoryService {
       });
 
       return inventories.map(inventory => ({
-        id: inventory.id,
-        tenantId: inventory.tenantId,
-        storeId: inventory.storeId,
-        productId: inventory.productId,
-        quantityOnHand: parseFloat(inventory.quantityOnHand.toString()),
-        quantityReserved: parseFloat(inventory.quantityReserved.toString()),
-        quantityAvailable: parseFloat(inventory.quantityAvailable.toString()),
-        reorderPoint: parseFloat(inventory.reorderPoint.toString()),
-        reorderQuantity: parseFloat(inventory.reorderQuantity.toString()),
-        lastStockTakeDate: inventory.lastStockTakeDate,
-        lastStockTakeQuantity: inventory.lastStockTakeQuantity ? parseFloat(inventory.lastStockTakeQuantity.toString()) : undefined,
-        unitCost: inventory.unitCost ? parseFloat(inventory.unitCost.toString()) : undefined,
-        location: inventory.location,
-        batchNumber: inventory.batchNumber,
-        expiryDate: inventory.expiryDate,
-        product: inventory.product ? {
-          id: inventory.product.id,
-          name: inventory.product.name,
-          sku: inventory.product.sku,
-          barcode: inventory.product.barcode,
+        id: inventory.dataValues.id,
+        tenantId: inventory.dataValues.tenantId,
+        storeId: inventory.dataValues.storeId,
+        productId: inventory.dataValues.productId,
+        quantityOnHand: parseFloat(inventory.dataValues.quantityOnHand.toString()),
+        quantityReserved: parseFloat(inventory.dataValues.quantityReserved.toString()),
+        quantityAvailable: parseFloat(inventory.dataValues.quantityAvailable.toString()),
+        reorderPoint: parseFloat(inventory.dataValues.reorderPoint.toString()),
+        reorderQuantity: parseFloat(inventory.dataValues.reorderQuantity.toString()),
+        lastStockTakeDate: inventory.dataValues.lastStockTakeDate,
+        lastStockTakeQuantity: inventory.dataValues.lastStockTakeQuantity ? parseFloat(inventory.dataValues.lastStockTakeQuantity.toString()) : undefined,
+        unitCost: inventory.dataValues.unitCost ? parseFloat(inventory.dataValues.unitCost.toString()) : undefined,
+        location: inventory.dataValues.location,
+        batchNumber: inventory.dataValues.batchNumber,
+        expiryDate: inventory.dataValues.expiryDate,
+        product: (inventory as any).product ? {
+          id: (inventory as any).product.dataValues.id,
+          name: (inventory as any).product.dataValues.name,
+          sku: (inventory as any).product.dataValues.sku,
+          barcode: (inventory as any).product.dataValues.barcode,
         } : undefined,
-        isLowStock: parseFloat(inventory.quantityAvailable.toString()) <= parseFloat(inventory.reorderPoint.toString()),
-        createdAt: inventory.createdAt,
-        updatedAt: inventory.updatedAt,
+        isLowStock: parseFloat(inventory.dataValues.quantityAvailable.toString()) <= parseFloat(inventory.dataValues.reorderPoint.toString()),
+        createdAt: inventory.dataValues.createdAt,
+        updatedAt: inventory.dataValues.updatedAt,
       })) as InventoryWithProduct[];
     } catch (error) {
       logger.error('Error getting expiring items:', error);
@@ -708,30 +708,30 @@ export class InventoryService {
       });
 
       return inventories.map(inventory => ({
-        id: inventory.id,
-        tenantId: inventory.tenantId,
-        storeId: inventory.storeId,
-        productId: inventory.productId,
-        quantityOnHand: parseFloat(inventory.quantityOnHand.toString()),
-        quantityReserved: parseFloat(inventory.quantityReserved.toString()),
-        quantityAvailable: parseFloat(inventory.quantityAvailable.toString()),
-        reorderPoint: parseFloat(inventory.reorderPoint.toString()),
-        reorderQuantity: parseFloat(inventory.reorderQuantity.toString()),
-        lastStockTakeDate: inventory.lastStockTakeDate,
-        lastStockTakeQuantity: inventory.lastStockTakeQuantity ? parseFloat(inventory.lastStockTakeQuantity.toString()) : undefined,
-        unitCost: inventory.unitCost ? parseFloat(inventory.unitCost.toString()) : undefined,
-        location: inventory.location,
-        batchNumber: inventory.batchNumber,
-        expiryDate: inventory.expiryDate,
-        product: inventory.product ? {
-          id: inventory.product.id,
-          name: inventory.product.name,
-          sku: inventory.product.sku,
-          barcode: inventory.product.barcode,
+        id: inventory.dataValues.id,
+        tenantId: inventory.dataValues.tenantId,
+        storeId: inventory.dataValues.storeId,
+        productId: inventory.dataValues.productId,
+        quantityOnHand: parseFloat(inventory.dataValues.quantityOnHand.toString()),
+        quantityReserved: parseFloat(inventory.dataValues.quantityReserved.toString()),
+        quantityAvailable: parseFloat(inventory.dataValues.quantityAvailable.toString()),
+        reorderPoint: parseFloat(inventory.dataValues.reorderPoint.toString()),
+        reorderQuantity: parseFloat(inventory.dataValues.reorderQuantity.toString()),
+        lastStockTakeDate: inventory.dataValues.lastStockTakeDate,
+        lastStockTakeQuantity: inventory.dataValues.lastStockTakeQuantity ? parseFloat(inventory.dataValues.lastStockTakeQuantity.toString()) : undefined,
+        unitCost: inventory.dataValues.unitCost ? parseFloat(inventory.dataValues.unitCost.toString()) : undefined,
+        location: inventory.dataValues.location,
+        batchNumber: inventory.dataValues.batchNumber,
+        expiryDate: inventory.dataValues.expiryDate,
+        product: (inventory as any).product ? {
+          id: (inventory as any).product.dataValues.id,
+          name: (inventory as any).product.dataValues.name,
+          sku: (inventory as any).product.dataValues.sku,
+          barcode: (inventory as any).product.dataValues.barcode,
         } : undefined,
-        isLowStock: parseFloat(inventory.quantityAvailable.toString()) <= parseFloat(inventory.reorderPoint.toString()),
-        createdAt: inventory.createdAt,
-        updatedAt: inventory.updatedAt,
+        isLowStock: parseFloat(inventory.dataValues.quantityAvailable.toString()) <= parseFloat(inventory.dataValues.reorderPoint.toString()),
+        createdAt: inventory.dataValues.createdAt,
+        updatedAt: inventory.dataValues.updatedAt,
       })) as InventoryWithProduct[];
     } catch (error) {
       logger.error('Error getting tenant inventory:', error);
@@ -758,30 +758,30 @@ export class InventoryService {
       });
 
       return inventories.map(inventory => ({
-        id: inventory.id,
-        tenantId: inventory.tenantId,
-        storeId: inventory.storeId,
-        productId: inventory.productId,
-        quantityOnHand: parseFloat(inventory.quantityOnHand.toString()),
-        quantityReserved: parseFloat(inventory.quantityReserved.toString()),
-        quantityAvailable: parseFloat(inventory.quantityAvailable.toString()),
-        reorderPoint: parseFloat(inventory.reorderPoint.toString()),
-        reorderQuantity: parseFloat(inventory.reorderQuantity.toString()),
-        lastStockTakeDate: inventory.lastStockTakeDate,
-        lastStockTakeQuantity: inventory.lastStockTakeQuantity ? parseFloat(inventory.lastStockTakeQuantity.toString()) : undefined,
-        unitCost: inventory.unitCost ? parseFloat(inventory.unitCost.toString()) : undefined,
-        location: inventory.location,
-        batchNumber: inventory.batchNumber,
-        expiryDate: inventory.expiryDate,
-        product: inventory.product ? {
-          id: inventory.product.id,
-          name: inventory.product.name,
-          sku: inventory.product.sku,
-          barcode: inventory.product.barcode,
+        id: inventory.dataValues.id,
+        tenantId: inventory.dataValues.tenantId,
+        storeId: inventory.dataValues.storeId,
+        productId: inventory.dataValues.productId,
+        quantityOnHand: parseFloat(inventory.dataValues.quantityOnHand.toString()),
+        quantityReserved: parseFloat(inventory.dataValues.quantityReserved.toString()),
+        quantityAvailable: parseFloat(inventory.dataValues.quantityAvailable.toString()),
+        reorderPoint: parseFloat(inventory.dataValues.reorderPoint.toString()),
+        reorderQuantity: parseFloat(inventory.dataValues.reorderQuantity.toString()),
+        lastStockTakeDate: inventory.dataValues.lastStockTakeDate,
+        lastStockTakeQuantity: inventory.dataValues.lastStockTakeQuantity ? parseFloat(inventory.dataValues.lastStockTakeQuantity.toString()) : undefined,
+        unitCost: inventory.dataValues.unitCost ? parseFloat(inventory.dataValues.unitCost.toString()) : undefined,
+        location: inventory.dataValues.location,
+        batchNumber: inventory.dataValues.batchNumber,
+        expiryDate: inventory.dataValues.expiryDate,
+        product: (inventory as any).product ? {
+          id: (inventory as any).product.dataValues.id,
+          name: (inventory as any).product.dataValues.name,
+          sku: (inventory as any).product.dataValues.sku,
+          barcode: (inventory as any).product.dataValues.barcode,
         } : undefined,
-        isLowStock: parseFloat(inventory.quantityAvailable.toString()) <= parseFloat(inventory.reorderPoint.toString()),
-        createdAt: inventory.createdAt,
-        updatedAt: inventory.updatedAt,
+        isLowStock: parseFloat(inventory.dataValues.quantityAvailable.toString()) <= parseFloat(inventory.dataValues.reorderPoint.toString()),
+        createdAt: inventory.dataValues.createdAt,
+        updatedAt: inventory.dataValues.updatedAt,
       })) as InventoryWithProduct[];
     } catch (error) {
       logger.error('Error getting product inventory across stores:', error);
@@ -824,30 +824,30 @@ export class InventoryService {
       });
 
       return inventories.map(inventory => ({
-        id: inventory.id,
-        tenantId: inventory.tenantId,
-        storeId: inventory.storeId,
-        productId: inventory.productId,
-        quantityOnHand: parseFloat(inventory.quantityOnHand.toString()),
-        quantityReserved: parseFloat(inventory.quantityReserved.toString()),
-        quantityAvailable: parseFloat(inventory.quantityAvailable.toString()),
-        reorderPoint: parseFloat(inventory.reorderPoint.toString()),
-        reorderQuantity: parseFloat(inventory.reorderQuantity.toString()),
-        lastStockTakeDate: inventory.lastStockTakeDate,
-        lastStockTakeQuantity: inventory.lastStockTakeQuantity ? parseFloat(inventory.lastStockTakeQuantity.toString()) : undefined,
-        unitCost: inventory.unitCost ? parseFloat(inventory.unitCost.toString()) : undefined,
-        location: inventory.location,
-        batchNumber: inventory.batchNumber,
-        expiryDate: inventory.expiryDate,
-        product: inventory.product ? {
-          id: inventory.product.id,
-          name: inventory.product.name,
-          sku: inventory.product.sku,
-          barcode: inventory.product.barcode,
+        id: inventory.dataValues.id,
+        tenantId: inventory.dataValues.tenantId,
+        storeId: inventory.dataValues.storeId,
+        productId: inventory.dataValues.productId,
+        quantityOnHand: parseFloat(inventory.dataValues.quantityOnHand.toString()),
+        quantityReserved: parseFloat(inventory.dataValues.quantityReserved.toString()),
+        quantityAvailable: parseFloat(inventory.dataValues.quantityAvailable.toString()),
+        reorderPoint: parseFloat(inventory.dataValues.reorderPoint.toString()),
+        reorderQuantity: parseFloat(inventory.dataValues.reorderQuantity.toString()),
+        lastStockTakeDate: inventory.dataValues.lastStockTakeDate,
+        lastStockTakeQuantity: inventory.dataValues.lastStockTakeQuantity ? parseFloat(inventory.dataValues.lastStockTakeQuantity.toString()) : undefined,
+        unitCost: inventory.dataValues.unitCost ? parseFloat(inventory.dataValues.unitCost.toString()) : undefined,
+        location: inventory.dataValues.location,
+        batchNumber: inventory.dataValues.batchNumber,
+        expiryDate: inventory.dataValues.expiryDate,
+        product: (inventory as any).product ? {
+          id: (inventory as any).product.dataValues.id,
+          name: (inventory as any).product.dataValues.name,
+          sku: (inventory as any).product.dataValues.sku,
+          barcode: (inventory as any).product.dataValues.barcode,
         } : undefined,
         isLowStock: true,
-        createdAt: inventory.createdAt,
-        updatedAt: inventory.updatedAt,
+        createdAt: inventory.dataValues.createdAt,
+        updatedAt: inventory.dataValues.updatedAt,
       })) as InventoryWithProduct[];
     } catch (error) {
       logger.error('Error getting tenant low stock items:', error);

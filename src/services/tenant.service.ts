@@ -49,13 +49,13 @@ export class TenantService {
     });
 
     return tenants.map((tenant) => ({
-      id: tenant.id,
-      name: tenant.name,
-      domain: tenant.domain!,
-      settings: tenant.settings || {},
-      isActive: tenant.isActive,
-      createdAt: tenant.createdAt,
-      updatedAt: tenant.updatedAt,
+      id: tenant.dataValues.id,
+      name: tenant.dataValues.name,
+      domain: tenant.dataValues.domain!,
+      settings: tenant.dataValues.settings || {},
+      isActive: tenant.dataValues.isActive,
+      createdAt: tenant.dataValues.createdAt,
+      updatedAt: tenant.dataValues.updatedAt,
       storeCount: tenant.stores?.length || 0,
       userCount: tenant.users?.length || 0,
     }));
@@ -87,13 +87,13 @@ export class TenantService {
     }
 
     return {
-      id: tenant.id,
-      name: tenant.name,
-      domain: tenant.domain!,
-      settings: tenant.settings || {},
-      isActive: tenant.isActive,
-      createdAt: tenant.createdAt,
-      updatedAt: tenant.updatedAt,
+      id: tenant.dataValues.id,
+      name: tenant.dataValues.name,
+      domain: tenant.dataValues.domain!,
+      settings: tenant.dataValues.settings || {},
+      isActive: tenant.dataValues.isActive,
+      createdAt: tenant.dataValues.createdAt,
+      updatedAt: tenant.dataValues.updatedAt,
       storeCount: tenant.stores?.length || 0,
       userCount: tenant.users?.length || 0,
     };
@@ -120,7 +120,7 @@ export class TenantService {
     });
 
     logger.info(`New tenant created: ${data.name}`, {
-      tenantId: tenant.id,
+      tenantId: tenant.dataValues.id,
       domain: data.domain,
     });
 
@@ -138,27 +138,27 @@ export class TenantService {
     }
 
     // Check domain uniqueness if being updated
-    if (data.domain && data.domain !== tenant.domain) {
+    if (data.domain && data.domain !== tenant.dataValues.domain) {
       const existingTenant = await Tenant.findOne({
         where: { domain: data.domain },
         paranoid: false,
       });
 
-      if (existingTenant && existingTenant.id !== tenantId) {
+      if (existingTenant && existingTenant.dataValues.id !== tenantId) {
         throw new Error('Tenant with this domain already exists');
       }
     }
 
     // Update fields
-    if (data.name !== undefined) tenant.name = data.name;
-    if (data.domain !== undefined) tenant.domain = data.domain;
-    if (data.settings !== undefined) tenant.settings = data.settings;
-    if (data.isActive !== undefined) tenant.isActive = data.isActive;
+    if (data.name !== undefined) (tenant as any).name = data.name;
+    if (data.domain !== undefined) (tenant as any).domain = data.domain;
+    if (data.settings !== undefined) (tenant as any).settings = data.settings;
+    if (data.isActive !== undefined) (tenant as any).isActive = data.isActive;
 
     await tenant.save();
 
-    logger.info(`Tenant updated: ${tenant.name}`, {
-      tenantId: tenant.id,
+    logger.info(`Tenant updated: ${tenant.dataValues.name}`, {
+      tenantId: tenant.dataValues.id,
       changes: data,
     });
 
@@ -190,8 +190,8 @@ export class TenantService {
 
     await tenant.destroy();
 
-    logger.info(`Tenant deleted: ${tenant.name}`, {
-      tenantId: tenant.id,
+    logger.info(`Tenant deleted: ${tenant.dataValues.name}`, {
+      tenantId: tenant.dataValues.id,
     });
   }
 

@@ -1,32 +1,10 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../../config/database';
 
-export interface TenantAttributes {
-  id: string;
-  name: string;
-  domain: string;
-  settings: object;
-  isActive?: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date;
-}
-
-export interface TenantCreationAttributes extends Omit<TenantAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
-
-class Tenant extends Model<TenantAttributes, TenantCreationAttributes> implements TenantAttributes {
-  declare id: string;
-  declare name: string;
-  declare domain: string;
-  declare settings: object;
-  declare isActive: boolean;
-  declare readonly createdAt: Date;
-  declare readonly updatedAt: Date;
-  declare readonly deletedAt?: Date;
-
+class Tenant extends Model {
   // Association mixins
-  declare readonly stores?: any[];
-  declare readonly users?: any[];
+  readonly stores?: any[];
+  readonly users?: any[];
 }
 
 Tenant.init(

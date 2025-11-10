@@ -72,17 +72,17 @@ export class ProductService {
       });
 
       return products.map(product => ({
-        id: product.id,
-        tenantId: product.tenantId,
-        storeId: product.storeId,
-        name: product.name,
-        description: product.description,
-        sku: product.sku,
-        barcode: product.barcode,
-        metadata: product.metadata,
-        version: product.version,
-        createdAt: product.createdAt,
-        updatedAt: product.updatedAt,
+        id: product.dataValues.id,
+        tenantId: product.dataValues.tenantId,
+        storeId: product.dataValues.storeId,
+        name: product.dataValues.name,
+        description: product.dataValues.description,
+        sku: product.dataValues.sku,
+        barcode: product.dataValues.barcode,
+        metadata: product.dataValues.metadata,
+        version: product.dataValues.version,
+        createdAt: product.dataValues.createdAt,
+        updatedAt: product.dataValues.updatedAt,
         inventory: (product as any).inventories,
       }));
     } catch (error) {
@@ -112,17 +112,17 @@ export class ProductService {
       }
 
       return {
-        id: product.id,
-        tenantId: product.tenantId,
-        storeId: product.storeId,
-        name: product.name,
-        description: product.description,
-        sku: product.sku,
-        barcode: product.barcode,
-        metadata: product.metadata,
-        version: product.version,
-        createdAt: product.createdAt,
-        updatedAt: product.updatedAt,
+        id: product.dataValues.id,
+        tenantId: product.dataValues.tenantId,
+        storeId: product.dataValues.storeId,
+        name: product.dataValues.name,
+        description: product.dataValues.description,
+        sku: product.dataValues.sku,
+        barcode: product.dataValues.barcode,
+        metadata: product.dataValues.metadata,
+        version: product.dataValues.version,
+        createdAt: product.dataValues.createdAt,
+        updatedAt: product.dataValues.updatedAt,
         inventory: (product as any).inventories,
       };
     } catch (error) {
@@ -142,8 +142,8 @@ export class ProductService {
       };
 
       const product = await Product.create(createData);
-      logger.info(`Product created: ${product.id}`);
-      const result = await this.getProductById(product.id, productData.tenantId);
+      logger.info(`Product created: ${product.dataValues.id}`);
+      const result = await this.getProductById(product.dataValues.id, productData.tenantId);
       return result!;
     } catch (error: any) {
       logger.error('Error creating product:', error);
@@ -256,17 +256,17 @@ export class ProductService {
       });
 
       return products.map(product => ({
-        id: product.id,
-        tenantId: product.tenantId,
-        storeId: product.storeId,
-        name: product.name,
-        description: product.description,
-        sku: product.sku,
-        barcode: product.barcode,
-        metadata: product.metadata,
-        version: product.version,
-        createdAt: product.createdAt,
-        updatedAt: product.updatedAt,
+        id: product.dataValues.id,
+        tenantId: product.dataValues.tenantId,
+        storeId: product.dataValues.storeId,
+        name: product.dataValues.name,
+        description: product.dataValues.description,
+        sku: product.dataValues.sku,
+        barcode: product.dataValues.barcode,
+        metadata: product.dataValues.metadata,
+        version: product.dataValues.version,
+        createdAt: product.dataValues.createdAt,
+        updatedAt: product.dataValues.updatedAt,
         inventory: (product as any).inventories,
       }));
     } catch (error) {

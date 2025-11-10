@@ -1,4 +1,19 @@
 import 'dotenv/config';
+import 'module-alias/register';
+
+// Configure module aliases for runtime path resolution
+import moduleAlias from 'module-alias';
+moduleAlias.addAliases({
+  '@': __dirname,
+  '@/config': __dirname + '/config',
+  '@/controllers': __dirname + '/controllers',
+  '@/middlewares': __dirname + '/middlewares',
+  '@/models': __dirname + '/db/models',
+  '@/routes': __dirname + '/routes',
+  '@/services': __dirname + '/services',
+  '@/utils': __dirname + '/utils',
+});
+
 import app from './app';
 import { testConnection } from './config/database';
 import logger from './config/logger';

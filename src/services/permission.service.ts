@@ -60,20 +60,20 @@ class PermissionService {
       });
 
       return permissions.map(permission => ({
-        id: permission.id,
-        tenantId: permission.tenantId,
-        name: permission.name,
-        resource: permission.resource,
-        action: permission.action,
-        description: permission.description,
-        is_system: permission.is_system,
+        id: permission.dataValues.id,
+        tenantId: permission.dataValues.tenantId,
+        name: permission.dataValues.name,
+        resource: permission.dataValues.resource,
+        action: permission.dataValues.action,
+        description: permission.dataValues.description,
+        is_system: permission.dataValues.is_system,
         roles: permission.roles?.map(role => ({
-          id: role.id,
-          name: role.name,
-          description: role.description,
+          id: role.dataValues.id,
+          name: role.dataValues.name,
+          description: role.dataValues.description,
         })) || [],
-        created_at: permission.created_at,
-        updated_at: permission.updated_at,
+        created_at: permission.dataValues.created_at,
+        updated_at: permission.dataValues.updated_at,
       }));
     } catch (error) {
       logger.error('Error getting all permissions:', error);
@@ -111,20 +111,20 @@ class PermissionService {
       }
 
       return {
-        id: permission.id,
-        tenantId: permission.tenantId,
-        name: permission.name,
-        resource: permission.resource,
-        action: permission.action,
-        description: permission.description,
-        is_system: permission.is_system,
+        id: permission.dataValues.id,
+        tenantId: permission.dataValues.tenantId,
+        name: permission.dataValues.name,
+        resource: permission.dataValues.resource,
+        action: permission.dataValues.action,
+        description: permission.dataValues.description,
+        is_system: permission.dataValues.is_system,
         roles: permission.roles?.map(role => ({
-          id: role.id,
-          name: role.name,
-          description: role.description,
+          id: role.dataValues.id,
+          name: role.dataValues.name,
+          description: role.dataValues.description,
         })) || [],
-        created_at: permission.created_at,
-        updated_at: permission.updated_at,
+        created_at: permission.dataValues.created_at,
+        updated_at: permission.dataValues.updated_at,
       };
     } catch (error) {
       logger.error('Error getting permission by ID:', error);
@@ -173,7 +173,7 @@ class PermissionService {
       });
 
       // Return the created permission with roles
-      return await this.getPermissionById(permission.id, tenantId) as PermissionWithRoles;
+      return await this.getPermissionById(permission.dataValues.id, tenantId) as PermissionWithRoles;
     } catch (error) {
       logger.error('Error creating permission:', error);
       throw error;
@@ -197,12 +197,12 @@ class PermissionService {
       }
 
       // Prevent updating system permissions
-      if (permission.is_system) {
+      if (permission.dataValues.is_system) {
         throw new Error('Cannot update system permissions');
       }
 
       // Check name uniqueness if name is being updated
-      if (data.name && data.name !== permission.name) {
+      if (data.name && data.name !== permission.dataValues.name) {
         const existingPermission = await Permission.findOne({
           where: {
             tenantId,
@@ -218,9 +218,9 @@ class PermissionService {
 
       // Check resource:action uniqueness if either is being updated
       if ((data.resource || data.action) &&
-          (data.resource !== permission.resource || data.action !== permission.action)) {
-        const resource = data.resource || permission.resource;
-        const action = data.action || permission.action;
+          (data.resource !== permission.dataValues.resource || data.action !== permission.dataValues.action)) {
+        const resource = data.resource || permission.dataValues.resource;
+        const action = data.action || permission.dataValues.action;
 
         const existingResourceAction = await Permission.findOne({
           where: {
@@ -270,7 +270,7 @@ class PermissionService {
       }
 
       // Prevent deleting system permissions
-      if (permission.is_system) {
+      if (permission.dataValues.is_system) {
         throw new Error('Cannot delete system permissions');
       }
 
@@ -315,20 +315,20 @@ class PermissionService {
       });
 
       return permissions.map(permission => ({
-        id: permission.id,
-        tenantId: permission.tenantId,
-        name: permission.name,
-        resource: permission.resource,
-        action: permission.action,
-        description: permission.description,
-        is_system: permission.is_system,
+        id: permission.dataValues.id,
+        tenantId: permission.dataValues.tenantId,
+        name: permission.dataValues.name,
+        resource: permission.dataValues.resource,
+        action: permission.dataValues.action,
+        description: permission.dataValues.description,
+        is_system: permission.dataValues.is_system,
         roles: permission.roles?.map(role => ({
-          id: role.id,
-          name: role.name,
-          description: role.description,
+          id: role.dataValues.id,
+          name: role.dataValues.name,
+          description: role.dataValues.description,
         })) || [],
-        created_at: permission.created_at,
-        updated_at: permission.updated_at,
+        created_at: permission.dataValues.created_at,
+        updated_at: permission.dataValues.updated_at,
       }));
     } catch (error) {
       logger.error('Error getting permissions by resource:', error);

@@ -77,22 +77,22 @@ export class UserService {
     });
 
     return users.map(user => ({
-      id: user.id,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      phone: user.phone,
-      avatar: user.avatar,
-      defaultStoreId: user.defaultStoreId,
-      isActive: user.isActive,
-      lastLoginAt: user.lastLoginAt,
-      tenantId: user.tenantId,
+      id: user.dataValues.id,
+      email: user.dataValues.email,
+      firstName: user.dataValues.firstName,
+      lastName: user.dataValues.lastName,
+      phone: user.dataValues.phone,
+      avatar: user.dataValues.avatar,
+      defaultStoreId: user.dataValues.defaultStoreId,
+      isActive: user.dataValues.isActive,
+      lastLoginAt: user.dataValues.lastLoginAt,
+      tenantId: user.dataValues.tenantId,
       tenantName: (user as any).tenant?.name || '',
       defaultStoreName: (user as any).defaultStore?.name,
       roles: (user as any).roles?.map((role: any) => role.name) || [],
       roleCount: (user as any).roles?.length || 0,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
+      createdAt: user.dataValues.createdAt,
+      updatedAt: user.dataValues.updatedAt,
     }));
   }
 
@@ -128,22 +128,22 @@ export class UserService {
     }
 
     return {
-      id: user.id,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      phone: user.phone,
-      avatar: user.avatar,
-      defaultStoreId: user.defaultStoreId,
-      isActive: user.isActive,
-      lastLoginAt: user.lastLoginAt,
-      tenantId: user.tenantId,
+      id: user.dataValues.id,
+      email: user.dataValues.email,
+      firstName: user.dataValues.firstName,
+      lastName: user.dataValues.lastName,
+      phone: user.dataValues.phone,
+      avatar: user.dataValues.avatar,
+      defaultStoreId: user.dataValues.defaultStoreId,
+      isActive: user.dataValues.isActive,
+      lastLoginAt: user.dataValues.lastLoginAt,
+      tenantId: user.dataValues.tenantId,
       tenantName: (user as any).tenant?.name || '',
       defaultStoreName: (user as any).defaultStore?.name,
       roles: (user as any).roles?.map((role: any) => role.name) || [],
       roleCount: (user as any).roles?.length || 0,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
+      createdAt: user.dataValues.createdAt,
+      updatedAt: user.dataValues.updatedAt,
     };
   }
 
@@ -213,12 +213,12 @@ export class UserService {
     }
 
     logger.info(`User created: ${userData.email}`, {
-      userId: user.id,
+      userId: user.dataValues.id,
       tenantId,
     });
 
     // Return user with associations
-    return this.getUserById(user.id, tenantId);
+    return UserService.getUserById(user.dataValues.id, tenantId);
   }
 
   /**
@@ -282,13 +282,11 @@ export class UserService {
       }
     }
 
-    logger.info(`User updated: ${user.email}`, {
-      userId,
+    logger.info(`User updated: ${userId}`, {
+      userId: user.dataValues.id,
       tenantId,
-    });
-
-    // Return updated user
-    return this.getUserById(userId, tenantId);
+    });    // Return updated user
+    return UserService.getUserById(userId, tenantId);
   }
 
   /**
@@ -309,7 +307,7 @@ export class UserService {
     // Remove all role assignments
     await (user as any).setRoles([]);
 
-    logger.info(`User deleted: ${user.email}`, {
+    logger.info(`User deleted: ${user.dataValues.email}`, {
       userId,
       tenantId,
     });
@@ -328,7 +326,7 @@ export class UserService {
     }
 
     // Verify current password
-    const isCurrentPasswordValid = await comparePassword(currentPassword, user.password);
+    const isCurrentPasswordValid = await comparePassword(currentPassword, user.dataValues.password);
     if (!isCurrentPasswordValid) {
       throw new Error('Current password is incorrect');
     }
@@ -342,7 +340,7 @@ export class UserService {
       passwordChangedAt: new Date(),
     });
 
-    logger.info(`Password changed for user: ${user.email}`, {
+    logger.info(`Password changed for user: ${user.dataValues.email}`, {
       userId,
       tenantId,
     });
@@ -371,11 +369,11 @@ export class UserService {
     });
 
     // Clear lockout if it exists
-    if (user.lockoutUntil) {
+    if (user.dataValues.lockoutUntil) {
       await user.update({ lockoutUntil: literal('NULL') });
     }
 
-    logger.info(`Password reset for user: ${user.email}`, {
+    logger.info(`Password reset for user: ${user.dataValues.email}`, {
       userId,
       tenantId,
     });
@@ -471,7 +469,7 @@ export class UserService {
 
     // Get current roles to check for duplicates
     const currentRoles = await (user as any).getRoles();
-    const currentRoleIds = currentRoles.map((role: any) => role.id);
+    const currentRoleIds = currentRoles.map((role: any) => role.dataValues.id);
     const newRoleIds = roleIds.filter(roleId => !currentRoleIds.includes(roleId));
 
     if (newRoleIds.length === 0) {
@@ -479,10 +477,10 @@ export class UserService {
     }
 
     // Add new roles
-    const newRoles = roles.filter(role => newRoleIds.includes(role.id));
+    const newRoles = roles.filter(role => newRoleIds.includes(role.dataValues.id));
     await (user as any).addRoles(newRoles);
 
-    logger.info(`Roles assigned to user: ${user.email}`, {
+    logger.info(`Roles assigned to user: ${user.dataValues.email}`, {
       userId,
       tenantId,
       roleIds: newRoleIds,
@@ -512,7 +510,7 @@ export class UserService {
 
     // Check if user has this role
     const userRoles = await (user as any).getRoles();
-    const hasRole = userRoles.some((userRole: any) => userRole.id === roleId);
+    const hasRole = userRoles.some((userRole: any) => userRole.dataValues.id === roleId);
 
     if (!hasRole) {
       throw new Error('User does not have this role assigned');
@@ -521,7 +519,7 @@ export class UserService {
     // Remove the role
     await (user as any).removeRole(role);
 
-    logger.info(`Role removed from user: ${user.email}`, {
+    logger.info(`Role removed from user: ${user.dataValues.email}`, {
       userId,
       tenantId,
       roleId,

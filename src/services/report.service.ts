@@ -452,22 +452,22 @@ export class ReportService {
         })),
         alerts: {
           lowStock: lowStockAlerts.map(item => ({
-            productId: item.productId,
-            productName: item.product?.name,
-            sku: item.product?.sku,
-            storeId: item.storeId,
-            storeName: item.store?.name,
-            currentStock: item.quantityAvailable,
-            reorderPoint: item.reorderPoint,
+            productId: item.dataValues.productId,
+            productName: (item as any).product?.dataValues.name,
+            sku: (item as any).product?.dataValues.sku,
+            storeId: item.dataValues.storeId,
+            storeName: (item as any).store?.dataValues.name,
+            currentStock: item.dataValues.quantityAvailable,
+            reorderPoint: item.dataValues.reorderPoint,
           })),
           outOfStock: outOfStockItems.map(item => ({
-            productId: item.productId,
-            productName: item.product?.name,
-            sku: item.product?.sku,
-            storeId: item.storeId,
-            storeName: item.store?.name,
-            currentStock: item.quantityAvailable,
-            reorderPoint: item.reorderPoint,
+            productId: item.dataValues.productId,
+            productName: (item as any).product?.dataValues.name,
+            sku: (item as any).product?.dataValues.sku,
+            storeId: item.dataValues.storeId,
+            storeName: (item as any).store?.dataValues.name,
+            currentStock: item.dataValues.quantityAvailable,
+            reorderPoint: item.dataValues.reorderPoint,
           })),
         },
         generatedAt: new Date(),
@@ -637,13 +637,13 @@ export class ReportService {
     });
 
     return sales.map(sale => ({
-      id: sale.id,
-      saleDate: sale.saleDate,
-      totalAmount: parseFloat(sale.totalAmount.toString()),
-      taxAmount: parseFloat(sale.taxAmount.toString()),
-      discountAmount: parseFloat(sale.discountAmount.toString()),
-      customer: sale.customer ? `${sale.customer.firstName} ${sale.customer.lastName}` : null,
-      user: sale.user ? `${sale.user.firstName} ${sale.user.lastName}` : null,
+      id: sale.dataValues.id,
+      saleDate: sale.dataValues.saleDate,
+      totalAmount: parseFloat(sale.dataValues.totalAmount.toString()),
+      taxAmount: parseFloat(sale.dataValues.taxAmount.toString()),
+      discountAmount: parseFloat(sale.dataValues.discountAmount.toString()),
+      customer: (sale as any).customer ? `${(sale as any).customer.dataValues.firstName} ${(sale as any).customer.dataValues.lastName}` : null,
+      user: (sale as any).user ? `${(sale as any).user.dataValues.firstName} ${(sale as any).user.dataValues.lastName}` : null,
     }));
   }
 
@@ -697,14 +697,14 @@ export class ReportService {
     });
 
     return inventories.map(inv => ({
-      productId: inv.productId,
-      productName: inv.product?.name,
-      sku: inv.product?.sku,
-      quantityAvailable: inv.quantityAvailable,
-      quantityReserved: inv.quantityReserved,
-      reorderPoint: inv.reorderPoint,
-      unitCost: parseFloat(inv.product?.unitCost?.toString() || '0'),
-      totalValue: inv.quantityAvailable * parseFloat(inv.product?.unitCost?.toString() || '0'),
+      productId: inv.dataValues.productId,
+      productName: (inv as any).product?.dataValues.name,
+      sku: (inv as any).product?.dataValues.sku,
+      quantityAvailable: inv.dataValues.quantityAvailable,
+      quantityReserved: inv.dataValues.quantityReserved,
+      reorderPoint: inv.dataValues.reorderPoint,
+      unitCost: parseFloat((inv as any).product?.dataValues.unitCost?.toString() || '0'),
+      totalValue: inv.dataValues.quantityAvailable * parseFloat((inv as any).product?.dataValues.unitCost?.toString() || '0'),
     }));
   }
 
@@ -752,20 +752,20 @@ export class ReportService {
     lowStockItems.forEach(item => {
       alerts.push({
         type: 'low_stock',
-        productId: item.productId,
-        productName: item.product?.name,
-        currentStock: item.quantityAvailable,
-        reorderPoint: item.reorderPoint,
+        productId: item.dataValues.productId,
+        productName: (item as any).product?.dataValues.name,
+        currentStock: item.dataValues.quantityAvailable,
+        reorderPoint: item.dataValues.reorderPoint,
       });
     });
 
     outOfStockItems.forEach(item => {
       alerts.push({
         type: 'out_of_stock',
-        productId: item.productId,
-        productName: item.product?.name,
-        currentStock: item.quantityAvailable,
-        reorderPoint: item.reorderPoint,
+        productId: item.dataValues.productId,
+        productName: (item as any).product?.dataValues.name,
+        currentStock: item.dataValues.quantityAvailable,
+        reorderPoint: item.dataValues.reorderPoint,
       });
     });
 
@@ -789,13 +789,13 @@ export class ReportService {
     });
 
     return customers.map(customer => ({
-      id: customer.id,
-      name: `${customer.firstName} ${customer.lastName}`,
-      email: customer.email,
-      phone: customer.phone,
-      totalSpent: parseFloat(customer.totalSpent.toString()),
-      loyaltyPoints: customer.loyaltyPoints,
-      joinedAt: customer.createdAt,
+      id: customer.dataValues.id,
+      name: `${customer.dataValues.firstName} ${customer.dataValues.lastName}`,
+      email: customer.dataValues.email,
+      phone: customer.dataValues.phone,
+      totalSpent: parseFloat(customer.dataValues.totalSpent.toString()),
+      loyaltyPoints: customer.dataValues.loyaltyPoints,
+      joinedAt: customer.dataValues.createdAt,
     }));
   }
 
@@ -805,7 +805,7 @@ export class ReportService {
       attributes: ['loyaltyPoints', 'totalSpent'],
     });
 
-    const totalPoints = customers.reduce((sum, c) => sum + c.loyaltyPoints, 0);
+    const totalPoints = customers.reduce((sum, c) => sum + c.dataValues.loyaltyPoints, 0);
     const averagePoints = customers.length > 0 ? totalPoints / customers.length : 0;
 
     return {
@@ -824,10 +824,10 @@ export class ReportService {
     });
 
     return products.map(product => ({
-      id: product.id,
-      name: product.name,
-      sku: product.sku,
-      description: product.description,
+      id: product.dataValues.id,
+      name: product.dataValues.name,
+      sku: product.dataValues.sku,
+      description: product.dataValues.description,
     }));
   }
 

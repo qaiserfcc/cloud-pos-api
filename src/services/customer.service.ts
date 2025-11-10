@@ -117,7 +117,7 @@ export class CustomerService {
 
       const customer = await Customer.create(customerDataWithDefaults);
 
-      logger.info(`Created customer ${customer.firstName} ${customer.lastName} for tenant ${customerData.tenantId}`);
+      logger.info(`Created customer ${customer.dataValues.firstName} ${customer.dataValues.lastName} for tenant ${customerData.tenantId}`);
 
       return this.formatCustomerResponse(customer);
     } catch (error: any) {
@@ -247,7 +247,7 @@ export class CustomerService {
       }
 
       // Check for duplicate email or phone within tenant (excluding current customer)
-      if (updateData.email && updateData.email !== customer.email) {
+      if (updateData.email && updateData.email !== customer.dataValues.email) {
         const existingEmail = await Customer.findOne({
           where: {
             tenantId,
@@ -260,7 +260,7 @@ export class CustomerService {
         }
       }
 
-      if (updateData.phone && updateData.phone !== customer.phone) {
+      if (updateData.phone && updateData.phone !== customer.dataValues.phone) {
         const existingPhone = await Customer.findOne({
           where: {
             tenantId,
@@ -275,7 +275,7 @@ export class CustomerService {
 
       await customer.update(updateData);
 
-      logger.info(`Updated customer ${customer.firstName} ${customer.lastName} for tenant ${tenantId}`);
+      logger.info(`Updated customer ${customer.dataValues.firstName} ${customer.dataValues.lastName} for tenant ${tenantId}`);
 
       // Fetch updated customer with associations
       const updatedCustomer = await Customer.findOne({
@@ -326,11 +326,11 @@ export class CustomerService {
       if (salesCount > 0) {
         // Soft delete - just deactivate
         await customer.update({ isActive: false });
-        logger.info(`Deactivated customer ${customer.firstName} ${customer.lastName} for tenant ${tenantId}`);
+        logger.info(`Deactivated customer ${customer.dataValues.firstName} ${customer.dataValues.lastName} for tenant ${tenantId}`);
       } else {
         // Hard delete if no sales
         await customer.destroy();
-        logger.info(`Deleted customer ${customer.firstName} ${customer.lastName} for tenant ${tenantId}`);
+        logger.info(`Deleted customer ${customer.dataValues.firstName} ${customer.dataValues.lastName} for tenant ${tenantId}`);
       }
 
       return true;
@@ -360,10 +360,10 @@ export class CustomerService {
         throw new Error('Customer not found');
       }
 
-      const newPoints = customer.loyaltyPoints + points;
+      const newPoints = customer.dataValues.loyaltyPoints + points;
       await customer.update({ loyaltyPoints: newPoints });
 
-      logger.info(`Added ${points} loyalty points to customer ${customer.firstName} ${customer.lastName}`);
+      logger.info(`Added ${points} loyalty points to customer ${customer.dataValues.firstName} ${customer.dataValues.lastName}`);
 
       return this.getCustomerById(customerId, tenantId);
     } catch (error: any) {
@@ -392,14 +392,14 @@ export class CustomerService {
         throw new Error('Customer not found');
       }
 
-      if (customer.loyaltyPoints < points) {
+      if (customer.dataValues.loyaltyPoints < points) {
         throw new Error('Insufficient loyalty points');
       }
 
-      const newPoints = customer.loyaltyPoints - points;
+      const newPoints = customer.dataValues.loyaltyPoints - points;
       await customer.update({ loyaltyPoints: newPoints });
 
-      logger.info(`Deducted ${points} loyalty points from customer ${customer.firstName} ${customer.lastName}`);
+      logger.info(`Deducted ${points} loyalty points from customer ${customer.dataValues.firstName} ${customer.dataValues.lastName}`);
 
       return this.getCustomerById(customerId, tenantId);
     } catch (error: any) {
@@ -427,14 +427,14 @@ export class CustomerService {
         return;
       }
 
-      const newTotalSpent = parseFloat(customer.totalSpent.toString()) + amount;
+      const newTotalSpent = parseFloat(customer.dataValues.totalSpent.toString()) + amount;
 
       await customer.update({
         totalSpent: newTotalSpent,
         lastPurchaseAt: new Date(),
       });
 
-      logger.info(`Updated spending for customer ${customer.firstName} ${customer.lastName}: +$${amount}`);
+      logger.info(`Updated spending for customer ${customer.dataValues.firstName} ${customer.dataValues.lastName}: +$${amount}`);
     } catch (error: any) {
       logger.error('Update customer spending error:', error);
       throw error;
@@ -488,10 +488,10 @@ export class CustomerService {
       });
 
       const totalCustomers = customers.length;
-      const activeCustomers = customers.filter(c => c.isActive).length;
+      const activeCustomers = customers.filter(c => c.dataValues.isActive).length;
       const inactiveCustomers = totalCustomers - activeCustomers;
-      const totalLoyaltyPoints = customers.reduce((sum, c) => sum + c.loyaltyPoints, 0);
-      const totalSpent = customers.reduce((sum, c) => sum + parseFloat(c.totalSpent.toString()), 0);
+      const totalLoyaltyPoints = customers.reduce((sum, c) => sum + c.dataValues.loyaltyPoints, 0);
+      const totalSpent = customers.reduce((sum, c) => sum + parseFloat(c.dataValues.totalSpent.toString()), 0);
       const averageSpent = totalCustomers > 0 ? totalSpent / totalCustomers : 0;
 
       // Top spenders
@@ -527,8 +527,8 @@ export class CustomerService {
       // Customers by gender
       const genderStats = customers.reduce(
         (acc, customer) => {
-          if (customer.gender === 'male') acc.male++;
-          else if (customer.gender === 'female') acc.female++;
+          if (customer.dataValues.gender === 'male') acc.male++;
+          else if (customer.dataValues.gender === 'female') acc.female++;
           else acc.other++;
           return acc;
         },
@@ -558,28 +558,28 @@ export class CustomerService {
     const salesCount = customer.sales ? customer.sales.length : 0;
 
     return {
-      id: customer.id,
-      tenantId: customer.tenantId,
-      firstName: customer.firstName,
-      lastName: customer.lastName,
-      email: customer.email,
-      phone: customer.phone,
-      address: customer.address,
-      city: customer.city,
-      state: customer.state,
-      zipCode: customer.zipCode,
-      country: customer.country,
-      dateOfBirth: customer.dateOfBirth,
-      gender: customer.gender,
-      loyaltyPoints: customer.loyaltyPoints,
-      totalSpent: parseFloat(customer.totalSpent.toString()),
-      lastPurchaseAt: customer.lastPurchaseAt,
-      isActive: customer.isActive,
-      notes: customer.notes,
-      fullName: `${customer.firstName} ${customer.lastName}`,
+      id: customer.dataValues.id,
+      tenantId: customer.dataValues.tenantId,
+      firstName: customer.dataValues.firstName,
+      lastName: customer.dataValues.lastName,
+      email: customer.dataValues.email,
+      phone: customer.dataValues.phone,
+      address: customer.dataValues.address,
+      city: customer.dataValues.city,
+      state: customer.dataValues.state,
+      zipCode: customer.dataValues.zipCode,
+      country: customer.dataValues.country,
+      dateOfBirth: customer.dataValues.dateOfBirth,
+      gender: customer.dataValues.gender,
+      loyaltyPoints: customer.dataValues.loyaltyPoints,
+      totalSpent: parseFloat(customer.dataValues.totalSpent.toString()),
+      lastPurchaseAt: customer.dataValues.lastPurchaseAt,
+      isActive: customer.dataValues.isActive,
+      notes: customer.dataValues.notes,
+      fullName: `${customer.dataValues.firstName} ${customer.dataValues.lastName}`,
       salesCount,
-      createdAt: customer.createdAt,
-      updatedAt: customer.updatedAt,
+      createdAt: customer.dataValues.createdAt,
+      updatedAt: customer.dataValues.updatedAt,
     };
   }
 }

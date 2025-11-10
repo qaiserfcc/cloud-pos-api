@@ -19,25 +19,7 @@ export interface ProductAttributes {
 
 export interface ProductCreationAttributes extends Omit<ProductAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
-class Product extends Model<ProductAttributes, ProductCreationAttributes> implements ProductAttributes {
-  declare id: string;
-  declare tenantId: string;
-  declare storeId?: string;
-  declare categoryId?: string;
-  declare name: string;
-  declare description?: string;
-  declare sku?: string;
-  declare barcode?: string;
-  declare metadata: any;
-  declare readonly createdAt: Date;
-  declare readonly updatedAt: Date;
-  declare readonly deletedAt?: Date;
-  declare version: number;
-
-  // Association mixins
-  declare readonly tenant?: any;
-  declare readonly store?: any;
-  declare readonly variants?: any[];
+class Product extends Model<ProductAttributes, ProductCreationAttributes> {
 }
 
 Product.init(

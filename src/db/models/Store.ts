@@ -1,40 +1,10 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../../config/database';
 
-export interface StoreAttributes {
-  id: string;
-  tenantId: string;
-  name: string;
-  code: string;
-  address: string;
-  phone?: string;
-  email?: string;
-  settings: object;
-  isActive?: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date;
-}
-
-export interface StoreCreationAttributes extends Omit<StoreAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
-
-class Store extends Model<StoreAttributes, StoreCreationAttributes> implements StoreAttributes {
-  declare id: string;
-  declare tenantId: string;
-  declare name: string;
-  declare code: string;
-  declare address: string;
-  declare phone?: string;
-  declare email?: string;
-  declare settings: object;
-  declare isActive: boolean;
-  declare readonly createdAt: Date;
-  declare readonly updatedAt: Date;
-  declare readonly deletedAt?: Date;
-
+class Store extends Model {
   // Association mixins
-  declare readonly tenant?: any;
-  declare readonly storeUsers?: any[];
+  readonly tenant?: any;
+  readonly storeUsers?: any[];
 }
 
 Store.init(

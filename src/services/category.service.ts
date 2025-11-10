@@ -80,29 +80,29 @@ export class CategoryService {
       // First pass: create all category objects
       categories.forEach(category => {
         const categoryData: CategoryWithAssociations = {
-          id: category.id,
-          tenantId: category.tenantId,
-          name: category.name,
-          description: category.description,
-          color: category.color,
-          icon: category.icon,
-          sortOrder: category.sortOrder,
-          isActive: category.isActive,
-          parentId: category.parentId,
+          id: category.dataValues.id,
+          tenantId: category.dataValues.tenantId,
+          name: category.dataValues.name,
+          description: category.dataValues.description,
+          color: category.dataValues.color,
+          icon: category.dataValues.icon,
+          sortOrder: category.dataValues.sortOrder,
+          isActive: category.dataValues.isActive,
+          parentId: category.dataValues.parentId,
           parent: undefined,
           subcategories: [],
-          createdAt: category.createdAt,
-          updatedAt: category.updatedAt,
+          createdAt: category.dataValues.createdAt,
+          updatedAt: category.dataValues.updatedAt,
         } as CategoryWithAssociations;
-        categoryMap.set(category.id, categoryData);
+        categoryMap.set(category.dataValues.id, categoryData);
       });
 
       // Second pass: build hierarchy
       categories.forEach(category => {
-        const categoryData = categoryMap.get(category.id)!;
+        const categoryData = categoryMap.get(category.dataValues.id)!;
 
-        if (category.parentId) {
-          const parent = categoryMap.get(category.parentId);
+        if (category.dataValues.parentId) {
+          const parent = categoryMap.get(category.dataValues.parentId);
           if (parent) {
             categoryData.parent = parent;
             if (!parent.subcategories) parent.subcategories = [];
@@ -146,43 +146,43 @@ export class CategoryService {
       }
 
       return {
-        id: category.id,
-        tenantId: category.tenantId,
-        name: category.name,
-        description: category.description,
-        color: category.color,
-        icon: category.icon,
-        sortOrder: category.sortOrder,
-        isActive: category.isActive,
-        parentId: category.parentId,
-        parent: category.parent ? {
-          id: category.parent.id,
-          tenantId: category.parent.tenantId,
-          name: category.parent.name,
-          description: category.parent.description,
-          color: category.parent.color,
-          icon: category.parent.icon,
-          sortOrder: category.parent.sortOrder,
-          isActive: category.parent.isActive,
-          parentId: category.parent.parentId,
-          createdAt: category.parent.createdAt,
-          updatedAt: category.parent.updatedAt,
+        id: category.dataValues.id,
+        tenantId: category.dataValues.tenantId,
+        name: category.dataValues.name,
+        description: category.dataValues.description,
+        color: category.dataValues.color,
+        icon: category.dataValues.icon,
+        sortOrder: category.dataValues.sortOrder,
+        isActive: category.dataValues.isActive,
+        parentId: category.dataValues.parentId,
+        parent: (category as any).parent ? {
+          id: (category as any).parent.dataValues.id,
+          tenantId: (category as any).parent.dataValues.tenantId,
+          name: (category as any).parent.dataValues.name,
+          description: (category as any).parent.dataValues.description,
+          color: (category as any).parent.dataValues.color,
+          icon: (category as any).parent.dataValues.icon,
+          sortOrder: (category as any).parent.dataValues.sortOrder,
+          isActive: (category as any).parent.dataValues.isActive,
+          parentId: (category as any).parent.dataValues.parentId,
+          createdAt: (category as any).parent.dataValues.createdAt,
+          updatedAt: (category as any).parent.dataValues.updatedAt,
         } : undefined,
-        subcategories: category.subcategories?.map(sub => ({
-          id: sub.id,
-          tenantId: sub.tenantId,
-          name: sub.name,
-          description: sub.description,
-          color: sub.color,
-          icon: sub.icon,
-          sortOrder: sub.sortOrder,
-          isActive: sub.isActive,
-          parentId: sub.parentId,
-          createdAt: sub.createdAt,
-          updatedAt: sub.updatedAt,
-        })) || [],
-        createdAt: category.createdAt,
-        updatedAt: category.updatedAt,
+        subcategories: ((category as any).subcategories?.map((sub: any) => ({
+          id: sub.dataValues.id,
+          tenantId: sub.dataValues.tenantId,
+          name: sub.dataValues.name,
+          description: sub.dataValues.description,
+          color: sub.dataValues.color,
+          icon: sub.dataValues.icon,
+          sortOrder: sub.dataValues.sortOrder,
+          isActive: sub.dataValues.isActive,
+          parentId: sub.dataValues.parentId,
+          createdAt: sub.dataValues.createdAt,
+          updatedAt: sub.dataValues.updatedAt,
+        })) || []),
+        createdAt: category.dataValues.createdAt,
+        updatedAt: category.dataValues.updatedAt,
       } as CategoryWithAssociations;
     } catch (error) {
       logger.error('Error getting category by ID:', error);
@@ -206,7 +206,7 @@ export class CategoryService {
         }
 
         // Prevent circular references
-        if (parentCategory.parentId === categoryData.parentId) {
+        if (parentCategory.dataValues.parentId === categoryData.parentId) {
           throw new Error('Circular reference detected in category hierarchy');
         }
       }
@@ -225,8 +225,8 @@ export class CategoryService {
       };
 
       const category = await Category.create(createData);
-      logger.info(`Category created: ${category.id}`);
-      const result = await this.getCategoryById(category.id, categoryData.tenantId);
+      logger.info(`Category created: ${category.dataValues.id}`);
+      const result = await this.getCategoryById(category.dataValues.id, categoryData.tenantId);
       return result!;
     } catch (error: any) {
       logger.error('Error creating category:', error);
@@ -255,7 +255,7 @@ export class CategoryService {
         }
 
         // Prevent circular references
-        if (parentCategory.parentId === updateData.parentId) {
+        if (parentCategory.dataValues.parentId === updateData.parentId) {
           throw new Error('Circular reference detected in category hierarchy');
         }
       }
@@ -338,30 +338,30 @@ export class CategoryService {
       });
 
       return categories.map(category => ({
-        id: category.id,
-        tenantId: category.tenantId,
-        name: category.name,
-        description: category.description,
-        color: category.color,
-        icon: category.icon,
-        sortOrder: category.sortOrder,
-        isActive: category.isActive,
-        parentId: category.parentId,
-        parent: category.parent ? {
-          id: category.parent.id,
-          tenantId: category.parent.tenantId,
-          name: category.parent.name,
-          description: category.parent.description,
-          color: category.parent.color,
-          icon: category.parent.icon,
-          sortOrder: category.parent.sortOrder,
-          isActive: category.parent.isActive,
-          parentId: category.parent.parentId,
-          createdAt: category.parent.createdAt,
-          updatedAt: category.parent.updatedAt,
+        id: category.dataValues.id,
+        tenantId: category.dataValues.tenantId,
+        name: category.dataValues.name,
+        description: category.dataValues.description,
+        color: category.dataValues.color,
+        icon: category.dataValues.icon,
+        sortOrder: category.dataValues.sortOrder,
+        isActive: category.dataValues.isActive,
+        parentId: category.dataValues.parentId,
+        parent: (category as any).parent ? {
+          id: (category as any).parent.dataValues.id,
+          tenantId: (category as any).parent.dataValues.tenantId,
+          name: (category as any).parent.dataValues.name,
+          description: (category as any).parent.dataValues.description,
+          color: (category as any).parent.dataValues.color,
+          icon: (category as any).parent.dataValues.icon,
+          sortOrder: (category as any).parent.dataValues.sortOrder,
+          isActive: (category as any).parent.dataValues.isActive,
+          parentId: (category as any).parent.dataValues.parentId,
+          createdAt: (category as any).parent.dataValues.createdAt,
+          updatedAt: (category as any).parent.dataValues.updatedAt,
         } : undefined,
-        createdAt: category.createdAt,
-        updatedAt: category.updatedAt,
+        createdAt: category.dataValues.createdAt,
+        updatedAt: category.dataValues.updatedAt,
       })) as CategoryWithAssociations[];
     } catch (error) {
       logger.error('Error searching categories:', error);

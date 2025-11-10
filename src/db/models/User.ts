@@ -1,59 +1,11 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../../config/database';
 
-export interface UserAttributes {
-  id: string;
-  tenantId: string;
-  defaultStoreId?: string;
-  email: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  phone?: string;
-  avatar?: string;
-  isActive: boolean;
-  lastLoginAt?: Date;
-  passwordChangedAt?: Date;
-  loginAttempts: number;
-  lockoutUntil?: Date;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date;
-}
-
-export interface UserCreationAttributes extends Omit<UserAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
-
-class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
-  declare id: string;
-  declare tenantId: string;
-  declare defaultStoreId?: string;
-  declare email: string;
-  declare password: string;
-  declare firstName: string;
-  declare lastName: string;
-  declare phone?: string;
-  declare avatar?: string;
-  declare isActive: boolean;
-  declare lastLoginAt?: Date;
-  declare passwordChangedAt?: Date;
-  declare loginAttempts: number;
-  declare lockoutUntil?: Date;
-  declare readonly createdAt: Date;
-  declare readonly updatedAt: Date;
-  declare readonly deletedAt?: Date;
-
+class User extends Model {
   // Association mixins
-  declare readonly tenant?: any;
-  declare readonly defaultStore?: any;
-  declare readonly roles?: any[];
-
-  // Many-to-many association mixins for roles
-  declare addRole: (role: any) => Promise<void>;
-  declare removeRole: (role: any) => Promise<void>;
-  declare addRoles: (roles: any[]) => Promise<void>;
-  declare removeRoles: (roles: any[]) => Promise<void>;
-  declare setRoles: (roles: any[]) => Promise<void>;
-  declare getRoles: () => Promise<any[]>;
+  readonly tenant?: any;
+  readonly defaultStore?: any;
+  readonly roles?: any[];
 }
 
 User.init(

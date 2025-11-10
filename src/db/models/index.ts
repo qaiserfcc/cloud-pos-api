@@ -20,6 +20,8 @@ import InventoryRegion from './InventoryRegion';
 import AutomatedReorderRule from './AutomatedReorderRule';
 import ApprovalRule from './ApprovalRule';
 import ApprovalRequest from './ApprovalRequest';
+import ReportTemplate from './ReportTemplate';
+import Theme from './Theme';
 
 // Tenant associations
 Tenant.hasMany(Store, {
@@ -514,6 +516,48 @@ ApprovalRule.hasMany(ApprovalRequest, {
   as: 'approvalRequests',
 });
 
+// ReportTemplate associations
+ReportTemplate.belongsTo(Tenant, {
+  foreignKey: 'tenantId',
+  as: 'tenant',
+});
+
+ReportTemplate.belongsTo(User, {
+  foreignKey: 'createdById',
+  as: 'createdBy',
+});
+
+Tenant.hasMany(ReportTemplate, {
+  foreignKey: 'tenantId',
+  as: 'reportTemplates',
+});
+
+User.hasMany(ReportTemplate, {
+  foreignKey: 'createdById',
+  as: 'createdReportTemplates',
+});
+
+// Theme associations
+Theme.belongsTo(Tenant, {
+  foreignKey: 'tenantId',
+  as: 'tenant',
+});
+
+Theme.belongsTo(User, {
+  foreignKey: 'createdById',
+  as: 'createdBy',
+});
+
+Tenant.hasMany(Theme, {
+  foreignKey: 'tenantId',
+  as: 'themes',
+});
+
+User.hasMany(Theme, {
+  foreignKey: 'createdById',
+  as: 'createdThemes',
+});
+
 export {
   sequelize,
   Tenant,
@@ -536,6 +580,8 @@ export {
   AutomatedReorderRule,
   ApprovalRule,
   ApprovalRequest,
+  ReportTemplate,
+  Theme,
   UserRole,
   RolePermission,
 };

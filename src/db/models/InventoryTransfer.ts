@@ -25,34 +25,7 @@ export interface InventoryTransferAttributes {
 
 export interface InventoryTransferCreationAttributes extends Omit<InventoryTransferAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
-class InventoryTransfer extends Model<InventoryTransferAttributes, InventoryTransferCreationAttributes> implements InventoryTransferAttributes {
-  declare id: string;
-  declare tenantId: string;
-  declare transferNumber: string;
-  declare sourceStoreId: string;
-  declare destinationStoreId: string;
-  declare productId: string;
-  declare quantity: number;
-  declare unitCost?: number;
-  declare status: 'pending' | 'approved' | 'rejected' | 'in_transit' | 'cancelled' | 'completed';
-  declare requestedBy: string;
-  declare approvedBy?: string;
-  declare approvedAt?: Date;
-  declare shippedAt?: Date;
-  declare receivedAt?: Date;
-  declare notes?: string;
-  declare reference?: string;
-  declare readonly createdAt: Date;
-  declare readonly updatedAt: Date;
-  declare readonly deletedAt?: Date;
-
-  // Association mixins
-  declare readonly tenant?: any;
-  declare readonly sourceStore?: any;
-  declare readonly destinationStore?: any;
-  declare readonly product?: any;
-  declare readonly requester?: any;
-  declare readonly approver?: any;
+class InventoryTransfer extends Model<InventoryTransferAttributes, InventoryTransferCreationAttributes> {
 }
 
 InventoryTransfer.init(

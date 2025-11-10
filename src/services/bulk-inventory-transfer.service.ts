@@ -106,7 +106,7 @@ class BulkInventoryTransferService {
           }
         });
 
-        if (!inventory || parseFloat(inventory.quantityAvailable.toString()) < item.quantity) {
+        if (!inventory || parseFloat(inventory.dataValues.quantityAvailable.toString()) < item.quantity) {
           throw new Error(`Insufficient inventory for product ${item.productId} in source store`);
         }
       }
@@ -149,7 +149,7 @@ class BulkInventoryTransferService {
       const transferItems = await Promise.all(
         transferData.items.map(item => {
           const itemData: any = {
-            bulkTransferId: bulkTransfer.id,
+            bulkTransferId: bulkTransfer.dataValues.id,
             productId: item.productId,
             quantity: item.quantity,
           };
@@ -194,7 +194,7 @@ class BulkInventoryTransferService {
         throw new Error('Bulk transfer not found');
       }
 
-      if (bulkTransfer.status !== 'draft') {
+      if (bulkTransfer.dataValues.status !== 'draft') {
         throw new Error('Only draft transfers can be submitted for approval');
       }
 
@@ -203,7 +203,7 @@ class BulkInventoryTransferService {
 
       await transaction.commit();
 
-      logger.info(`Submitted bulk transfer ${bulkTransfer.bulkTransferNumber} for approval`);
+      logger.info(`Submitted bulk transfer ${bulkTransfer.dataValues.bulkTransferNumber} for approval`);
 
       return bulkTransfer;
     } catch (error: any) {
@@ -235,7 +235,7 @@ class BulkInventoryTransferService {
         throw new Error('Bulk transfer not found');
       }
 
-      if (bulkTransfer.status !== 'pending') {
+      if (bulkTransfer.dataValues.status !== 'pending') {
         throw new Error('Only pending transfers can be approved');
       }
 
@@ -246,31 +246,31 @@ class BulkInventoryTransferService {
         approvedAt: new Date(),
       };
 
-      if (notes !== undefined) updateData.notes = notes || bulkTransfer.notes;
+      if (notes !== undefined) updateData.notes = notes || bulkTransfer.dataValues.notes;
 
       await bulkTransfer.update(updateData, { transaction });
 
       // Create individual inventory transfers
       const individualTransfers = await Promise.all(
-        bulkTransfer.transferItems!.map(async (item: BulkInventoryTransferItem) => {
+        (bulkTransfer as any).transferItems!.map(async (item: BulkInventoryTransferItem) => {
           const transferNumber = await this.generateTransferNumber(tenantId);
 
           const transferData: any = {
             tenantId,
             transferNumber,
-            sourceStoreId: bulkTransfer.sourceStoreId,
-            destinationStoreId: bulkTransfer.destinationStoreId,
-            productId: item.productId,
-            quantity: item.quantity,
+            sourceStoreId: bulkTransfer.dataValues.sourceStoreId,
+            destinationStoreId: bulkTransfer.dataValues.destinationStoreId,
+            productId: item.dataValues.productId,
+            quantity: item.dataValues.quantity,
             status: 'approved',
-            requestedBy: bulkTransfer.requestedBy,
+            requestedBy: bulkTransfer.dataValues.requestedBy,
             approvedBy: userId,
             approvedAt: new Date(),
-            notes: `Part of bulk transfer ${bulkTransfer.bulkTransferNumber}: ${item.notes || ''}`,
+            notes: `Part of bulk transfer ${bulkTransfer.dataValues.bulkTransferNumber}: ${item.dataValues.notes || ''}`,
           };
 
-          if (item.unitCost !== undefined) transferData.unitCost = item.unitCost;
-          if (bulkTransfer.reference !== undefined) transferData.reference = bulkTransfer.reference;
+          if (item.dataValues.unitCost !== undefined) transferData.unitCost = item.dataValues.unitCost;
+          if (bulkTransfer.dataValues.reference !== undefined) transferData.reference = bulkTransfer.dataValues.reference;
 
           return InventoryTransfer.create(transferData, { transaction });
         })
@@ -278,7 +278,7 @@ class BulkInventoryTransferService {
 
       await transaction.commit();
 
-      logger.info(`Approved bulk transfer ${bulkTransfer.bulkTransferNumber} and created ${individualTransfers.length} individual transfers`);
+      logger.info(`Approved bulk transfer ${bulkTransfer.dataValues.bulkTransferNumber} and created ${individualTransfers.length} individual transfers`);
 
       return {
         ...bulkTransfer,
@@ -480,7 +480,7 @@ class BulkInventoryTransferService {
         throw new Error('Bulk transfer not found');
       }
 
-      if (!['draft', 'pending', 'approved'].includes(bulkTransfer.status)) {
+      if (!['draft', 'pending', 'approved'].includes(bulkTransfer.dataValues.status)) {
         throw new Error('Transfer cannot be cancelled at this stage');
       }
 
@@ -490,19 +490,19 @@ class BulkInventoryTransferService {
       };
 
       if (reason !== undefined) {
-        updateData.notes = reason ? `${bulkTransfer.notes || ''}\nCancellation reason: ${reason}` : bulkTransfer.notes;
+        updateData.notes = reason ? `${bulkTransfer.dataValues.notes || ''}\nCancellation reason: ${reason}` : bulkTransfer.dataValues.notes;
       }
 
       await bulkTransfer.update(updateData, { transaction });
 
       // Cancel any individual transfers that were created
-      if (bulkTransfer.status === 'approved') {
+      if (bulkTransfer.dataValues.status === 'approved') {
         await InventoryTransfer.update(
           { status: 'cancelled' },
           {
             where: {
               tenantId,
-              reference: bulkTransfer.bulkTransferNumber,
+              reference: bulkTransfer.dataValues.bulkTransferNumber,
               status: { [Op.in]: ['approved', 'pending'] }
             },
             transaction
@@ -512,7 +512,7 @@ class BulkInventoryTransferService {
 
       await transaction.commit();
 
-      logger.info(`Cancelled bulk transfer ${bulkTransfer.bulkTransferNumber}`);
+      logger.info(`Cancelled bulk transfer ${bulkTransfer.dataValues.bulkTransferNumber}`);
 
       return bulkTransfer;
     } catch (error: any) {

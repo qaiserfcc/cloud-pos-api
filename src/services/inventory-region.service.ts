@@ -203,7 +203,7 @@ class InventoryRegionService {
 
       await transaction.commit();
 
-      logger.info(`Updated inventory region ${region.regionCode}`);
+      logger.info(`Updated inventory region ${region.dataValues.regionCode}`);
 
       return region;
     } catch (error: any) {
@@ -236,7 +236,7 @@ class InventoryRegionService {
 
       await transaction.commit();
 
-      logger.info(`Deleted inventory region ${region.regionCode}`);
+      logger.info(`Deleted inventory region ${region.dataValues.regionCode}`);
     } catch (error: any) {
       await transaction.rollback();
       logger.error('Delete region error:', error);
@@ -388,49 +388,49 @@ class InventoryRegionService {
       let outOfStockItems = 0;
 
       inventories.forEach((inv: any) => {
-        const quantity = parseFloat(inv.quantityAvailable.toString());
-        const unitCost = parseFloat(inv.unitCost?.toString() || '0');
+        const quantity = parseFloat(inv.dataValues.quantityAvailable.toString());
+        const unitCost = parseFloat(inv.dataValues.unitCost?.toString() || '0');
         const value = quantity * unitCost;
 
         // Store breakdown
-        if (!storeBreakdown.has(inv.storeId)) {
-          storeBreakdown.set(inv.storeId, {
-            storeId: inv.storeId,
-            storeName: inv.store!.name,
+        if (!storeBreakdown.has(inv.dataValues.storeId)) {
+          storeBreakdown.set(inv.dataValues.storeId, {
+            storeId: inv.dataValues.storeId,
+            storeName: inv.dataValues.store!.dataValues.name,
             productCount: 0,
             totalValue: 0,
             lowStockCount: 0,
           });
         }
 
-        const storeData = storeBreakdown.get(inv.storeId);
+        const storeData = storeBreakdown.get(inv.dataValues.storeId);
         storeData.productCount++;
         storeData.totalValue += value;
 
         // Product breakdown
-        if (!productBreakdown.has(inv.productId)) {
-          productBreakdown.set(inv.productId, {
-            productId: inv.productId,
-            productName: inv.product!.name,
+        if (!productBreakdown.has(inv.dataValues.productId)) {
+          productBreakdown.set(inv.dataValues.productId, {
+            productId: inv.dataValues.productId,
+            productName: inv.dataValues.product!.dataValues.name,
             totalQuantity: 0,
             totalValue: 0,
             storeDistribution: [],
           });
         }
 
-        const productData = productBreakdown.get(inv.productId);
+        const productData = productBreakdown.get(inv.dataValues.productId);
         productData.totalQuantity += quantity;
         productData.totalValue += value;
         productData.storeDistribution.push({
-          storeId: inv.storeId,
-          storeName: inv.store!.name,
+          storeId: inv.dataValues.storeId,
+          storeName: inv.dataValues.store!.dataValues.name,
           quantity,
         });
 
         totalValue += value;
 
         // Check stock levels
-        const threshold = filters?.lowStockThreshold || parseFloat(inv.reorderPoint?.toString() || '0');
+        const threshold = filters?.lowStockThreshold || parseFloat(inv.dataValues.reorderPoint?.toString() || '0');
         if (quantity === 0) {
           outOfStockItems++;
           storeData.lowStockCount++;
@@ -446,8 +446,8 @@ class InventoryRegionService {
         .slice(0, 10);
 
       return {
-        regionId: region.id,
-        regionName: region.regionName,
+        regionId: region.dataValues.id,
+        regionName: region.dataValues.regionName,
         totalStores: (region as any).stores.length,
         totalProducts: productBreakdown.size,
         lowStockItems,
@@ -506,7 +506,7 @@ class InventoryRegionService {
 
       await transaction.commit();
 
-      logger.info(`Added ${storeIds.length} stores to region ${region.regionCode}`);
+      logger.info(`Added ${storeIds.length} stores to region ${region.dataValues.regionCode}`);
 
       return region;
     } catch (error: any) {
@@ -544,7 +544,7 @@ class InventoryRegionService {
 
       await transaction.commit();
 
-      logger.info(`Removed ${storeIds.length} stores from region ${region.regionCode}`);
+      logger.info(`Removed ${storeIds.length} stores from region ${region.dataValues.regionCode}`);
 
       return region;
     } catch (error: any) {
