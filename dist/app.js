@@ -14,6 +14,7 @@ const models_1 = require("./models");
 const auth_routes_1 = __importDefault(require("./routes/auth.routes"));
 const tenant_routes_1 = __importDefault(require("./routes/tenant.routes"));
 const store_routes_1 = __importDefault(require("./routes/store.routes"));
+const user_routes_1 = __importDefault(require("./routes/user.routes"));
 const app = (0, express_1.default)();
 (0, models_1.setupAssociations)();
 app.set('trust proxy', 1);
@@ -64,6 +65,7 @@ app.get('/health', (req, res) => {
 app.use('/api/v1/auth', auth_routes_1.default);
 app.use('/api/v1/tenants', tenant_routes_1.default);
 app.use('/api/v1/stores', store_routes_1.default);
+app.use('/api/v1/users', user_routes_1.default);
 if (process.env.NODE_ENV !== 'production') {
     const swaggerUi = require('swagger-ui-express');
     const swaggerDocument = require('../swagger.json');

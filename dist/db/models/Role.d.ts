@@ -1,7 +1,7 @@
 import { Model } from 'sequelize';
 export interface RoleAttributes {
     id: string;
-    tenant_id: string;
+    tenantId: string;
     name: string;
     description: string;
     is_system: boolean;
@@ -13,7 +13,7 @@ export interface RoleCreationAttributes extends Omit<RoleAttributes, 'id' | 'cre
 }
 declare class Role extends Model<RoleAttributes, RoleCreationAttributes> implements RoleAttributes {
     id: string;
-    tenant_id: string;
+    tenantId: string;
     name: string;
     description: string;
     is_system: boolean;

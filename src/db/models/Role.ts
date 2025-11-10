@@ -3,7 +3,7 @@ import sequelize from '../../config/database';
 
 export interface RoleAttributes {
   id: string;
-  tenant_id: string;
+  tenantId: string;
   name: string;
   description: string;
   is_system: boolean;
@@ -16,7 +16,7 @@ export interface RoleCreationAttributes extends Omit<RoleAttributes, 'id' | 'cre
 
 class Role extends Model<RoleAttributes, RoleCreationAttributes> implements RoleAttributes {
   declare public id: string;
-  declare public tenant_id: string;
+  declare public tenantId: string;
   declare public name: string;
   declare public description: string;
   declare public is_system: boolean;
@@ -37,7 +37,7 @@ Role.init(
       primaryKey: true,
       defaultValue: DataTypes.UUIDV4,
     },
-    tenant_id: {
+    tenantId: {
       type: DataTypes.UUID,
       allowNull: false,
       references: {
@@ -83,7 +83,7 @@ Role.init(
     indexes: [
       {
         unique: true,
-        fields: ['tenant_id', 'name'],
+        fields: ['tenantId', 'name'],
       },
     ],
   }

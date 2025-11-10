@@ -65,12 +65,12 @@ export const seedInitialData = async (): Promise<void> => {
     const createdPermissions = [];
     for (const perm of permissions) {
       const [permission] = await Permission.findOrCreate({
-        where: { name: perm.name, tenant_id: tenant.dataValues.id },
+        where: { name: perm.name, tenantId: tenant.dataValues.id } as any,
         defaults: {
           ...perm,
-          tenant_id: tenant.dataValues.id,
+          tenantId: tenant.dataValues.id,
           is_system: true,
-        },
+        } as any,
       });
       createdPermissions.push(permission);
     }
@@ -80,24 +80,24 @@ export const seedInitialData = async (): Promise<void> => {
     // Create default roles
     const superAdminRole = await Role.create({
       name: 'Super Admin',
-      tenant_id: tenant.dataValues.id,
+      tenantId: tenant.dataValues.id,
       description: 'Super administrator with full system access',
       is_system: true,
-    });
+    } as any);
 
     const tenantAdminRole = await Role.create({
       name: 'Tenant Admin',
-      tenant_id: tenant.dataValues.id,
+      tenantId: tenant.dataValues.id,
       description: 'Tenant administrator with tenant-level access',
       is_system: true,
-    });
+    } as any);
 
     const storeManagerRole = await Role.create({
       name: 'Store Manager',
-      tenant_id: tenant.dataValues.id,
+      tenantId: tenant.dataValues.id,
       description: 'Store manager with store-level access',
       is_system: true,
-    });
+    } as any);
 
     logger.info('Created default roles');
 

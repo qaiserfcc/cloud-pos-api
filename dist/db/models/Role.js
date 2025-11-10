@@ -13,7 +13,7 @@ Role.init({
         primaryKey: true,
         defaultValue: sequelize_1.DataTypes.UUIDV4,
     },
-    tenant_id: {
+    tenantId: {
         type: sequelize_1.DataTypes.UUID,
         allowNull: false,
         references: {
@@ -58,7 +58,7 @@ Role.init({
     indexes: [
         {
             unique: true,
-            fields: ['tenant_id', 'name'],
+            fields: ['tenantId', 'name'],
         },
     ],
 });
