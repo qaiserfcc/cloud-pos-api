@@ -273,6 +273,332 @@ export class ReportService {
     }
   }
 
+  /**
+   * Generate regional sales dashboard with multi-store analytics
+   */
+  static async generateRegionalSalesDashboard(tenantId: string, filters: ReportFilters = {}): Promise<any> {
+    try {
+      const { startDate, endDate } = filters;
+
+      // Get sales data grouped by store
+      const storeSales = await Sale.findAll({
+        where: {
+          tenantId,
+          status: 'completed',
+          ...(startDate && endDate && { saleDate: { [Op.between]: [startDate, endDate] } }),
+        },
+        attributes: [
+          'storeId',
+          [fn('COUNT', col('id')), 'totalSales'],
+          [fn('SUM', col('totalAmount')), 'totalRevenue'],
+          [fn('AVG', col('totalAmount')), 'averageSale'],
+          [fn('MAX', col('saleDate')), 'lastSaleDate'],
+        ],
+        include: [
+          {
+            model: require('../db/models').Store,
+            as: 'store',
+            attributes: ['id', 'name', 'location'],
+          },
+        ],
+        group: ['storeId', 'store.id', 'store.name', 'store.location'],
+        raw: true,
+      });
+
+      // Get sales trends over time across all stores
+      const salesTrends = await Sale.findAll({
+        where: {
+          tenantId,
+          status: 'completed',
+          ...(startDate && endDate && { saleDate: { [Op.between]: [startDate, endDate] } }),
+        },
+        attributes: [
+          [fn('DATE', col('saleDate')), 'date'],
+          [fn('COUNT', col('id')), 'totalSales'],
+          [fn('SUM', col('totalAmount')), 'totalRevenue'],
+        ],
+        group: [fn('DATE', col('saleDate'))],
+        order: [[fn('DATE', col('saleDate')), 'ASC']],
+        raw: true,
+      });
+
+      // Calculate summary metrics
+      const totalRevenue = storeSales.reduce((sum, store: any) => sum + parseFloat(store.totalRevenue || '0'), 0);
+      const totalSales = storeSales.reduce((sum, store: any) => sum + parseInt(store.totalSales || '0'), 0);
+      const averageSaleValue = totalSales > 0 ? totalRevenue / totalSales : 0;
+
+      return {
+        period: {
+          startDate: filters.startDate,
+          endDate: filters.endDate,
+        },
+        summary: {
+          totalStores: storeSales.length,
+          totalRevenue,
+          totalSales,
+          averageSaleValue,
+        },
+        storePerformance: storeSales.map((store: any) => ({
+          storeId: store.storeId,
+          storeName: store['store.name'],
+          location: store['store.location'],
+          totalSales: parseInt(store.totalSales || '0'),
+          totalRevenue: parseFloat(store.totalRevenue || '0'),
+          averageSale: parseFloat(store.averageSale || '0'),
+          lastSaleDate: store.lastSaleDate,
+        })),
+        trends: salesTrends.map((trend: any) => ({
+          date: trend.date,
+          totalSales: parseInt(trend.totalSales || '0'),
+          totalRevenue: parseFloat(trend.totalRevenue || '0'),
+        })),
+        generatedAt: new Date(),
+      };
+    } catch (error: any) {
+      logger.error('Generate regional sales dashboard error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Generate regional inventory dashboard
+   */
+  static async generateRegionalInventoryDashboard(tenantId: string, filters: ReportFilters = {}): Promise<any> {
+    try {
+      // Get inventory data grouped by store
+      const storeInventory = await Inventory.findAll({
+        where: { tenantId },
+        attributes: [
+          'storeId',
+          [fn('COUNT', col('id')), 'totalProducts'],
+          [fn('SUM', literal('quantity_available * (SELECT unit_cost FROM products WHERE products.id = inventories.product_id)')), 'totalValue'],
+          [fn('SUM', col('quantityAvailable')), 'totalQuantity'],
+        ],
+        include: [
+          {
+            model: require('../db/models').Store,
+            as: 'store',
+            attributes: ['id', 'name', 'location'],
+          },
+        ],
+        group: ['storeId', 'store.id', 'store.name', 'store.location'],
+        raw: true,
+      });
+
+      // Get low stock alerts across all stores
+      const lowStockAlerts = await Inventory.findAll({
+        where: {
+          tenantId,
+          [Op.and]: [
+            literal('quantity_available <= reorder_point'),
+            literal('quantity_available > 0'),
+          ],
+        },
+        include: [
+          {
+            model: Product,
+            as: 'product',
+            attributes: ['id', 'name', 'sku'],
+          },
+          {
+            model: require('../db/models').Store,
+            as: 'store',
+            attributes: ['id', 'name'],
+          },
+        ],
+        order: [['quantityAvailable', 'ASC']],
+        limit: 50,
+      });
+
+      // Get out of stock items
+      const outOfStockItems = await Inventory.findAll({
+        where: {
+          tenantId,
+          quantityAvailable: { [Op.lte]: 0 },
+        },
+        include: [
+          {
+            model: Product,
+            as: 'product',
+            attributes: ['id', 'name', 'sku'],
+          },
+          {
+            model: require('../db/models').Store,
+            as: 'store',
+            attributes: ['id', 'name'],
+          },
+        ],
+        limit: 50,
+      });
+
+      const totalValue = storeInventory.reduce((sum, store: any) => sum + parseFloat(store.totalValue || '0'), 0);
+      const totalProducts = storeInventory.reduce((sum, store: any) => sum + parseInt(store.totalProducts || '0'), 0);
+
+      return {
+        summary: {
+          totalStores: storeInventory.length,
+          totalValue,
+          totalProducts,
+          lowStockAlerts: lowStockAlerts.length,
+          outOfStockItems: outOfStockItems.length,
+        },
+        storeInventory: storeInventory.map((store: any) => ({
+          storeId: store.storeId,
+          storeName: store['store.name'],
+          location: store['store.location'],
+          totalProducts: parseInt(store.totalProducts || '0'),
+          totalValue: parseFloat(store.totalValue || '0'),
+          totalQuantity: parseInt(store.totalQuantity || '0'),
+        })),
+        alerts: {
+          lowStock: lowStockAlerts.map(item => ({
+            productId: item.productId,
+            productName: item.product?.name,
+            sku: item.product?.sku,
+            storeId: item.storeId,
+            storeName: item.store?.name,
+            currentStock: item.quantityAvailable,
+            reorderPoint: item.reorderPoint,
+          })),
+          outOfStock: outOfStockItems.map(item => ({
+            productId: item.productId,
+            productName: item.product?.name,
+            sku: item.product?.sku,
+            storeId: item.storeId,
+            storeName: item.store?.name,
+            currentStock: item.quantityAvailable,
+            reorderPoint: item.reorderPoint,
+          })),
+        },
+        generatedAt: new Date(),
+      };
+    } catch (error: any) {
+      logger.error('Generate regional inventory dashboard error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Generate regional performance dashboard
+   */
+  static async generateRegionalPerformanceDashboard(tenantId: string, filters: ReportFilters = {}): Promise<any> {
+    try {
+      const { startDate, endDate } = filters;
+
+      // Get comprehensive performance metrics by store
+      const storePerformance = await Sale.findAll({
+        where: {
+          tenantId,
+          status: 'completed',
+          ...(startDate && endDate && { saleDate: { [Op.between]: [startDate, endDate] } }),
+        },
+        attributes: [
+          'storeId',
+          [fn('COUNT', col('id')), 'totalSales'],
+          [fn('SUM', col('totalAmount')), 'totalRevenue'],
+          [fn('SUM', col('taxAmount')), 'totalTax'],
+          [fn('SUM', col('discountAmount')), 'totalDiscounts'],
+          [fn('AVG', col('totalAmount')), 'averageSaleValue'],
+          [fn('COUNT', literal('DISTINCT customer_id')), 'uniqueCustomers'],
+        ],
+        include: [
+          {
+            model: require('../db/models').Store,
+            as: 'store',
+            attributes: ['id', 'name', 'location'],
+          },
+        ],
+        group: ['storeId', 'store.id', 'store.name', 'store.location'],
+        raw: true,
+      });
+
+      // Get customer metrics by store
+      const customerMetrics = await Customer.findAll({
+        where: { tenantId },
+        attributes: [
+          'storeId',
+          [fn('COUNT', col('id')), 'totalCustomers'],
+          [fn('AVG', col('totalSpent')), 'averageSpent'],
+          [fn('SUM', col('loyaltyPoints')), 'totalLoyaltyPoints'],
+          [fn('COUNT', literal('CASE WHEN total_spent > 0 THEN 1 END')), 'activeCustomers'],
+        ],
+        include: [
+          {
+            model: require('../db/models').Store,
+            as: 'store',
+            attributes: ['id', 'name'],
+          },
+        ],
+        group: ['storeId', 'store.id', 'store.name'],
+        raw: true,
+      });
+
+      // Calculate profitability (revenue - cost of goods sold approximation)
+      // This would need more complex calculations in a real implementation
+      const performanceWithProfitability = storePerformance.map((store: any) => {
+        const revenue = parseFloat(store.totalRevenue || '0');
+        const tax = parseFloat(store.totalTax || '0');
+        const discounts = parseFloat(store.totalDiscounts || '0');
+        const netRevenue = revenue - tax - discounts;
+
+        // Simplified COGS calculation (would need actual cost data)
+        const estimatedCOGS = netRevenue * 0.6; // Assume 60% COGS
+        const estimatedProfit = netRevenue - estimatedCOGS;
+        const profitMargin = netRevenue > 0 ? (estimatedProfit / netRevenue) * 100 : 0;
+
+        return {
+          storeId: store.storeId,
+          storeName: store['store.name'],
+          location: store['store.location'],
+          sales: {
+            totalSales: parseInt(store.totalSales || '0'),
+            totalRevenue: revenue,
+            netRevenue,
+            averageSaleValue: parseFloat(store.averageSaleValue || '0'),
+            totalTax: tax,
+            totalDiscounts: discounts,
+          },
+          customers: {
+            uniqueCustomers: parseInt(store.uniqueCustomers || '0'),
+          },
+          profitability: {
+            estimatedCOGS,
+            estimatedProfit,
+            profitMargin: Math.round(profitMargin * 100) / 100,
+          },
+        };
+      });
+
+      return {
+        period: {
+          startDate: filters.startDate,
+          endDate: filters.endDate,
+        },
+        summary: {
+          totalStores: storePerformance.length,
+          totalRevenue: performanceWithProfitability.reduce((sum, store) => sum + store.sales.totalRevenue, 0),
+          totalProfit: performanceWithProfitability.reduce((sum, store) => sum + store.profitability.estimatedProfit, 0),
+          averageProfitMargin: performanceWithProfitability.length > 0
+            ? performanceWithProfitability.reduce((sum, store) => sum + store.profitability.profitMargin, 0) / performanceWithProfitability.length
+            : 0,
+        },
+        storePerformance: performanceWithProfitability,
+        customerMetrics: customerMetrics.map((metric: any) => ({
+          storeId: metric.storeId,
+          storeName: metric['store.name'],
+          totalCustomers: parseInt(metric.totalCustomers || '0'),
+          activeCustomers: parseInt(metric.activeCustomers || '0'),
+          averageSpent: parseFloat(metric.averageSpent || '0'),
+          totalLoyaltyPoints: parseInt(metric.totalLoyaltyPoints || '0'),
+        })),
+        generatedAt: new Date(),
+      };
+    } catch (error: any) {
+      logger.error('Generate regional performance dashboard error:', error);
+      throw error;
+    }
+  }
+
   // Helper methods for data retrieval
   private static async getSalesData(tenantId: string, filters: ReportFilters): Promise<any[]> {
     const { startDate, endDate, storeId, customerId, userId } = filters;

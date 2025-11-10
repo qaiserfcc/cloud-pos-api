@@ -44,4 +44,17 @@ router.post('/stock-take', requirePermission('inventory:update'), InventoryContr
 // DELETE /api/v1/inventory/:productId - Delete inventory record
 router.delete('/:productId', requirePermission('inventory:delete'), InventoryController.deleteInventory);
 
+// Multi-store inventory routes (require higher permissions)
+// GET /api/v1/inventory/tenant/all - Get all inventory across tenant stores
+router.get('/tenant/all', requirePermission('inventory:view_all'), InventoryController.getTenantInventory);
+
+// GET /api/v1/inventory/tenant/product/:productId - Get product inventory across all stores
+router.get('/tenant/product/:productId', requirePermission('inventory:view_all'), InventoryController.getProductInventoryAcrossStores);
+
+// GET /api/v1/inventory/tenant/low-stock - Get low stock items across tenant
+router.get('/tenant/low-stock', requirePermission('inventory:view_all'), InventoryController.getTenantLowStockItems);
+
+// GET /api/v1/inventory/tenant/stats - Get tenant-wide inventory statistics
+router.get('/tenant/stats', requirePermission('inventory:view_all'), InventoryController.getTenantInventoryStats);
+
 export default router;

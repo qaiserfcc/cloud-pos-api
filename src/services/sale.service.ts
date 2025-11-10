@@ -1,6 +1,6 @@
 import { Sale, SaleItem, Payment, Product, Customer, User } from '../db/models';
 import { InventoryService } from './inventory.service';
-import { Op, Transaction } from 'sequelize';
+import { Op, Transaction, fn, col } from 'sequelize';
 import logger from '../config/logger';
 
 export interface CreateSaleData {
@@ -885,6 +885,285 @@ export class SaleService {
     } catch (error: any) {
       logger.error('Error deleting sale:', error);
       throw error;
+    }
+  }
+
+  /**
+   * Get tenant-wide sales statistics across all stores
+   */
+  static async getTenantSalesStats(tenantId: string, startDate?: Date, endDate?: Date): Promise<any> {
+    try {
+      const dateFilter: any = {};
+      if (startDate || endDate) {
+        if (startDate) dateFilter[Op.gte] = startDate;
+        if (endDate) dateFilter[Op.lte] = endDate;
+      }
+
+      const whereClause = {
+        tenantId,
+        ...(Object.keys(dateFilter).length > 0 && { saleDate: dateFilter }),
+      };
+
+      const totalSales = await Sale.count({ where: whereClause });
+
+      const completedSales = await Sale.count({
+        where: { ...whereClause, status: 'completed' },
+      });
+
+      const totalRevenue = await Sale.sum('totalAmount', {
+        where: { ...whereClause, status: 'completed' },
+      });
+
+      const totalTax = await Sale.sum('taxAmount', {
+        where: { ...whereClause, status: 'completed' },
+      });
+
+      const totalDiscount = await Sale.sum('discountAmount', {
+        where: { ...whereClause, status: 'completed' },
+      });
+
+      return {
+        totalSales,
+        completedSales,
+        totalRevenue: totalRevenue ? parseFloat(totalRevenue.toString()) : 0,
+        totalTax: totalTax ? parseFloat(totalTax.toString()) : 0,
+        totalDiscount: totalDiscount ? parseFloat(totalDiscount.toString()) : 0,
+        averageSaleValue: totalRevenue && completedSales ? parseFloat(totalRevenue.toString()) / completedSales : 0,
+      };
+    } catch (error) {
+      logger.error('Error getting tenant sales stats:', error);
+      throw new Error('Failed to get tenant sales statistics');
+    }
+  }
+
+  /**
+   * Compare sales performance across stores
+   */
+  static async compareStoreSales(tenantId: string, startDate?: Date, endDate?: Date): Promise<any[]> {
+    try {
+      const dateFilter: any = {};
+      if (startDate || endDate) {
+        if (startDate) dateFilter[Op.gte] = startDate;
+        if (endDate) dateFilter[Op.lte] = endDate;
+      }
+
+      const whereClause = {
+        tenantId,
+        status: 'completed',
+        ...(Object.keys(dateFilter).length > 0 && { saleDate: dateFilter }),
+      };
+
+      const storeStats = await Sale.findAll({
+        where: whereClause,
+        attributes: [
+          'storeId',
+          [fn('COUNT', col('id')), 'totalSales'],
+          [fn('SUM', col('totalAmount')), 'totalRevenue'],
+          [fn('SUM', col('taxAmount')), 'totalTax'],
+          [fn('SUM', col('discountAmount')), 'totalDiscount'],
+          [fn('AVG', col('totalAmount')), 'averageSaleValue'],
+          [fn('MIN', col('saleDate')), 'firstSaleDate'],
+          [fn('MAX', col('saleDate')), 'lastSaleDate'],
+        ],
+        group: ['storeId'],
+        raw: true,
+      });
+
+      return storeStats.map((stat: any) => ({
+        storeId: stat.storeId,
+        totalSales: parseInt(stat.totalSales.toString()),
+        totalRevenue: parseFloat(stat.totalRevenue.toString()),
+        totalTax: parseFloat(stat.totalTax.toString()),
+        totalDiscount: parseFloat(stat.totalDiscount.toString()),
+        averageSaleValue: parseFloat(stat.averageSaleValue.toString()),
+        firstSaleDate: stat.firstSaleDate,
+        lastSaleDate: stat.lastSaleDate,
+      }));
+    } catch (error) {
+      logger.error('Error comparing store sales:', error);
+      throw new Error('Failed to compare store sales');
+    }
+  }
+
+  /**
+   * Get sales trends across all stores in tenant
+   */
+  static async getTenantSalesTrends(tenantId: string, startDate?: Date, endDate?: Date): Promise<any[]> {
+    try {
+      const dateRange = startDate && endDate ? { [Op.between]: [startDate, endDate] } : {};
+
+      const trends = await Sale.findAll({
+        where: {
+          tenantId,
+          status: 'completed',
+          ...(Object.keys(dateRange).length > 0 && { saleDate: dateRange }),
+        },
+        attributes: [
+          [fn('DATE', col('saleDate')), 'date'],
+          [fn('COUNT', col('id')), 'totalSales'],
+          [fn('SUM', col('totalAmount')), 'totalRevenue'],
+        ],
+        group: [fn('DATE', col('saleDate'))],
+        order: [[fn('DATE', col('saleDate')), 'ASC']],
+        raw: true,
+      });
+
+      return trends.map((trend: any) => ({
+        date: trend.date,
+        totalSales: parseInt(trend.totalSales.toString()),
+        totalRevenue: parseFloat(trend.totalRevenue.toString()),
+      }));
+    } catch (error) {
+      logger.error('Error getting tenant sales trends:', error);
+      throw new Error('Failed to get tenant sales trends');
+    }
+  }
+
+  /**
+   * Get inventory turnover metrics across stores
+   */
+  static async getInventoryTurnoverMetrics(tenantId: string, startDate?: Date, endDate?: Date): Promise<any[]> {
+    try {
+      // This would require joining sales with inventory data
+      // For now, return basic sales volume by product across stores
+      const productSales = await Sale.findAll({
+        where: {
+          tenantId,
+          status: 'completed',
+          ...(startDate && endDate && { saleDate: { [Op.between]: [startDate, endDate] } }),
+        },
+        include: [
+          {
+            model: SaleItem,
+            as: 'saleItems',
+            include: [
+              {
+                model: Product,
+                as: 'product',
+                attributes: ['id', 'name', 'sku'],
+              },
+            ],
+          },
+        ],
+        attributes: ['storeId'],
+      });
+
+      // Aggregate sales by store and product
+      const turnoverData: { [key: string]: any } = {};
+
+      for (const sale of productSales) {
+        const storeId = sale.storeId;
+        if (!turnoverData[storeId]) {
+          turnoverData[storeId] = {
+            storeId,
+            productsSold: {},
+            totalItemsSold: 0,
+          };
+        }
+
+        for (const item of sale.saleItems || []) {
+          const productId = item.productId;
+          const quantity = parseFloat(item.quantity.toString());
+
+          if (!turnoverData[storeId].productsSold[productId]) {
+            turnoverData[storeId].productsSold[productId] = {
+              productId,
+              productName: item.product?.name,
+              quantitySold: 0,
+            };
+          }
+
+          turnoverData[storeId].productsSold[productId].quantitySold += quantity;
+          turnoverData[storeId].totalItemsSold += quantity;
+        }
+      }
+
+      return Object.values(turnoverData).map((storeData: any) => ({
+        storeId: storeData.storeId,
+        totalItemsSold: storeData.totalItemsSold,
+        uniqueProductsSold: Object.keys(storeData.productsSold).length,
+        topProducts: Object.values(storeData.productsSold)
+          .sort((a: any, b: any) => b.quantitySold - a.quantitySold)
+          .slice(0, 5),
+      }));
+    } catch (error) {
+      logger.error('Error getting inventory turnover metrics:', error);
+      throw new Error('Failed to get inventory turnover metrics');
+    }
+  }
+
+  /**
+   * Get profitability metrics across stores
+   */
+  static async getStoreProfitabilityMetrics(tenantId: string, startDate?: Date, endDate?: Date): Promise<any[]> {
+    try {
+      // Get sales data with cost information
+      const salesData = await Sale.findAll({
+        where: {
+          tenantId,
+          status: 'completed',
+          ...(startDate && endDate && { saleDate: { [Op.between]: [startDate, endDate] } }),
+        },
+        include: [
+          {
+            model: SaleItem,
+            as: 'saleItems',
+            include: [
+              {
+                model: Product,
+                as: 'product',
+                attributes: ['id', 'unitCost'],
+              },
+            ],
+          },
+        ],
+        attributes: ['storeId', 'totalAmount', 'taxAmount', 'discountAmount'],
+      });
+
+      // Calculate profitability by store
+      const profitabilityData: { [key: string]: any } = {};
+
+      for (const sale of salesData) {
+        const storeId = sale.storeId;
+        if (!profitabilityData[storeId]) {
+          profitabilityData[storeId] = {
+            storeId,
+            totalRevenue: 0,
+            totalCost: 0,
+            totalTax: 0,
+            totalDiscount: 0,
+            totalSales: 0,
+          };
+        }
+
+        profitabilityData[storeId].totalRevenue += parseFloat(sale.totalAmount.toString());
+        profitabilityData[storeId].totalTax += parseFloat(sale.taxAmount.toString());
+        profitabilityData[storeId].totalDiscount += parseFloat(sale.discountAmount.toString());
+        profitabilityData[storeId].totalSales += 1;
+
+        // Calculate cost of goods sold
+        for (const item of sale.saleItems || []) {
+          const quantity = parseFloat(item.quantity.toString());
+          const unitCost = parseFloat(item.product?.unitCost?.toString() || '0');
+          profitabilityData[storeId].totalCost += quantity * unitCost;
+        }
+      }
+
+      return Object.values(profitabilityData).map((storeData: any) => ({
+        storeId: storeData.storeId,
+        totalRevenue: storeData.totalRevenue,
+        totalCost: storeData.totalCost,
+        grossProfit: storeData.totalRevenue - storeData.totalCost,
+        profitMargin: storeData.totalRevenue > 0 ? ((storeData.totalRevenue - storeData.totalCost) / storeData.totalRevenue) * 100 : 0,
+        totalTax: storeData.totalTax,
+        totalDiscount: storeData.totalDiscount,
+        netProfit: storeData.totalRevenue - storeData.totalCost - storeData.totalTax,
+        totalSales: storeData.totalSales,
+        averageProfitPerSale: storeData.totalSales > 0 ? (storeData.totalRevenue - storeData.totalCost) / storeData.totalSales : 0,
+      }));
+    } catch (error) {
+      logger.error('Error getting store profitability metrics:', error);
+      throw new Error('Failed to get store profitability metrics');
     }
   }
 }

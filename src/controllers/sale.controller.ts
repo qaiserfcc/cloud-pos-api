@@ -614,4 +614,174 @@ export class SaleController {
       next(error);
     }
   }
+
+  /**
+   * Get tenant-wide sales statistics
+   */
+  static async getTenantSalesStats(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const tenantId = req.user?.tenantId;
+
+      if (!tenantId) {
+        res.status(400).json({
+          success: false,
+          error: 'Tenant ID is required',
+        });
+        return;
+      }
+
+      const { startDate, endDate } = req.query;
+
+      const start = startDate ? new Date(startDate as string) : undefined;
+      const end = endDate ? new Date(endDate as string) : undefined;
+
+      const stats = await SaleService.getTenantSalesStats(tenantId, start, end);
+
+      logger.info(`Retrieved tenant-wide sales statistics for tenant ${tenantId}`);
+
+      res.json({
+        success: true,
+        data: stats,
+      });
+    } catch (error: any) {
+      logger.error('Get tenant sales stats error:', error);
+      next(error);
+    }
+  }
+
+  /**
+   * Compare sales performance across stores
+   */
+  static async compareStoreSales(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const tenantId = req.user?.tenantId;
+
+      if (!tenantId) {
+        res.status(400).json({
+          success: false,
+          error: 'Tenant ID is required',
+        });
+        return;
+      }
+
+      const { startDate, endDate } = req.query;
+
+      const start = startDate ? new Date(startDate as string) : undefined;
+      const end = endDate ? new Date(endDate as string) : undefined;
+
+      const comparison = await SaleService.compareStoreSales(tenantId, start, end);
+
+      logger.info(`Retrieved store sales comparison for tenant ${tenantId}`);
+
+      res.json({
+        success: true,
+        data: comparison,
+      });
+    } catch (error: any) {
+      logger.error('Compare store sales error:', error);
+      next(error);
+    }
+  }
+
+  /**
+   * Get sales trends across all stores
+   */
+  static async getTenantSalesTrends(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const tenantId = req.user?.tenantId;
+
+      if (!tenantId) {
+        res.status(400).json({
+          success: false,
+          error: 'Tenant ID is required',
+        });
+        return;
+      }
+
+      const { startDate, endDate } = req.query;
+
+      const start = startDate ? new Date(startDate as string) : undefined;
+      const end = endDate ? new Date(endDate as string) : undefined;
+
+      const trends = await SaleService.getTenantSalesTrends(tenantId, start, end);
+
+      logger.info(`Retrieved tenant sales trends for tenant ${tenantId}`);
+
+      res.json({
+        success: true,
+        data: trends,
+      });
+    } catch (error: any) {
+      logger.error('Get tenant sales trends error:', error);
+      next(error);
+    }
+  }
+
+  /**
+   * Get inventory turnover metrics across stores
+   */
+  static async getInventoryTurnoverMetrics(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const tenantId = req.user?.tenantId;
+
+      if (!tenantId) {
+        res.status(400).json({
+          success: false,
+          error: 'Tenant ID is required',
+        });
+        return;
+      }
+
+      const { startDate, endDate } = req.query;
+
+      const start = startDate ? new Date(startDate as string) : undefined;
+      const end = endDate ? new Date(endDate as string) : undefined;
+
+      const metrics = await SaleService.getInventoryTurnoverMetrics(tenantId, start, end);
+
+      logger.info(`Retrieved inventory turnover metrics for tenant ${tenantId}`);
+
+      res.json({
+        success: true,
+        data: metrics,
+      });
+    } catch (error: any) {
+      logger.error('Get inventory turnover metrics error:', error);
+      next(error);
+    }
+  }
+
+  /**
+   * Get profitability metrics across stores
+   */
+  static async getStoreProfitabilityMetrics(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const tenantId = req.user?.tenantId;
+
+      if (!tenantId) {
+        res.status(400).json({
+          success: false,
+          error: 'Tenant ID is required',
+        });
+        return;
+      }
+
+      const { startDate, endDate } = req.query;
+
+      const start = startDate ? new Date(startDate as string) : undefined;
+      const end = endDate ? new Date(endDate as string) : undefined;
+
+      const metrics = await SaleService.getStoreProfitabilityMetrics(tenantId, start, end);
+
+      logger.info(`Retrieved store profitability metrics for tenant ${tenantId}`);
+
+      res.json({
+        success: true,
+        data: metrics,
+      });
+    } catch (error: any) {
+      logger.error('Get store profitability metrics error:', error);
+      next(error);
+    }
+  }
 }

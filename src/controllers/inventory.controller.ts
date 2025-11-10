@@ -641,4 +641,142 @@ export class InventoryController {
       next(error);
     }
   }
+
+  /**
+   * Get inventory across all stores for a tenant (Centralized Inventory Visibility)
+   */
+  static async getTenantInventory(req: Request, res: Response): Promise<void> {
+    try {
+      const { tenantId } = req.body.context;
+      const {
+        storeIds,
+        productIds,
+        includeInactive = false,
+        lowStockOnly = false,
+        categoryId,
+      } = req.query;
+
+      const filters: any = {
+        includeInactive: includeInactive === 'true',
+        lowStockOnly: lowStockOnly === 'true',
+      };
+
+      if (storeIds) {
+        filters.storeIds = Array.isArray(storeIds) ? storeIds as string[] : [storeIds as string];
+      }
+
+      if (productIds) {
+        filters.productIds = Array.isArray(productIds) ? productIds as string[] : [productIds as string];
+      }
+
+      if (categoryId) {
+        filters.categoryId = categoryId as string;
+      }
+
+      const inventories = await InventoryService.getTenantInventory(tenantId, filters);
+
+      res.status(200).json({
+        success: true,
+        data: inventories,
+        count: inventories.length,
+      });
+      return;
+    } catch (error: any) {
+      logger.error('Error getting tenant inventory:', error);
+      res.status(500).json({
+        success: false,
+        message: error.message || 'Failed to get tenant inventory',
+      });
+    }
+  }
+
+  /**
+   * Get inventory by product across all stores
+   */
+  static async getProductInventoryAcrossStores(req: Request, res: Response): Promise<void> {
+    try {
+      const { tenantId } = req.body.context;
+      const { productId } = req.params;
+
+      if (!productId) {
+        res.status(400).json({
+          success: false,
+          message: 'Product ID is required',
+        });
+        return;
+      }
+
+      const inventories = await InventoryService.getProductInventoryAcrossStores(productId, tenantId);
+
+      res.status(200).json({
+        success: true,
+        data: inventories,
+        count: inventories.length,
+      });
+      return;
+    } catch (error: any) {
+      logger.error('Error getting product inventory across stores:', error);
+      res.status(500).json({
+        success: false,
+        message: error.message || 'Failed to get product inventory across stores',
+      });
+    }
+  }
+
+  /**
+   * Get low stock items across all stores for a tenant
+   */
+  static async getTenantLowStockItems(req: Request, res: Response): Promise<void> {
+    try {
+      const { tenantId } = req.body.context;
+      const { storeIds } = req.query;
+
+      const storeIdsArray = storeIds
+        ? Array.isArray(storeIds) ? storeIds as string[] : [storeIds as string]
+        : undefined;
+
+      const lowStockItems = await InventoryService.getTenantLowStockItems(tenantId, storeIdsArray);
+
+      res.status(200).json({
+        success: true,
+        data: lowStockItems,
+        count: lowStockItems.length,
+      });
+      return;
+    } catch (error: any) {
+      logger.error('Error getting tenant low stock items:', error);
+      res.status(500).json({
+        success: false,
+        message: error.message || 'Failed to get tenant low stock items',
+      });
+    }
+  }
+
+  /**
+   * Get inventory statistics across all stores for a tenant
+   */
+  static async getTenantInventoryStats(req: Request, res: Response): Promise<void> {
+    try {
+      const { tenantId } = req.body.context;
+      const { storeIds } = req.query;
+
+      const storeIdsArray = storeIds
+        ? Array.isArray(storeIds) ? storeIds as string[] : [storeIds as string]
+        : undefined;
+
+      const stats = await InventoryService.getTenantInventoryStats(tenantId, storeIdsArray);
+
+      res.status(200).json({
+        success: true,
+        data: stats,
+      });
+      return;
+    } catch (error: any) {
+      logger.error('Error getting tenant inventory stats:', error);
+      res.status(500).json({
+        success: false,
+        message: error.message || 'Failed to get tenant inventory statistics',
+      });
+    }
+  }
 }

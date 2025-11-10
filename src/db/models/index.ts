@@ -13,6 +13,7 @@ import SaleItem from './SaleItem';
 import Payment from './Payment';
 import Inventory from './Inventory';
 import DashboardWidget from './DashboardWidget';
+import InventoryTransfer from './InventoryTransfer';
 
 // Tenant associations
 Tenant.hasMany(Store, {
@@ -314,6 +315,37 @@ DashboardWidget.belongsTo(Store, {
   as: 'store',
 });
 
+// InventoryTransfer associations
+InventoryTransfer.belongsTo(Tenant, {
+  foreignKey: 'tenantId',
+  as: 'tenant',
+});
+
+InventoryTransfer.belongsTo(Store, {
+  foreignKey: 'sourceStoreId',
+  as: 'sourceStore',
+});
+
+InventoryTransfer.belongsTo(Store, {
+  foreignKey: 'destinationStoreId',
+  as: 'destinationStore',
+});
+
+InventoryTransfer.belongsTo(Product, {
+  foreignKey: 'productId',
+  as: 'product',
+});
+
+InventoryTransfer.belongsTo(User, {
+  foreignKey: 'requestedBy',
+  as: 'requester',
+});
+
+InventoryTransfer.belongsTo(User, {
+  foreignKey: 'approvedBy',
+  as: 'approver',
+});
+
 export {
   sequelize,
   Tenant,
@@ -329,6 +361,7 @@ export {
   Payment,
   Inventory,
   DashboardWidget,
+  InventoryTransfer,
   UserRole,
   RolePermission,
 };

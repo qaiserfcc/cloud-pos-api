@@ -651,4 +651,288 @@ export class InventoryService {
       throw error;
     }
   }
+
+  /**
+   * Get inventory across all stores for a tenant (Centralized Inventory Visibility)
+   */
+  static async getTenantInventory(tenantId: string, filters?: {
+    storeIds?: string[];
+    productIds?: string[];
+    includeInactive?: boolean;
+    lowStockOnly?: boolean;
+    categoryId?: string;
+  }): Promise<InventoryWithProduct[]> {
+    try {
+      const whereClause: any = { tenantId };
+
+      if (filters?.storeIds && filters.storeIds.length > 0) {
+        whereClause.storeId = { [Op.in]: filters.storeIds };
+      }
+
+      if (filters?.productIds && filters.productIds.length > 0) {
+        whereClause.productId = { [Op.in]: filters.productIds };
+      }
+
+      if (!filters?.includeInactive) {
+        whereClause.quantityOnHand = { [Op.gt]: 0 };
+      }
+
+      if (filters?.lowStockOnly) {
+        whereClause[Op.and] = [
+          Inventory.sequelize!.literal('quantity_available <= reorder_point'),
+          Inventory.sequelize!.literal('quantity_available > 0'),
+        ];
+      }
+
+      let includeConditions: any[] = [
+        {
+          model: Product,
+          as: 'product',
+          required: true,
+          attributes: ['id', 'name', 'sku', 'barcode'],
+        },
+      ];
+
+      if (filters?.categoryId) {
+        includeConditions[0].where = { categoryId: filters.categoryId };
+        includeConditions[0].required = true;
+      }
+
+      const inventories = await Inventory.findAll({
+        where: whereClause,
+        include: includeConditions,
+        order: [
+          [{ model: Product, as: 'product' }, 'name', 'ASC'],
+          ['storeId', 'ASC'],
+        ],
+      });
+
+      return inventories.map(inventory => ({
+        id: inventory.id,
+        tenantId: inventory.tenantId,
+        storeId: inventory.storeId,
+        productId: inventory.productId,
+        quantityOnHand: parseFloat(inventory.quantityOnHand.toString()),
+        quantityReserved: parseFloat(inventory.quantityReserved.toString()),
+        quantityAvailable: parseFloat(inventory.quantityAvailable.toString()),
+        reorderPoint: parseFloat(inventory.reorderPoint.toString()),
+        reorderQuantity: parseFloat(inventory.reorderQuantity.toString()),
+        lastStockTakeDate: inventory.lastStockTakeDate,
+        lastStockTakeQuantity: inventory.lastStockTakeQuantity ? parseFloat(inventory.lastStockTakeQuantity.toString()) : undefined,
+        unitCost: inventory.unitCost ? parseFloat(inventory.unitCost.toString()) : undefined,
+        location: inventory.location,
+        batchNumber: inventory.batchNumber,
+        expiryDate: inventory.expiryDate,
+        product: inventory.product ? {
+          id: inventory.product.id,
+          name: inventory.product.name,
+          sku: inventory.product.sku,
+          barcode: inventory.product.barcode,
+        } : undefined,
+        isLowStock: parseFloat(inventory.quantityAvailable.toString()) <= parseFloat(inventory.reorderPoint.toString()),
+        createdAt: inventory.createdAt,
+        updatedAt: inventory.updatedAt,
+      })) as InventoryWithProduct[];
+    } catch (error) {
+      logger.error('Error getting tenant inventory:', error);
+      throw new Error('Failed to retrieve tenant inventory');
+    }
+  }
+
+  /**
+   * Get inventory by product across all stores
+   */
+  static async getProductInventoryAcrossStores(productId: string, tenantId: string): Promise<InventoryWithProduct[]> {
+    try {
+      const inventories = await Inventory.findAll({
+        where: { productId, tenantId },
+        include: [
+          {
+            model: Product,
+            as: 'product',
+            required: true,
+            attributes: ['id', 'name', 'sku', 'barcode'],
+          },
+        ],
+        order: [['storeId', 'ASC']],
+      });
+
+      return inventories.map(inventory => ({
+        id: inventory.id,
+        tenantId: inventory.tenantId,
+        storeId: inventory.storeId,
+        productId: inventory.productId,
+        quantityOnHand: parseFloat(inventory.quantityOnHand.toString()),
+        quantityReserved: parseFloat(inventory.quantityReserved.toString()),
+        quantityAvailable: parseFloat(inventory.quantityAvailable.toString()),
+        reorderPoint: parseFloat(inventory.reorderPoint.toString()),
+        reorderQuantity: parseFloat(inventory.reorderQuantity.toString()),
+        lastStockTakeDate: inventory.lastStockTakeDate,
+        lastStockTakeQuantity: inventory.lastStockTakeQuantity ? parseFloat(inventory.lastStockTakeQuantity.toString()) : undefined,
+        unitCost: inventory.unitCost ? parseFloat(inventory.unitCost.toString()) : undefined,
+        location: inventory.location,
+        batchNumber: inventory.batchNumber,
+        expiryDate: inventory.expiryDate,
+        product: inventory.product ? {
+          id: inventory.product.id,
+          name: inventory.product.name,
+          sku: inventory.product.sku,
+          barcode: inventory.product.barcode,
+        } : undefined,
+        isLowStock: parseFloat(inventory.quantityAvailable.toString()) <= parseFloat(inventory.reorderPoint.toString()),
+        createdAt: inventory.createdAt,
+        updatedAt: inventory.updatedAt,
+      })) as InventoryWithProduct[];
+    } catch (error) {
+      logger.error('Error getting product inventory across stores:', error);
+      throw new Error('Failed to retrieve product inventory across stores');
+    }
+  }
+
+  /**
+   * Get low stock items across all stores for a tenant
+   */
+  static async getTenantLowStockItems(tenantId: string, storeIds?: string[]): Promise<InventoryWithProduct[]> {
+    try {
+      const whereClause: any = {
+        tenantId,
+        [Op.and]: [
+          Inventory.sequelize!.literal('quantity_available <= reorder_point'),
+          Inventory.sequelize!.literal('quantity_available > 0'),
+        ],
+      };
+
+      if (storeIds && storeIds.length > 0) {
+        whereClause.storeId = { [Op.in]: storeIds };
+      }
+
+      const inventories = await Inventory.findAll({
+        where: whereClause,
+        include: [
+          {
+            model: Product,
+            as: 'product',
+            required: true,
+            attributes: ['id', 'name', 'sku', 'barcode'],
+          },
+        ],
+        order: [
+          ['quantityAvailable', 'ASC'],
+          [{ model: Product, as: 'product' }, 'name', 'ASC'],
+          ['storeId', 'ASC'],
+        ],
+      });
+
+      return inventories.map(inventory => ({
+        id: inventory.id,
+        tenantId: inventory.tenantId,
+        storeId: inventory.storeId,
+        productId: inventory.productId,
+        quantityOnHand: parseFloat(inventory.quantityOnHand.toString()),
+        quantityReserved: parseFloat(inventory.quantityReserved.toString()),
+        quantityAvailable: parseFloat(inventory.quantityAvailable.toString()),
+        reorderPoint: parseFloat(inventory.reorderPoint.toString()),
+        reorderQuantity: parseFloat(inventory.reorderQuantity.toString()),
+        lastStockTakeDate: inventory.lastStockTakeDate,
+        lastStockTakeQuantity: inventory.lastStockTakeQuantity ? parseFloat(inventory.lastStockTakeQuantity.toString()) : undefined,
+        unitCost: inventory.unitCost ? parseFloat(inventory.unitCost.toString()) : undefined,
+        location: inventory.location,
+        batchNumber: inventory.batchNumber,
+        expiryDate: inventory.expiryDate,
+        product: inventory.product ? {
+          id: inventory.product.id,
+          name: inventory.product.name,
+          sku: inventory.product.sku,
+          barcode: inventory.product.barcode,
+        } : undefined,
+        isLowStock: true,
+        createdAt: inventory.createdAt,
+        updatedAt: inventory.updatedAt,
+      })) as InventoryWithProduct[];
+    } catch (error) {
+      logger.error('Error getting tenant low stock items:', error);
+      throw new Error('Failed to retrieve tenant low stock items');
+    }
+  }
+
+  /**
+   * Get inventory statistics across all stores for a tenant
+   */
+  static async getTenantInventoryStats(tenantId: string, storeIds?: string[]): Promise<any> {
+    try {
+      const whereClause: any = { tenantId };
+      if (storeIds && storeIds.length > 0) {
+        whereClause.storeId = { [Op.in]: storeIds };
+      }
+
+      const totalItems = await Inventory.count({
+        where: whereClause,
+      });
+
+      const lowStockItems = await Inventory.count({
+        where: {
+          ...whereClause,
+          [Op.and]: [
+            Inventory.sequelize!.literal('quantity_available <= reorder_point'),
+            Inventory.sequelize!.literal('quantity_available > 0'),
+          ],
+        },
+      });
+
+      const outOfStockItems = await Inventory.count({
+        where: {
+          ...whereClause,
+          quantityAvailable: { [Op.lte]: 0 },
+        },
+      });
+
+      const totalValue = await Inventory.sum('unitCost', {
+        where: {
+          ...whereClause,
+          unitCost: { [Op.not]: null as any },
+        },
+      });
+
+      const expiringSoon = await Inventory.count({
+        where: {
+          ...whereClause,
+          expiryDate: {
+            [Op.lte]: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
+            [Op.not]: null as any,
+          },
+          quantityOnHand: { [Op.gt]: 0 },
+        },
+      });
+
+      // Get per-store breakdown
+      const storeStats = await Inventory.findAll({
+        where: whereClause,
+        attributes: [
+          'storeId',
+          [Inventory.sequelize!.fn('COUNT', Inventory.sequelize!.col('id')), 'itemCount'],
+          [Inventory.sequelize!.fn('SUM', Inventory.sequelize!.col('quantity_on_hand')), 'totalQuantity'],
+          [Inventory.sequelize!.fn('SUM', Inventory.sequelize!.literal('quantity_on_hand * unit_cost')), 'totalValue'],
+        ],
+        group: ['storeId'],
+        raw: true,
+      });
+
+      return {
+        totalItems,
+        lowStockItems,
+        outOfStockItems,
+        totalValue: totalValue ? parseFloat(totalValue.toString()) : 0,
+        expiringSoon,
+        storeBreakdown: storeStats.map(stat => ({
+          storeId: (stat as any).storeId,
+          itemCount: parseInt((stat as any).itemCount as string),
+          totalQuantity: parseFloat((stat as any).totalQuantity as string) || 0,
+          totalValue: parseFloat((stat as any).totalValue as string) || 0,
+        })),
+      };
+    } catch (error) {
+      logger.error('Error getting tenant inventory stats:', error);
+      throw new Error('Failed to get tenant inventory statistics');
+    }
+  }
 }

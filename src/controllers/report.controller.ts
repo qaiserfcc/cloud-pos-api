@@ -208,4 +208,111 @@ export class ReportController {
       next(error);
     }
   }
+
+  /**
+   * Generate regional sales dashboard
+   */
+  static async generateRegionalSalesDashboard(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const tenantId = req.user?.tenantId;
+      const {
+        startDate,
+        endDate,
+      } = req.query;
+
+      if (!tenantId) {
+        res.status(400).json({
+          success: false,
+          error: 'Tenant ID is required',
+        });
+        return;
+      }
+
+      const filters: ReportFilters = {
+        ...(startDate && { startDate: new Date(startDate as string) }),
+        ...(endDate && { endDate: new Date(endDate as string) }),
+      };
+
+      const dashboard = await ReportService.generateRegionalSalesDashboard(tenantId, filters);
+
+      logger.info(`Generated regional sales dashboard for tenant ${tenantId}`);
+
+      res.json({
+        success: true,
+        data: dashboard,
+      });
+    } catch (error: any) {
+      logger.error('Generate regional sales dashboard error:', error);
+      next(error);
+    }
+  }
+
+  /**
+   * Generate regional inventory dashboard
+   */
+  static async generateRegionalInventoryDashboard(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const tenantId = req.user?.tenantId;
+
+      if (!tenantId) {
+        res.status(400).json({
+          success: false,
+          error: 'Tenant ID is required',
+        });
+        return;
+      }
+
+      const filters: ReportFilters = {};
+
+      const dashboard = await ReportService.generateRegionalInventoryDashboard(tenantId, filters);
+
+      logger.info(`Generated regional inventory dashboard for tenant ${tenantId}`);
+
+      res.json({
+        success: true,
+        data: dashboard,
+      });
+    } catch (error: any) {
+      logger.error('Generate regional inventory dashboard error:', error);
+      next(error);
+    }
+  }
+
+  /**
+   * Generate regional performance dashboard
+   */
+  static async generateRegionalPerformanceDashboard(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const tenantId = req.user?.tenantId;
+      const {
+        startDate,
+        endDate,
+      } = req.query;
+
+      if (!tenantId) {
+        res.status(400).json({
+          success: false,
+          error: 'Tenant ID is required',
+        });
+        return;
+      }
+
+      const filters: ReportFilters = {
+        ...(startDate && { startDate: new Date(startDate as string) }),
+        ...(endDate && { endDate: new Date(endDate as string) }),
+      };
+
+      const dashboard = await ReportService.generateRegionalPerformanceDashboard(tenantId, filters);
+
+      logger.info(`Generated regional performance dashboard for tenant ${tenantId}`);
+
+      res.json({
+        success: true,
+        data: dashboard,
+      });
+    } catch (error: any) {
+      logger.error('Generate regional performance dashboard error:', error);
+      next(error);
+    }
+  }
 }
