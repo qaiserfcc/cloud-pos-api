@@ -413,4 +413,118 @@ export class UserService {
     const existingUser = await User.findOne({ where: whereClause });
     return !existingUser;
   }
+
+  /**
+   * Get all roles assigned to a user
+   */
+  static async getUserRoles(userId: string, tenantId: string): Promise<any[]> {
+    const user = await User.findOne({
+      where: { id: userId, tenantId },
+      include: [
+        {
+          model: Role,
+          as: 'roles',
+          required: false,
+          attributes: ['id', 'name', 'description', 'is_system'],
+          include: [
+            {
+              model: Permission,
+              as: 'permissions',
+              required: false,
+              attributes: ['id', 'name', 'resource', 'action', 'description'],
+            },
+          ],
+        },
+      ],
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    return (user as any).roles || [];
+  }
+
+  /**
+   * Assign roles to a user
+   */
+  static async assignRolesToUser(userId: string, tenantId: string, roleIds: string[]): Promise<void> {
+    const user = await User.findOne({
+      where: { id: userId, tenantId }
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    // Validate all roles exist and belong to the tenant
+    const roles = await Role.findAll({
+      where: {
+        id: { [Op.in]: roleIds },
+        tenantId
+      } as any
+    });
+
+    if (roles.length !== roleIds.length) {
+      throw new Error('One or more roles not found or do not belong to this tenant');
+    }
+
+    // Get current roles to check for duplicates
+    const currentRoles = await (user as any).getRoles();
+    const currentRoleIds = currentRoles.map((role: any) => role.id);
+    const newRoleIds = roleIds.filter(roleId => !currentRoleIds.includes(roleId));
+
+    if (newRoleIds.length === 0) {
+      throw new Error('All specified roles are already assigned to this user');
+    }
+
+    // Add new roles
+    const newRoles = roles.filter(role => newRoleIds.includes(role.id));
+    await (user as any).addRoles(newRoles);
+
+    logger.info(`Roles assigned to user: ${user.email}`, {
+      userId,
+      tenantId,
+      roleIds: newRoleIds,
+    });
+  }
+
+  /**
+   * Remove a role from a user
+   */
+  static async removeRoleFromUser(userId: string, tenantId: string, roleId: string): Promise<void> {
+    const user = await User.findOne({
+      where: { id: userId, tenantId }
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    // Check if role exists and belongs to tenant
+    const role = await Role.findOne({
+      where: { id: roleId, tenantId }
+    });
+
+    if (!role) {
+      throw new Error('Role not found or does not belong to this tenant');
+    }
+
+    // Check if user has this role
+    const userRoles = await (user as any).getRoles();
+    const hasRole = userRoles.some((userRole: any) => userRole.id === roleId);
+
+    if (!hasRole) {
+      throw new Error('User does not have this role assigned');
+    }
+
+    // Remove the role
+    await (user as any).removeRole(role);
+
+    logger.info(`Role removed from user: ${user.email}`, {
+      userId,
+      tenantId,
+      roleId,
+    });
+  }
 }

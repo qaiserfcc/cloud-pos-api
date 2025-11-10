@@ -417,4 +417,172 @@ export class UserController {
       next(error);
     }
   }
+
+  /**
+   * Get all roles assigned to a user
+   */
+  static async getUserRoles(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { userId } = req.params;
+      const tenantId = req.user?.tenantId;
+
+      if (!userId) {
+        res.status(400).json({
+          success: false,
+          error: 'User ID is required',
+        });
+        return;
+      }
+
+      if (!tenantId) {
+        res.status(400).json({
+          success: false,
+          error: 'Tenant ID is required',
+        });
+        return;
+      }
+
+      const roles = await UserService.getUserRoles(userId, tenantId);
+
+      res.json({
+        success: true,
+        data: roles,
+      });
+    } catch (error: any) {
+      logger.error('Get user roles error:', error);
+
+      if (error.message === 'User not found') {
+        res.status(404).json({
+          success: false,
+          error: error.message,
+        });
+        return;
+      }
+
+      next(error);
+    }
+  }
+
+  /**
+   * Assign roles to a user
+   */
+  static async assignRolesToUser(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { userId } = req.params;
+      const tenantId = req.user?.tenantId;
+      const { roleIds } = req.body;
+
+      if (!userId) {
+        res.status(400).json({
+          success: false,
+          error: 'User ID is required',
+        });
+        return;
+      }
+
+      if (!tenantId) {
+        res.status(400).json({
+          success: false,
+          error: 'Tenant ID is required',
+        });
+        return;
+      }
+
+      if (!roleIds || !Array.isArray(roleIds) || roleIds.length === 0) {
+        res.status(400).json({
+          success: false,
+          error: 'Role IDs array is required and cannot be empty',
+        });
+        return;
+      }
+
+      await UserService.assignRolesToUser(userId, tenantId, roleIds);
+
+      res.json({
+        success: true,
+        message: 'Roles assigned to user successfully',
+      });
+    } catch (error: any) {
+      logger.error('Assign roles to user error:', error);
+
+      if (error.message === 'User not found') {
+        res.status(404).json({
+          success: false,
+          error: error.message,
+        });
+        return;
+      }
+
+      if (error.message.includes('not found') || error.message.includes('do not belong') || error.message.includes('already assigned')) {
+        res.status(400).json({
+          success: false,
+          error: error.message,
+        });
+        return;
+      }
+
+      next(error);
+    }
+  }
+
+  /**
+   * Remove a role from a user
+   */
+  static async removeRoleFromUser(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { userId, roleId } = req.params;
+      const tenantId = req.user?.tenantId;
+
+      if (!userId) {
+        res.status(400).json({
+          success: false,
+          error: 'User ID is required',
+        });
+        return;
+      }
+
+      if (!roleId) {
+        res.status(400).json({
+          success: false,
+          error: 'Role ID is required',
+        });
+        return;
+      }
+
+      if (!tenantId) {
+        res.status(400).json({
+          success: false,
+          error: 'Tenant ID is required',
+        });
+        return;
+      }
+
+      await UserService.removeRoleFromUser(userId, tenantId, roleId);
+
+      res.json({
+        success: true,
+        message: 'Role removed from user successfully',
+      });
+    } catch (error: any) {
+      logger.error('Remove role from user error:', error);
+
+      if (error.message === 'User not found') {
+        res.status(404).json({
+          success: false,
+          error: error.message,
+        });
+        return;
+      }
+
+      if (error.message.includes('not found') || error.message.includes('does not belong') || error.message.includes('does not have')) {
+        res.status(400).json({
+          success: false,
+          error: error.message,
+        });
+        return;
+      }
+
+      next(error);
+    }
+  }
 }

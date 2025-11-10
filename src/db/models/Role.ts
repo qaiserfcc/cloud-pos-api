@@ -28,6 +28,22 @@ class Role extends Model<RoleAttributes, RoleCreationAttributes> implements Role
   declare public readonly tenant?: any;
   declare public readonly users?: any[];
   declare public readonly permissions?: any[];
+
+  // Many-to-many association mixins for users
+  declare public addUser: (user: any) => Promise<void>;
+  declare public removeUser: (user: any) => Promise<void>;
+  declare public addUsers: (users: any[]) => Promise<void>;
+  declare public removeUsers: (users: any[]) => Promise<void>;
+  declare public setUsers: (users: any[]) => Promise<void>;
+  declare public getUsers: () => Promise<any[]>;
+
+  // Many-to-many association mixins for permissions
+  declare public addPermission: (permission: any) => Promise<void>;
+  declare public removePermission: (permission: any) => Promise<void>;
+  declare public addPermissions: (permissions: any[]) => Promise<void>;
+  declare public removePermissions: (permissions: any[]) => Promise<void>;
+  declare public setPermissions: (permissions: any[]) => Promise<void>;
+  declare public getPermissions: () => Promise<any[]>;
 }
 
 Role.init(

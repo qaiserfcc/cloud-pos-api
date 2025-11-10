@@ -31,6 +31,14 @@ class Permission extends Model<PermissionAttributes, PermissionCreationAttribute
   // Association mixins
   declare public readonly tenant?: any;
   declare public readonly roles?: any[];
+
+  // Many-to-many association mixins for roles
+  declare public addRole: (role: any) => Promise<void>;
+  declare public removeRole: (role: any) => Promise<void>;
+  declare public addRoles: (roles: any[]) => Promise<void>;
+  declare public removeRoles: (roles: any[]) => Promise<void>;
+  declare public setRoles: (roles: any[]) => Promise<void>;
+  declare public getRoles: () => Promise<any[]>;
 }
 
 Permission.init(

@@ -35,4 +35,14 @@ router.put('/:id/change-password', UserController.changePassword);
 // PUT /api/v1/users/:id/reset-password - Reset user password (admin only)
 router.put('/:id/reset-password', requirePermission('user:update'), UserController.resetPassword);
 
+// User-Role Management Routes
+// GET /api/v1/users/:userId/roles - Get roles assigned to a user
+router.get('/:userId/roles', requirePermission('user:read'), UserController.getUserRoles);
+
+// POST /api/v1/users/:userId/roles - Assign roles to a user
+router.post('/:userId/roles', requirePermission('user:update'), UserController.assignRolesToUser);
+
+// DELETE /api/v1/users/:userId/roles/:roleId - Remove a role from a user
+router.delete('/:userId/roles/:roleId', requirePermission('user:update'), UserController.removeRoleFromUser);
+
 export default router;
