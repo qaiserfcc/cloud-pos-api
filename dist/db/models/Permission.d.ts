@@ -1,7 +1,7 @@
 import { Model } from 'sequelize';
 export interface PermissionAttributes {
     id: string;
-    tenant_id: string;
+    tenantId: string;
     name: string;
     resource: string;
     action: string;
@@ -15,7 +15,7 @@ export interface PermissionCreationAttributes extends Omit<PermissionAttributes,
 }
 declare class Permission extends Model<PermissionAttributes, PermissionCreationAttributes> implements PermissionAttributes {
     id: string;
-    tenant_id: string;
+    tenantId: string;
     name: string;
     resource: string;
     action: string;

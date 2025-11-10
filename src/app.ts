@@ -10,12 +10,14 @@ import { testConnection } from './config/database';
 
 // Import models and setup associations
 import { setupAssociations } from './models';
+import { setupDbAssociations } from './db/models';
 
 // Import routes
 import authRoutes from './routes/auth.routes';
 import tenantRoutes from './routes/tenant.routes';
 import storeRoutes from './routes/store.routes';
 import userRoutes from './routes/user.routes';
+import roleRoutes from './routes/role.routes';
 // import productRoutes from './routes/product.routes';
 // import inventoryRoutes from './routes/inventory.routes';
 // import orderRoutes from './routes/order.routes';
@@ -34,6 +36,7 @@ const app = express();
 
 // Setup database associations
 setupAssociations();
+setupDbAssociations();
 
 // Trust proxy for rate limiting behind reverse proxy
 app.set('trust proxy', 1);
@@ -102,6 +105,7 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/tenants', tenantRoutes);
 app.use('/api/v1/stores', storeRoutes);
 app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/roles', roleRoutes);
 // app.use('/api/v1/products', productRoutes);
 // app.use('/api/v1/inventory', inventoryRoutes);
 // app.use('/api/v1/orders', orderRoutes);

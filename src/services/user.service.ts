@@ -1,7 +1,7 @@
-import { User } from '../models/user.model';
+import { User } from '../db/models';
 import { Tenant } from '../models/tenant.model';
 import { Store } from '../models/store.model';
-import { Role } from '../models/role.model';
+import { Role } from '../db/models';
 import { Permission } from '../models/permission.model';
 import { hashPassword, comparePassword } from '../utils/jwt';
 import { Op, literal } from 'sequelize';
@@ -171,7 +171,7 @@ export class UserService {
     if (userData.roleIds && userData.roleIds.length > 0) {
       const roles = await Role.findAll({
         where: {
-          id: userData.roleIds,
+          id: { [Op.in]: userData.roleIds },
           tenantId
         } as any
       });
@@ -205,7 +205,7 @@ export class UserService {
     if (userData.roleIds && userData.roleIds.length > 0) {
       const roles = await Role.findAll({
         where: {
-          id: userData.roleIds,
+          id: { [Op.in]: userData.roleIds },
           tenantId
         } as any
       });
@@ -247,7 +247,7 @@ export class UserService {
     if (updateData.roleIds && updateData.roleIds.length > 0) {
       const roles = await Role.findAll({
         where: {
-          id: updateData.roleIds,
+          id: { [Op.in]: updateData.roleIds },
           tenantId
         } as any
       });
@@ -272,7 +272,7 @@ export class UserService {
       if (updateData.roleIds.length > 0) {
         const roles = await Role.findAll({
           where: {
-            id: updateData.roleIds,
+            id: { [Op.in]: updateData.roleIds },
             tenantId
           } as any
         });

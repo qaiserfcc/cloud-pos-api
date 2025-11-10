@@ -4,16 +4,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
-const user_model_1 = require("../models/user.model");
+const models_1 = require("../db/models");
 const tenant_model_1 = require("../models/tenant.model");
 const store_model_1 = require("../models/store.model");
-const role_model_1 = require("../models/role.model");
+const models_2 = require("../db/models");
 const jwt_1 = require("../utils/jwt");
 const sequelize_1 = require("sequelize");
 const logger_1 = __importDefault(require("../config/logger"));
 class UserService {
     static async getAllUsers(tenantId) {
-        const users = await user_model_1.User.findAll({
+        const users = await models_1.User.findAll({
             where: { tenantId },
             include: [
                 {
@@ -28,7 +28,7 @@ class UserService {
                     required: false,
                 },
                 {
-                    model: role_model_1.Role,
+                    model: models_2.Role,
                     as: 'roles',
                     required: false,
                     attributes: ['id', 'name'],
@@ -56,7 +56,7 @@ class UserService {
         }));
     }
     static async getUserById(userId, tenantId) {
-        const user = await user_model_1.User.findOne({
+        const user = await models_1.User.findOne({
             where: { id: userId, tenantId },
             include: [
                 {
@@ -71,7 +71,7 @@ class UserService {
                     required: false,
                 },
                 {
-                    model: role_model_1.Role,
+                    model: models_2.Role,
                     as: 'roles',
                     required: false,
                     attributes: ['id', 'name'],
@@ -101,7 +101,7 @@ class UserService {
         };
     }
     static async createUser(tenantId, userData) {
-        const existingUser = await user_model_1.User.findOne({ where: { email: userData.email } });
+        const existingUser = await models_1.User.findOne({ where: { email: userData.email } });
         if (existingUser) {
             throw new Error('User with this email already exists');
         }
@@ -114,9 +114,9 @@ class UserService {
             }
         }
         if (userData.roleIds && userData.roleIds.length > 0) {
-            const roles = await role_model_1.Role.findAll({
+            const roles = await models_2.Role.findAll({
                 where: {
-                    id: userData.roleIds,
+                    id: { [sequelize_1.Op.in]: userData.roleIds },
                     tenantId
                 }
             });
@@ -140,11 +140,11 @@ class UserService {
             userDataToCreate.avatar = userData.avatar;
         if (userData.defaultStoreId !== undefined)
             userDataToCreate.defaultStoreId = userData.defaultStoreId;
-        const user = await user_model_1.User.create(userDataToCreate);
+        const user = await models_1.User.create(userDataToCreate);
         if (userData.roleIds && userData.roleIds.length > 0) {
-            const roles = await role_model_1.Role.findAll({
+            const roles = await models_2.Role.findAll({
                 where: {
-                    id: userData.roleIds,
+                    id: { [sequelize_1.Op.in]: userData.roleIds },
                     tenantId
                 }
             });
@@ -157,7 +157,7 @@ class UserService {
         return this.getUserById(user.id, tenantId);
     }
     static async updateUser(userId, tenantId, updateData) {
-        const user = await user_model_1.User.findOne({
+        const user = await models_1.User.findOne({
             where: { id: userId, tenantId }
         });
         if (!user) {
@@ -172,9 +172,9 @@ class UserService {
             }
         }
         if (updateData.roleIds && updateData.roleIds.length > 0) {
-            const roles = await role_model_1.Role.findAll({
+            const roles = await models_2.Role.findAll({
                 where: {
-                    id: updateData.roleIds,
+                    id: { [sequelize_1.Op.in]: updateData.roleIds },
                     tenantId
                 }
             });
@@ -198,9 +198,9 @@ class UserService {
         await user.update(updateFields);
         if (updateData.roleIds !== undefined) {
             if (updateData.roleIds.length > 0) {
-                const roles = await role_model_1.Role.findAll({
+                const roles = await models_2.Role.findAll({
                     where: {
-                        id: updateData.roleIds,
+                        id: { [sequelize_1.Op.in]: updateData.roleIds },
                         tenantId
                     }
                 });
@@ -217,7 +217,7 @@ class UserService {
         return this.getUserById(userId, tenantId);
     }
     static async deleteUser(userId, tenantId) {
-        const user = await user_model_1.User.findOne({
+        const user = await models_1.User.findOne({
             where: { id: userId, tenantId }
         });
         if (!user) {
@@ -231,7 +231,7 @@ class UserService {
         });
     }
     static async changePassword(userId, tenantId, currentPassword, newPassword) {
-        const user = await user_model_1.User.findOne({
+        const user = await models_1.User.findOne({
             where: { id: userId, tenantId, isActive: true }
         });
         if (!user) {
@@ -252,7 +252,7 @@ class UserService {
         });
     }
     static async resetPassword(userId, tenantId, newPassword) {
-        const user = await user_model_1.User.findOne({
+        const user = await models_1.User.findOne({
             where: { id: userId, tenantId }
         });
         if (!user) {
@@ -274,8 +274,8 @@ class UserService {
     }
     static async getUserStats(tenantId) {
         const [totalResult, activeResult] = await Promise.all([
-            user_model_1.User.count({ where: { tenantId } }),
-            user_model_1.User.count({ where: { tenantId, isActive: true } }),
+            models_1.User.count({ where: { tenantId } }),
+            models_1.User.count({ where: { tenantId, isActive: true } }),
         ]);
         return {
             totalUsers: totalResult,
@@ -288,7 +288,7 @@ class UserService {
         if (excludeUserId) {
             whereClause.id = { [require('sequelize').Op.ne]: excludeUserId };
         }
-        const existingUser = await user_model_1.User.findOne({ where: whereClause });
+        const existingUser = await models_1.User.findOne({ where: whereClause });
         return !existingUser;
     }
 }

@@ -7,4 +7,5 @@ import User from './User';
 declare const UserRole: import("sequelize").ModelCtor<import("sequelize").Model<any, any>>;
 declare const RolePermission: import("sequelize").ModelCtor<import("sequelize").Model<any, any>>;
 export { sequelize, Tenant, Store, Role, Permission, User, UserRole, RolePermission, };
+export declare const setupDbAssociations: () => void;
 //# sourceMappingURL=index.d.ts.map

@@ -166,3 +166,9 @@ export {
   UserRole,
   RolePermission,
 };
+
+// Setup function to initialize associations
+export const setupDbAssociations = () => {
+  // Associations are already defined above
+  // This function ensures they are initialized
+};

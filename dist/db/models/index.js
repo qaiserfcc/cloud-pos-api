@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RolePermission = exports.UserRole = exports.User = exports.Permission = exports.Role = exports.Store = exports.Tenant = exports.sequelize = void 0;
+exports.setupDbAssociations = exports.RolePermission = exports.UserRole = exports.User = exports.Permission = exports.Role = exports.Store = exports.Tenant = exports.sequelize = void 0;
 const sequelize_1 = require("sequelize");
 const database_1 = __importDefault(require("../../config/database"));
 exports.sequelize = database_1.default;
@@ -146,4 +146,7 @@ Permission_1.default.belongsToMany(Role_1.default, {
     otherKey: 'role_id',
     as: 'roles',
 });
+const setupDbAssociations = () => {
+};
+exports.setupDbAssociations = setupDbAssociations;
 //# sourceMappingURL=index.js.map

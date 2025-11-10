@@ -3,7 +3,7 @@ import sequelize from '../../config/database';
 
 export interface PermissionAttributes {
   id: string;
-  tenant_id: string;
+  tenantId: string;
   name: string;
   resource: string;
   action: string;
@@ -18,7 +18,7 @@ export interface PermissionCreationAttributes extends Omit<PermissionAttributes,
 
 class Permission extends Model<PermissionAttributes, PermissionCreationAttributes> implements PermissionAttributes {
   declare public id: string;
-  declare public tenant_id: string;
+  declare public tenantId: string;
   declare public name: string;
   declare public resource: string;
   declare public action: string;
@@ -40,7 +40,7 @@ Permission.init(
       primaryKey: true,
       defaultValue: DataTypes.UUIDV4,
     },
-    tenant_id: {
+    tenantId: {
       type: DataTypes.UUID,
       allowNull: false,
       references: {
@@ -94,10 +94,10 @@ Permission.init(
     indexes: [
       {
         unique: true,
-        fields: ['tenant_id', 'name'],
+        fields: ['tenantId', 'name'],
       },
       {
-        fields: ['tenant_id', 'resource', 'action'],
+        fields: ['tenantId', 'resource', 'action'],
       },
     ],
   }
