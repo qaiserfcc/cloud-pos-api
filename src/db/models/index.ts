@@ -5,6 +5,13 @@ import Store from './Store';
 import Role from './Role';
 import Permission from './Permission';
 import User from './User';
+import Category from './Category';
+import Product from './Product';
+import Customer from './Customer';
+import Sale from './Sale';
+import SaleItem from './SaleItem';
+import Payment from './Payment';
+import Inventory from './Inventory';
 
 // Tenant associations
 Tenant.hasMany(Store, {
@@ -156,6 +163,145 @@ Permission.belongsToMany(Role, {
   as: 'roles',
 });
 
+// Category associations
+Category.belongsTo(Tenant, {
+  foreignKey: 'tenantId',
+  as: 'tenant',
+});
+
+Category.hasMany(Category, {
+  foreignKey: 'parentId',
+  as: 'subcategories',
+  onDelete: 'SET NULL',
+});
+
+Category.belongsTo(Category, {
+  foreignKey: 'parentId',
+  as: 'parent',
+});
+
+Category.hasMany(Product, {
+  foreignKey: 'categoryId',
+  as: 'products',
+  onDelete: 'SET NULL',
+});
+
+// Product associations
+Product.belongsTo(Tenant, {
+  foreignKey: 'tenantId',
+  as: 'tenant',
+});
+
+Product.belongsTo(Category, {
+  foreignKey: 'categoryId',
+  as: 'category',
+});
+
+Product.hasMany(Inventory, {
+  foreignKey: 'productId',
+  as: 'inventories',
+  onDelete: 'CASCADE',
+});
+
+Product.hasMany(SaleItem, {
+  foreignKey: 'productId',
+  as: 'saleItems',
+  onDelete: 'RESTRICT',
+});
+
+// Customer associations
+Customer.belongsTo(Tenant, {
+  foreignKey: 'tenantId',
+  as: 'tenant',
+});
+
+Customer.hasMany(Sale, {
+  foreignKey: 'customerId',
+  as: 'sales',
+  onDelete: 'SET NULL',
+});
+
+// Sale associations
+Sale.belongsTo(Tenant, {
+  foreignKey: 'tenantId',
+  as: 'tenant',
+});
+
+Sale.belongsTo(Store, {
+  foreignKey: 'storeId',
+  as: 'store',
+});
+
+Sale.belongsTo(Customer, {
+  foreignKey: 'customerId',
+  as: 'customer',
+});
+
+Sale.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'user',
+});
+
+Sale.hasMany(SaleItem, {
+  foreignKey: 'saleId',
+  as: 'saleItems',
+  onDelete: 'CASCADE',
+});
+
+Sale.hasMany(Payment, {
+  foreignKey: 'saleId',
+  as: 'payments',
+  onDelete: 'CASCADE',
+});
+
+// SaleItem associations
+SaleItem.belongsTo(Tenant, {
+  foreignKey: 'tenantId',
+  as: 'tenant',
+});
+
+SaleItem.belongsTo(Sale, {
+  foreignKey: 'saleId',
+  as: 'sale',
+});
+
+SaleItem.belongsTo(Product, {
+  foreignKey: 'productId',
+  as: 'product',
+});
+
+// Payment associations
+Payment.belongsTo(Tenant, {
+  foreignKey: 'tenantId',
+  as: 'tenant',
+});
+
+Payment.belongsTo(Sale, {
+  foreignKey: 'saleId',
+  as: 'sale',
+});
+
+Payment.belongsTo(User, {
+  foreignKey: 'processedBy',
+  as: 'user',
+});
+
+// Inventory associations
+Inventory.belongsTo(Tenant, {
+  foreignKey: 'tenantId',
+  as: 'tenant',
+});
+
+Inventory.belongsTo(Store, {
+  foreignKey: 'storeId',
+  as: 'store',
+});
+
+Inventory.belongsTo(Product, {
+  foreignKey: 'productId',
+  as: 'product',
+});
+
 export {
   sequelize,
   Tenant,
@@ -163,6 +309,13 @@ export {
   Role,
   Permission,
   User,
+  Category,
+  Product,
+  Customer,
+  Sale,
+  SaleItem,
+  Payment,
+  Inventory,
   UserRole,
   RolePermission,
 };

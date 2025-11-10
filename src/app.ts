@@ -19,7 +19,8 @@ import storeRoutes from './routes/store.routes';
 import userRoutes from './routes/user.routes';
 import roleRoutes from './routes/role.routes';
 import permissionRoutes from './routes/permission.routes';
-// import productRoutes from './routes/product.routes';
+import productRoutes from './routes/product.routes';
+import categoryRoutes from './routes/category.routes';
 // import inventoryRoutes from './routes/inventory.routes';
 // import orderRoutes from './routes/order.routes';
 // import paymentRoutes from './routes/payment.routes';
@@ -101,15 +102,15 @@ app.get('/health', (req, res) => {
   });
 });
 
-// API routes
+// Register routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/tenants', tenantRoutes);
 app.use('/api/v1/stores', storeRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/roles', roleRoutes);
 app.use('/api/v1/permissions', permissionRoutes);
-// app.use('/api/v1/products', productRoutes);
-// app.use('/api/v1/inventory', inventoryRoutes);
+app.use('/api/v1/products', productRoutes);
+app.use('/api/v1/categories', categoryRoutes);
 // app.use('/api/v1/orders', orderRoutes);
 // app.use('/api/v1/payments', paymentRoutes);
 // app.use('/api/v1/customers', customerRoutes);
