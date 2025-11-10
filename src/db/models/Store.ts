@@ -7,8 +7,8 @@ export interface StoreAttributes {
   name: string;
   code: string;
   address: string;
-  phone: string;
-  email: string;
+  phone?: string;
+  email?: string;
   settings: object;
   isActive?: boolean;
   createdAt: Date;
@@ -24,8 +24,8 @@ class Store extends Model<StoreAttributes, StoreCreationAttributes> implements S
   declare public name: string;
   declare public code: string;
   declare public address: string;
-  declare public phone: string;
-  declare public email: string;
+  declare public phone?: string;
+  declare public email?: string;
   declare public settings: object;
   declare public isActive: boolean;
   declare public readonly createdAt: Date;
@@ -34,7 +34,7 @@ class Store extends Model<StoreAttributes, StoreCreationAttributes> implements S
 
   // Association mixins
   declare public readonly tenant?: any;
-  declare public readonly users?: any[];
+  declare public readonly storeUsers?: any[];
 }
 
 Store.init(

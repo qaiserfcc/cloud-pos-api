@@ -14,7 +14,7 @@ import { setupAssociations } from './models';
 // Import routes
 import authRoutes from './routes/auth.routes';
 import tenantRoutes from './routes/tenant.routes';
-// import storeRoutes from './routes/store.routes';
+import storeRoutes from './routes/store.routes';
 // import userRoutes from './routes/user.routes';
 // import productRoutes from './routes/product.routes';
 // import inventoryRoutes from './routes/inventory.routes';
@@ -100,7 +100,7 @@ app.get('/health', (req, res) => {
 // API routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/tenants', tenantRoutes);
-// app.use('/api/v1/stores', storeRoutes);
+app.use('/api/v1/stores', storeRoutes);
 // app.use('/api/v1/users', userRoutes);
 // app.use('/api/v1/products', productRoutes);
 // app.use('/api/v1/inventory', inventoryRoutes);
