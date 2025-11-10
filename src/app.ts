@@ -23,6 +23,8 @@ import productRoutes from './routes/product.routes';
 import categoryRoutes from './routes/category.routes';
 import inventoryRoutes from './routes/inventory.routes';
 import inventoryTransferRoutes from './routes/inventory-transfer.routes';
+import bulkInventoryTransferRoutes from './routes/bulk-inventory-transfer.routes';
+import inventoryRegionRoutes from './routes/inventory-region.routes';
 import saleRoutes from './routes/sale.routes';
 import customerRoutes from './routes/customer.routes';
 // import orderRoutes from './routes/order.routes';
@@ -31,6 +33,7 @@ import dashboardRoutes from './routes/dashboard.routes';
 // import syncRoutes from './routes/sync.routes';
 // import auditRoutes from './routes/audit.routes';
 import reportRoutes from './routes/report.routes';
+import automatedReorderRuleRoutes from './routes/automated-reorder-rule.routes';
 
 // Import middlewares
 // import { errorHandler } from './middlewares/error.middleware';
@@ -115,6 +118,8 @@ app.use('/api/v1/products', productRoutes);
 app.use('/api/v1/categories', categoryRoutes);
 app.use('/api/v1/inventory', inventoryRoutes);
 app.use('/api/v1/inventory-transfers', inventoryTransferRoutes);
+app.use('/api/v1/bulk-transfers', bulkInventoryTransferRoutes);
+app.use('/api/v1/inventory-regions', inventoryRegionRoutes);
 app.use('/api/v1/sales', saleRoutes);
 app.use('/api/v1/customers', customerRoutes);
 // app.use('/api/v1/payments', paymentRoutes);
@@ -122,6 +127,7 @@ app.use('/api/v1/dashboard', dashboardRoutes);
 // app.use('/api/v1/sync', syncRoutes);
 // app.use('/api/v1/audit', auditRoutes);
 app.use('/api/v1/reports', reportRoutes);
+app.use('/api/v1/automated-reorder-rules', automatedReorderRuleRoutes);
 
 // Swagger documentation
 if (process.env.NODE_ENV !== 'production') {

@@ -5,6 +5,7 @@ export interface ProductAttributes {
   id: string;
   tenantId: string;
   storeId?: string;
+  categoryId?: string;
   name: string;
   description?: string;
   sku?: string;
@@ -22,6 +23,7 @@ class Product extends Model<ProductAttributes, ProductCreationAttributes> implem
   declare public id: string;
   declare public tenantId: string;
   declare public storeId?: string;
+  declare public categoryId?: string;
   declare public name: string;
   declare public description?: string;
   declare public sku?: string;
@@ -60,6 +62,15 @@ Product.init(
       field: 'store_id',
       references: {
         model: 'stores',
+        key: 'id',
+      },
+    },
+    categoryId: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      field: 'category_id',
+      references: {
+        model: 'categories',
         key: 'id',
       },
     },

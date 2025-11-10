@@ -14,6 +14,10 @@ import Payment from './Payment';
 import Inventory from './Inventory';
 import DashboardWidget from './DashboardWidget';
 import InventoryTransfer from './InventoryTransfer';
+import BulkInventoryTransfer from './BulkInventoryTransfer';
+import BulkInventoryTransferItem from './BulkInventoryTransferItem';
+import InventoryRegion from './InventoryRegion';
+import AutomatedReorderRule from './AutomatedReorderRule';
 
 // Tenant associations
 Tenant.hasMany(Store, {
@@ -346,6 +350,116 @@ InventoryTransfer.belongsTo(User, {
   as: 'approver',
 });
 
+// Bulk Inventory Transfer associations
+BulkInventoryTransfer.belongsTo(Tenant, {
+  foreignKey: 'tenantId',
+  as: 'tenant',
+});
+
+BulkInventoryTransfer.belongsTo(Store, {
+  foreignKey: 'sourceStoreId',
+  as: 'sourceStore',
+});
+
+BulkInventoryTransfer.belongsTo(Store, {
+  foreignKey: 'destinationStoreId',
+  as: 'destinationStore',
+});
+
+BulkInventoryTransfer.belongsTo(User, {
+  foreignKey: 'requestedBy',
+  as: 'requester',
+});
+
+BulkInventoryTransfer.belongsTo(User, {
+  foreignKey: 'approvedBy',
+  as: 'approver',
+});
+
+BulkInventoryTransfer.hasMany(BulkInventoryTransferItem, {
+  foreignKey: 'bulkTransferId',
+  as: 'transferItems',
+  onDelete: 'CASCADE',
+});
+
+// Bulk Inventory Transfer Item associations
+BulkInventoryTransferItem.belongsTo(BulkInventoryTransfer, {
+  foreignKey: 'bulkTransferId',
+  as: 'bulkTransfer',
+});
+
+BulkInventoryTransferItem.belongsTo(Product, {
+  foreignKey: 'productId',
+  as: 'product',
+});
+
+// Inventory Region associations
+InventoryRegion.belongsTo(Tenant, {
+  foreignKey: 'tenantId',
+  as: 'tenant',
+});
+
+InventoryRegion.belongsTo(User, {
+  foreignKey: 'managerId',
+  as: 'manager',
+});
+
+// Many-to-many: InventoryRegion <-> Store
+const InventoryRegionStore = sequelize.define('InventoryRegionStore', {
+  inventoryRegionId: {
+    type: DataTypes.UUID,
+    allowNull: false,
+    references: {
+      model: 'inventory_regions',
+      key: 'id',
+    },
+  },
+  storeId: {
+    type: DataTypes.UUID,
+    allowNull: false,
+    references: {
+      model: 'stores',
+      key: 'id',
+    },
+  },
+}, {
+  tableName: 'inventory_region_stores',
+  timestamps: true,
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  indexes: [
+    {
+      unique: true,
+      fields: ['inventory_region_id', 'store_id'],
+    },
+  ],
+});
+
+InventoryRegion.belongsToMany(Store, {
+  through: InventoryRegionStore,
+  foreignKey: 'inventoryRegionId',
+  otherKey: 'storeId',
+  as: 'stores',
+});
+
+Store.belongsToMany(InventoryRegion, {
+  through: InventoryRegionStore,
+  foreignKey: 'storeId',
+  otherKey: 'inventoryRegionId',
+  as: 'regions',
+});
+
+// Automated Reorder Rule associations
+AutomatedReorderRule.belongsTo(Tenant, {
+  foreignKey: 'tenantId',
+  as: 'tenant',
+});
+
+AutomatedReorderRule.belongsTo(Product, {
+  foreignKey: 'productId',
+  as: 'product',
+});
+
 export {
   sequelize,
   Tenant,
@@ -362,6 +476,10 @@ export {
   Inventory,
   DashboardWidget,
   InventoryTransfer,
+  BulkInventoryTransfer,
+  BulkInventoryTransferItem,
+  InventoryRegion,
+  AutomatedReorderRule,
   UserRole,
   RolePermission,
 };
