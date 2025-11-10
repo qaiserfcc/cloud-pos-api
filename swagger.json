@@ -15,6 +15,10 @@
     {
       "url": "http://localhost:3000/api/v1",
       "description": "Development server"
+    },
+    {
+      "url": "https://api.cloudpos.com/api/v1",
+      "description": "Production server"
     }
   ],
   "components": {
@@ -62,7 +66,10 @@
       },
       "LoginRequest": {
         "type": "object",
-        "required": ["email", "password"],
+        "required": [
+          "email",
+          "password"
+        ],
         "properties": {
           "email": {
             "type": "string",
@@ -102,49 +109,6 @@
                 "example": 3600
               }
             }
-          }
-        }
-      },
-      "RegisterRequest": {
-        "type": "object",
-        "required": ["email", "password", "firstName", "lastName", "tenantId"],
-        "properties": {
-          "email": {
-            "type": "string",
-            "format": "email",
-            "example": "user@example.com"
-          },
-          "password": {
-            "type": "string",
-            "minLength": 6,
-            "example": "password123"
-          },
-          "firstName": {
-            "type": "string",
-            "example": "John"
-          },
-          "lastName": {
-            "type": "string",
-            "example": "Doe"
-          },
-          "phone": {
-            "type": "string",
-            "example": "+1234567890"
-          },
-          "tenantId": {
-            "type": "string",
-            "format": "uuid",
-            "example": "123e4567-e89b-12d3-a456-426614174000"
-          }
-        }
-      },
-      "RefreshTokenRequest": {
-        "type": "object",
-        "required": ["refreshToken"],
-        "properties": {
-          "refreshToken": {
-            "type": "string",
-            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
           }
         }
       },
@@ -248,47 +212,6 @@
           }
         }
       },
-      "CreateTenantRequest": {
-        "type": "object",
-        "required": ["name", "domain"],
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "My Company"
-          },
-          "domain": {
-            "type": "string",
-            "example": "mycompany"
-          },
-          "settings": {
-            "type": "object",
-            "example": {
-              "theme": "light",
-              "currency": "USD"
-            }
-          }
-        }
-      },
-      "UpdateTenantRequest": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "Updated Company Name"
-          },
-          "settings": {
-            "type": "object",
-            "example": {
-              "theme": "dark",
-              "currency": "EUR"
-            }
-          },
-          "isActive": {
-            "type": "boolean",
-            "example": true
-          }
-        }
-      },
       "Store": {
         "type": "object",
         "properties": {
@@ -345,640 +268,6 @@
             "example": "2023-11-10T10:00:00Z"
           }
         }
-      },
-      "CreateStoreRequest": {
-        "type": "object",
-        "required": ["name", "code"],
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "Main Store"
-          },
-          "code": {
-            "type": "string",
-            "example": "MAIN"
-          },
-          "address": {
-            "type": "string",
-            "example": "123 Main St, City, State 12345"
-          },
-          "phone": {
-            "type": "string",
-            "example": "+1234567890"
-          },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "example": "store@example.com"
-          },
-          "settings": {
-            "type": "object",
-            "example": {
-              "timezone": "America/New_York",
-              "currency": "USD"
-            }
-          }
-        }
-      },
-      "UpdateStoreRequest": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "Updated Store Name"
-          },
-          "address": {
-            "type": "string",
-            "example": "456 Updated St, City, State 12345"
-          },
-          "phone": {
-            "type": "string",
-            "example": "+0987654321"
-          },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "example": "updated@example.com"
-          },
-          "settings": {
-            "type": "object",
-            "example": {
-              "timezone": "America/Los_Angeles",
-              "currency": "USD"
-            }
-          },
-          "isActive": {
-            "type": "boolean",
-            "example": true
-          }
-        }
-      },
-      "Role": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "example": "123e4567-e89b-12d3-a456-426614174000"
-          },
-          "tenantId": {
-            "type": "string",
-            "format": "uuid",
-            "example": "123e4567-e89b-12d3-a456-426614174000"
-          },
-          "name": {
-            "type": "string",
-            "example": "Manager"
-          },
-          "description": {
-            "type": "string",
-            "example": "Store manager role"
-          },
-          "isSystem": {
-            "type": "boolean",
-            "example": false
-          },
-          "isActive": {
-            "type": "boolean",
-            "example": true
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2023-11-10T10:00:00Z"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2023-11-10T10:00:00Z"
-          }
-        }
-      },
-      "CreateRoleRequest": {
-        "type": "object",
-        "required": ["name"],
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "Manager"
-          },
-          "description": {
-            "type": "string",
-            "example": "Store manager role"
-          }
-        }
-      },
-      "UpdateRoleRequest": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "Senior Manager"
-          },
-          "description": {
-            "type": "string",
-            "example": "Senior store manager role"
-          },
-          "isActive": {
-            "type": "boolean",
-            "example": true
-          }
-        }
-      },
-      "Permission": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "example": "123e4567-e89b-12d3-a456-426614174000"
-          },
-          "tenantId": {
-            "type": "string",
-            "format": "uuid",
-            "example": "123e4567-e89b-12d3-a456-426614174000"
-          },
-          "resource": {
-            "type": "string",
-            "example": "product"
-          },
-          "action": {
-            "type": "string",
-            "example": "read"
-          },
-          "name": {
-            "type": "string",
-            "example": "product:read"
-          },
-          "description": {
-            "type": "string",
-            "example": "Read products"
-          },
-          "isSystem": {
-            "type": "boolean",
-            "example": false
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2023-11-10T10:00:00Z"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2023-11-10T10:00:00Z"
-          }
-        }
-      },
-      "CreatePermissionRequest": {
-        "type": "object",
-        "required": ["resource", "action"],
-        "properties": {
-          "resource": {
-            "type": "string",
-            "example": "product"
-          },
-          "action": {
-            "type": "string",
-            "example": "read"
-          },
-          "description": {
-            "type": "string",
-            "example": "Read products"
-          }
-        }
-      },
-      "UpdatePermissionRequest": {
-        "type": "object",
-        "properties": {
-          "description": {
-            "type": "string",
-            "example": "Updated permission description"
-          }
-        }
-      },
-      "Product": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "example": "123e4567-e89b-12d3-a456-426614174000"
-          },
-          "tenantId": {
-            "type": "string",
-            "format": "uuid",
-            "example": "123e4567-e89b-12d3-a456-426614174000"
-          },
-          "storeId": {
-            "type": "string",
-            "format": "uuid",
-            "example": "123e4567-e89b-12d3-a456-426614174000"
-          },
-          "name": {
-            "type": "string",
-            "example": "Wireless Headphones"
-          },
-          "description": {
-            "type": "string",
-            "example": "High-quality wireless headphones with noise cancellation"
-          },
-          "sku": {
-            "type": "string",
-            "example": "WH-001"
-          },
-          "barcode": {
-            "type": "string",
-            "example": "1234567890123"
-          },
-          "metadata": {
-            "type": "object",
-            "example": {
-              "price": 99.99,
-              "cost": 50.00,
-              "category": "Electronics"
-            }
-          },
-          "version": {
-            "type": "number",
-            "example": 1
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2023-11-10T10:00:00Z"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2023-11-10T10:00:00Z"
-          }
-        }
-      },
-      "CreateProductRequest": {
-        "type": "object",
-        "required": ["name"],
-        "properties": {
-          "storeId": {
-            "type": "string",
-            "format": "uuid",
-            "example": "123e4567-e89b-12d3-a456-426614174000"
-          },
-          "name": {
-            "type": "string",
-            "example": "Wireless Headphones"
-          },
-          "description": {
-            "type": "string",
-            "example": "High-quality wireless headphones with noise cancellation"
-          },
-          "sku": {
-            "type": "string",
-            "example": "WH-001"
-          },
-          "barcode": {
-            "type": "string",
-            "example": "1234567890123"
-          },
-          "metadata": {
-            "type": "object",
-            "example": {
-              "price": 99.99,
-              "cost": 50.00,
-              "category": "Electronics"
-            }
-          }
-        }
-      },
-      "UpdateProductRequest": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "Updated Product Name"
-          },
-          "description": {
-            "type": "string",
-            "example": "Updated description"
-          },
-          "sku": {
-            "type": "string",
-            "example": "WH-002"
-          },
-          "barcode": {
-            "type": "string",
-            "example": "9876543210987"
-          },
-          "metadata": {
-            "type": "object",
-            "example": {
-              "price": 129.99,
-              "cost": 60.00,
-              "category": "Electronics"
-            }
-          }
-        }
-      },
-      "Category": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "example": "123e4567-e89b-12d3-a456-426614174000"
-          },
-          "tenantId": {
-            "type": "string",
-            "format": "uuid",
-            "example": "123e4567-e89b-12d3-a456-426614174000"
-          },
-          "name": {
-            "type": "string",
-            "example": "Electronics"
-          },
-          "description": {
-            "type": "string",
-            "example": "Electronic devices and accessories"
-          },
-          "color": {
-            "type": "string",
-            "example": "#FF5733"
-          },
-          "icon": {
-            "type": "string",
-            "example": "fas fa-laptop"
-          },
-          "sortOrder": {
-            "type": "number",
-            "example": 1
-          },
-          "isActive": {
-            "type": "boolean",
-            "example": true
-          },
-          "parentId": {
-            "type": "string",
-            "format": "uuid",
-            "example": "123e4567-e89b-12d3-a456-426614174000"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2023-11-10T10:00:00Z"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2023-11-10T10:00:00Z"
-          }
-        }
-      },
-      "CreateCategoryRequest": {
-        "type": "object",
-        "required": ["name"],
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "Electronics"
-          },
-          "description": {
-            "type": "string",
-            "example": "Electronic devices and accessories"
-          },
-          "color": {
-            "type": "string",
-            "example": "#FF5733"
-          },
-          "icon": {
-            "type": "string",
-            "example": "fas fa-laptop"
-          },
-          "parentId": {
-            "type": "string",
-            "format": "uuid",
-            "example": "123e4567-e89b-12d3-a456-426614174000"
-          }
-        }
-      },
-      "UpdateCategoryRequest": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "Updated Category Name"
-          },
-          "description": {
-            "type": "string",
-            "example": "Updated description"
-          },
-          "color": {
-            "type": "string",
-            "example": "#33FF57"
-          },
-          "icon": {
-            "type": "string",
-            "example": "fas fa-mobile"
-          },
-          "sortOrder": {
-            "type": "number",
-            "example": 2
-          },
-          "isActive": {
-            "type": "boolean",
-            "example": true
-          },
-          "parentId": {
-            "type": "string",
-            "format": "uuid",
-            "example": "123e4567-e89b-12d3-a456-426614174000"
-          }
-        }
-      },
-      "UpdateSortOrdersRequest": {
-        "type": "object",
-        "required": ["sortOrders"],
-        "properties": {
-          "sortOrders": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "format": "uuid",
-                  "example": "123e4567-e89b-12d3-a456-426614174000"
-                },
-                "sortOrder": {
-                  "type": "number",
-                  "example": 1
-                }
-              }
-            }
-          }
-        }
-      },
-      "CreateUserRequest": {
-        "type": "object",
-        "required": ["email", "password", "firstName", "lastName"],
-        "properties": {
-          "email": {
-            "type": "string",
-            "format": "email",
-            "example": "user@example.com"
-          },
-          "password": {
-            "type": "string",
-            "minLength": 6,
-            "example": "password123"
-          },
-          "firstName": {
-            "type": "string",
-            "example": "John"
-          },
-          "lastName": {
-            "type": "string",
-            "example": "Doe"
-          },
-          "phone": {
-            "type": "string",
-            "example": "+1234567890"
-          },
-          "defaultStoreId": {
-            "type": "string",
-            "format": "uuid",
-            "example": "123e4567-e89b-12d3-a456-426614174000"
-          }
-        }
-      },
-      "UpdateUserRequest": {
-        "type": "object",
-        "properties": {
-          "firstName": {
-            "type": "string",
-            "example": "Jane"
-          },
-          "lastName": {
-            "type": "string",
-            "example": "Smith"
-          },
-          "phone": {
-            "type": "string",
-            "example": "+0987654321"
-          },
-          "avatar": {
-            "type": "string",
-            "format": "uri",
-            "example": "https://example.com/avatar.jpg"
-          },
-          "isActive": {
-            "type": "boolean",
-            "example": true
-          },
-          "defaultStoreId": {
-            "type": "string",
-            "format": "uuid",
-            "example": "123e4567-e89b-12d3-a456-426614174000"
-          }
-        }
-      },
-      "ChangePasswordRequest": {
-        "type": "object",
-        "required": ["currentPassword", "newPassword"],
-        "properties": {
-          "currentPassword": {
-            "type": "string",
-            "example": "currentpassword123"
-          },
-          "newPassword": {
-            "type": "string",
-            "minLength": 6,
-            "example": "newpassword123"
-          }
-        }
-      },
-      "ResetPasswordRequest": {
-        "type": "object",
-        "required": ["newPassword"],
-        "properties": {
-          "newPassword": {
-            "type": "string",
-            "minLength": 6,
-            "example": "newpassword123"
-          }
-        }
-      },
-      "AssignRolesRequest": {
-        "type": "object",
-        "required": ["roleIds"],
-        "properties": {
-          "roleIds": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uuid",
-              "example": "123e4567-e89b-12d3-a456-426614174000"
-            }
-          }
-        }
-      },
-      "AssignPermissionsRequest": {
-        "type": "object",
-        "required": ["permissionIds"],
-        "properties": {
-          "permissionIds": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uuid",
-              "example": "123e4567-e89b-12d3-a456-426614174000"
-            }
-          }
-        }
-      },
-      "StatsResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean",
-            "example": true
-          },
-          "data": {
-            "type": "object",
-            "properties": {
-              "total": {
-                "type": "number",
-                "example": 150
-              },
-              "active": {
-                "type": "number",
-                "example": 145
-              },
-              "inactive": {
-                "type": "number",
-                "example": 5
-              }
-            }
-          }
-        }
-      },
-      "SearchResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean",
-            "example": true
-          },
-          "data": {
-            "type": "array",
-            "items": {
-              "type": "object"
-            }
-          },
-          "message": {
-            "type": "string",
-            "example": "Search completed successfully"
-          }
-        }
       }
     },
     "parameters": {
@@ -1010,399 +299,283 @@
     }
   ],
   "paths": {
-    "/health": {
-      "get": {
-        "summary": "Health check endpoint",
-        "description": "Check if the API is running and healthy",
-        "tags": ["Health"],
+    "/sales": {
+      "post": {
+        "summary": "Create a new sale transaction",
+        "description": "Create a new sale with items, calculate totals, and update inventory",
+        "tags": [
+          "Sales"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "items"
+                ],
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "productId",
+                        "quantity",
+                        "unitPrice"
+                      ],
+                      "properties": {
+                        "productId": {
+                          "type": "string",
+                          "format": "uuid",
+                          "example": "123e4567-e89b-12d3-a456-426614174000"
+                        },
+                        "quantity": {
+                          "type": "number",
+                          "minimum": 1,
+                          "example": 2
+                        },
+                        "unitPrice": {
+                          "type": "number",
+                          "minimum": 0,
+                          "example": 29.99
+                        },
+                        "discount": {
+                          "type": "number",
+                          "minimum": 0,
+                          "example": 0
+                        }
+                      }
+                    }
+                  },
+                  "customerId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "example": "123e4567-e89b-12d3-a456-426614174000"
+                  },
+                  "notes": {
+                    "type": "string",
+                    "example": "Customer requested gift wrapping"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
-          "200": {
-            "description": "Server is healthy",
+          "201": {
+            "description": "Sale created successfully",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Sale"
+                    },
+                    "message": {
                       "type": "string",
-                      "example": "OK"
+                      "example": "Sale created successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or insufficient stock",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Requires sale create permission",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sales/{id}": {
+      "get": {
+        "summary": "Get sale by ID",
+        "description": "Retrieve detailed information about a specific sale including items and payments",
+        "tags": [
+          "Sales"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Sale ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sale retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
                     },
-                    "timestamp": {
+                    "data": {
+                      "$ref": "#/components/schemas/Sale"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Requires sale read permission",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Sale not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update sale details",
+        "description": "Update sale information such as items, discounts, or notes",
+        "tags": [
+          "Sales"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Sale ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "productId": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "quantity": {
+                          "type": "number",
+                          "minimum": 1
+                        },
+                        "unitPrice": {
+                          "type": "number",
+                          "minimum": 0
+                        },
+                        "discount": {
+                          "type": "number",
+                          "minimum": 0,
+                          "default": 0
+                        }
+                      }
+                    }
+                  },
+                  "discount": {
+                    "type": "number",
+                    "minimum": 0,
+                    "default": 0
+                  },
+                  "notes": {
+                    "type": "string",
+                    "maxLength": 500
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sale updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Sale"
+                    },
+                    "message": {
                       "type": "string",
-                      "format": "date-time"
-                    },
-                    "uptime": {
-                      "type": "number"
+                      "example": "Sale updated successfully"
                     }
                   }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/login": {
-      "post": {
-        "summary": "User login",
-        "description": "Authenticate user and return access/refresh tokens",
-        "tags": ["Authentication"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/LoginRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Login successful",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LoginResponse"
                 }
               }
             }
           },
           "400": {
-            "description": "Invalid credentials",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/register": {
-      "post": {
-        "summary": "User registration",
-        "description": "Register a new user account",
-        "tags": ["Authentication"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegisterRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "User registered successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Success"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "User already exists",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/refresh": {
-      "post": {
-        "summary": "Refresh access token",
-        "description": "Generate new access token using refresh token",
-        "tags": ["Authentication"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RefreshTokenRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Token refreshed successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LoginResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Invalid refresh token",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/logout": {
-      "post": {
-        "summary": "User logout",
-        "description": "Invalidate the current session",
-        "tags": ["Authentication"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Logged out successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Success"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/profile": {
-      "get": {
-        "summary": "Get user profile",
-        "description": "Get current authenticated user's profile information",
-        "tags": ["Authentication"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Profile retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/User"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/tenants": {
-      "get": {
-        "summary": "Get all tenants",
-        "description": "Retrieve all tenants (Superadmin only)",
-        "tags": ["Tenants"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenants retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Tenant"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires superadmin access",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "summary": "Create tenant",
-        "description": "Create a new tenant (Superadmin only)",
-        "tags": ["Tenants"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateTenantRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Tenant created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Success"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires superadmin access",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Tenant already exists",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/tenants/{id}": {
-      "get": {
-        "summary": "Get tenant by ID",
-        "description": "Retrieve a specific tenant by ID",
-        "tags": ["Tenants"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "Tenant ID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Tenant"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires superadmin or tenant admin access",
+            "description": "Bad request - Invalid data or sale cannot be updated",
             "content": {
               "application/json": {
                 "schema": {
@@ -1412,81 +585,7 @@
             }
           },
           "404": {
-            "description": "Tenant not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "summary": "Update tenant",
-        "description": "Update tenant information (Superadmin only)",
-        "tags": ["Tenants"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "Tenant ID"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateTenantRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Tenant updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Success"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires superadmin access",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Tenant not found",
+            "description": "Sale not found",
             "content": {
               "application/json": {
                 "schema": {
@@ -1498,9 +597,12 @@
         }
       },
       "delete": {
-        "summary": "Delete tenant",
-        "description": "Delete a tenant (Superadmin only)",
-        "tags": ["Tenants"],
+        "summary": "Delete a sale",
+        "description": "Permanently delete a sale (admin only, for data cleanup)",
+        "tags": [
+          "Sales",
+          "Admin"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -1515,113 +617,12 @@
               "type": "string",
               "format": "uuid"
             },
-            "description": "Tenant ID"
+            "description": "Sale ID"
           }
         ],
         "responses": {
           "200": {
-            "description": "Tenant deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Success"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires superadmin access",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Tenant not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/tenants/{id}/stats": {
-      "get": {
-        "summary": "Get tenant statistics",
-        "description": "Get statistics for a specific tenant",
-        "tags": ["Tenants"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "Tenant ID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant statistics retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/StatsResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires superadmin or tenant admin access",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/tenants/check-domain/{domain}": {
-      "get": {
-        "summary": "Check domain availability",
-        "description": "Check if a domain is available for tenant creation",
-        "tags": ["Tenants"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "domain",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Domain to check"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Domain availability checked",
+            "description": "Sale deleted successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -1631,175 +632,17 @@
                       "type": "boolean",
                       "example": true
                     },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "available": {
-                          "type": "boolean",
-                          "example": true
-                        }
-                      }
+                    "message": {
+                      "type": "string",
+                      "example": "Sale deleted successfully"
                     }
                   }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/stores": {
-      "get": {
-        "summary": "Get all stores",
-        "description": "Retrieve all stores for the authenticated user's tenant",
-        "tags": ["Stores"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Stores retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Store"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires store read permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "summary": "Create store",
-        "description": "Create a new store",
-        "tags": ["Stores"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateStoreRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Store created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Success"
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires store create permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Store code already exists",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/stores/{id}": {
-      "get": {
-        "summary": "Get store by ID",
-        "description": "Retrieve a specific store by ID",
-        "tags": ["Stores"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "Store ID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Store retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Store"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires store read permission",
+            "description": "Bad request - Sale cannot be deleted",
             "content": {
               "application/json": {
                 "schema": {
@@ -1809,135 +652,7 @@
             }
           },
           "404": {
-            "description": "Store not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "summary": "Update store",
-        "description": "Update store information",
-        "tags": ["Stores"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "Store ID"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateStoreRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Store updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Success"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires store update permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Store not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "summary": "Delete store",
-        "description": "Delete a store",
-        "tags": ["Stores"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "Store ID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Store deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Success"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires store delete permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Store not found",
+            "description": "Sale not found",
             "content": {
               "application/json": {
                 "schema": {
@@ -1949,11 +664,13 @@
         }
       }
     },
-    "/stores/{id}/stats": {
+    "/sales/store": {
       "get": {
-        "summary": "Get store statistics",
-        "description": "Get statistics for a specific store",
-        "tags": ["Stores"],
+        "summary": "Get store sales with pagination and filters",
+        "description": "Retrieve sales for the current store with optional filtering and pagination",
+        "tags": [
+          "Sales"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -1961,2273 +678,92 @@
         ],
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "Store ID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Store statistics retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/StatsResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires store read permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/stores/check-code/{code}": {
-      "get": {
-        "summary": "Check store code availability",
-        "description": "Check if a store code is available",
-        "tags": ["Stores"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "code",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Store code to check"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Store code availability checked",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "available": {
-                          "type": "boolean",
-                          "example": true
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/users": {
-      "get": {
-        "summary": "Get all users",
-        "description": "Retrieve all users for the authenticated user's tenant",
-        "tags": ["Users"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Users retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/User"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires user read permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "summary": "Create user",
-        "description": "Create a new user",
-        "tags": ["Users"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateUserRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "User created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Success"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires user create permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "User already exists",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/users/stats": {
-      "get": {
-        "summary": "Get user statistics",
-        "description": "Get statistics for users in the tenant",
-        "tags": ["Users"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "User statistics retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/StatsResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires user read permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/users/check-email/{email}": {
-      "get": {
-        "summary": "Check email availability",
-        "description": "Check if an email address is available for user registration",
-        "tags": ["Users"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "email",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "email"
-            },
-            "description": "Email address to check"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Email availability checked",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "available": {
-                          "type": "boolean",
-                          "example": true
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/users/{id}": {
-      "get": {
-        "summary": "Get user by ID",
-        "description": "Retrieve a specific user by ID",
-        "tags": ["Users"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "User ID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "User retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/User"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires user read permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "User not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "summary": "Update user",
-        "description": "Update user information",
-        "tags": ["Users"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "User ID"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateUserRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "User updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Success"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires user update permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "User not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "summary": "Delete user",
-        "description": "Delete a user",
-        "tags": ["Users"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "User ID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "User deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Success"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires user delete permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "User not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/users/{id}/change-password": {
-      "put": {
-        "summary": "Change user password",
-        "description": "Change the password for a user",
-        "tags": ["Users"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "User ID"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ChangePasswordRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Password changed successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Success"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Can only change own password or requires admin permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/users/{id}/reset-password": {
-      "put": {
-        "summary": "Reset user password",
-        "description": "Reset password for a user (admin only)",
-        "tags": ["Users"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "User ID"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ResetPasswordRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Password reset successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Success"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires user update permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "User not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/users/{userId}/roles": {
-      "get": {
-        "summary": "Get user roles",
-        "description": "Get all roles assigned to a user",
-        "tags": ["Users"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "User ID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "User roles retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Role"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires user read permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "summary": "Assign roles to user",
-        "description": "Assign one or more roles to a user",
-        "tags": ["Users"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "User ID"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AssignRolesRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Roles assigned successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Success"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires user update permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/users/{userId}/roles/{roleId}": {
-      "delete": {
-        "summary": "Remove role from user",
-        "description": "Remove a specific role from a user",
-        "tags": ["Users"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "User ID"
-          },
-          {
-            "name": "roleId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "Role ID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Role removed successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Success"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires user update permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "User or role not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/roles": {
-      "get": {
-        "summary": "Get all roles",
-        "description": "Retrieve all roles for the authenticated user's tenant",
-        "tags": ["Roles"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Roles retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Role"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires role read permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "summary": "Create role",
-        "description": "Create a new role",
-        "tags": ["Roles"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateRoleRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Role created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Success"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires role create permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Role name already exists",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/roles/stats": {
-      "get": {
-        "summary": "Get role statistics",
-        "description": "Get statistics for roles in the tenant",
-        "tags": ["Roles"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Role statistics retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/StatsResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires role read permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/roles/check-name/{name}": {
-      "get": {
-        "summary": "Check role name availability",
-        "description": "Check if a role name is available",
-        "tags": ["Roles"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Role name to check"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Role name availability checked",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "available": {
-                          "type": "boolean",
-                          "example": true
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/roles/{id}": {
-      "get": {
-        "summary": "Get role by ID",
-        "description": "Retrieve a specific role by ID",
-        "tags": ["Roles"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "Role ID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Role retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Role"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires role read permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Role not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "summary": "Update role",
-        "description": "Update role information",
-        "tags": ["Roles"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "Role ID"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateRoleRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Role updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Success"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires role update permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Role not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "summary": "Delete role",
-        "description": "Delete a role",
-        "tags": ["Roles"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "Role ID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Role deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Success"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires role delete permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Role not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/roles/{roleId}/permissions": {
-      "get": {
-        "summary": "Get role permissions",
-        "description": "Get all permissions assigned to a role",
-        "tags": ["Roles"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "roleId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "Role ID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Role permissions retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Permission"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires role read permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "summary": "Assign permissions to role",
-        "description": "Assign one or more permissions to a role",
-        "tags": ["Roles"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "roleId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "Role ID"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AssignPermissionsRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Permissions assigned successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Success"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires role update permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/roles/{roleId}/permissions/{permissionId}": {
-      "delete": {
-        "summary": "Remove permission from role",
-        "description": "Remove a specific permission from a role",
-        "tags": ["Roles"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "roleId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "Role ID"
-          },
-          {
-            "name": "permissionId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "Permission ID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Permission removed successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Success"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires role update permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Role or permission not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/permissions": {
-      "get": {
-        "summary": "Get all permissions",
-        "description": "Retrieve all permissions for the authenticated user's tenant",
-        "tags": ["Permissions"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Permissions retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Permission"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires role read permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "summary": "Create permission",
-        "description": "Create a new permission",
-        "tags": ["Permissions"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreatePermissionRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Permission created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Success"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires role create permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Permission already exists",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/permissions/stats": {
-      "get": {
-        "summary": "Get permission statistics",
-        "description": "Get statistics for permissions in the tenant",
-        "tags": ["Permissions"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Permission statistics retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/StatsResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires role read permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/permissions/check-name/{name}": {
-      "get": {
-        "summary": "Check permission name availability",
-        "description": "Check if a permission name is available",
-        "tags": ["Permissions"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Permission name to check"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Permission name availability checked",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "available": {
-                          "type": "boolean",
-                          "example": true
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/permissions/check-resource-action/{resource}/{action}": {
-      "get": {
-        "summary": "Check resource:action availability",
-        "description": "Check if a resource:action combination is available",
-        "tags": ["Permissions"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "resource",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Resource name"
-          },
-          {
-            "name": "action",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Action name"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Resource:action availability checked",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "available": {
-                          "type": "boolean",
-                          "example": true
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/permissions/resource/{resource}": {
-      "get": {
-        "summary": "Get permissions by resource",
-        "description": "Get all permissions for a specific resource",
-        "tags": ["Permissions"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "resource",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Resource name"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Permissions retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Permission"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires role read permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/permissions/{id}": {
-      "get": {
-        "summary": "Get permission by ID",
-        "description": "Retrieve a specific permission by ID",
-        "tags": ["Permissions"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "Permission ID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Permission retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Permission"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires role read permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Permission not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "summary": "Update permission",
-        "description": "Update permission information",
-        "tags": ["Permissions"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "Permission ID"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdatePermissionRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Permission updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Success"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires role update permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Permission not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "summary": "Delete permission",
-        "description": "Delete a permission",
-        "tags": ["Permissions"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "Permission ID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Permission deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Success"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires role delete permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Permission not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/products": {
-      "get": {
-        "summary": "Get all products",
-        "description": "Retrieve all products for the authenticated user's tenant",
-        "tags": ["Products"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Products retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Product"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires product read permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "summary": "Create product",
-        "description": "Create a new product",
-        "tags": ["Products"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateProductRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Product created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Success"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires product create permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Product SKU or barcode already exists",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/products/stats": {
-      "get": {
-        "summary": "Get product statistics",
-        "description": "Get statistics for products in the tenant",
-        "tags": ["Products"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Product statistics retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/StatsResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires product read permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/products/search": {
-      "get": {
-        "summary": "Search products",
-        "description": "Search products by name, SKU, or barcode",
-        "tags": ["Products"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "q",
+            "name": "page",
             "in": "query",
-            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            },
+            "description": "Page number for pagination"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            },
+            "description": "Number of items per page"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "completed",
+                "cancelled"
+              ]
+            },
+            "description": "Filter by sale status"
+          },
+          {
+            "name": "paymentStatus",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "partial",
+                "paid",
+                "refunded"
+              ]
+            },
+            "description": "Filter by payment status"
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Filter sales from this date"
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Filter sales until this date"
+          },
+          {
+            "name": "customerId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Filter by customer ID"
+          },
+          {
+            "name": "search",
+            "in": "query",
             "schema": {
               "type": "string"
             },
-            "description": "Search query"
+            "description": "Search in sale number or customer name"
           }
         ],
         "responses": {
           "200": {
-            "description": "Products search completed successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SearchResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Search query is required",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires product read permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/products/{id}": {
-      "get": {
-        "summary": "Get product by ID",
-        "description": "Retrieve a specific product by ID",
-        "tags": ["Products"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "Product ID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Product retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Product"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires product read permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Product not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "summary": "Update product",
-        "description": "Update product information",
-        "tags": ["Products"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "Product ID"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateProductRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Product updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Success"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires product update permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Product not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Product SKU or barcode already exists",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "summary": "Delete product",
-        "description": "Delete a product",
-        "tags": ["Products"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "Product ID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Product deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Success"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Cannot delete product that has been sold",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires product delete permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Product not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/categories": {
-      "get": {
-        "summary": "Get all categories",
-        "description": "Retrieve all categories for the authenticated user's tenant (hierarchical)",
-        "tags": ["Categories"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Categories retrieved successfully",
+            "description": "Store sales retrieved successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -4240,7 +776,28 @@
                     "data": {
                       "type": "array",
                       "items": {
-                        "$ref": "#/components/schemas/Category"
+                        "$ref": "#/components/schemas/Sale"
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "page": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "limit": {
+                          "type": "integer",
+                          "example": 20
+                        },
+                        "total": {
+                          "type": "integer",
+                          "example": 150
+                        },
+                        "totalPages": {
+                          "type": "integer",
+                          "example": 8
+                        }
                       }
                     }
                   }
@@ -4248,8 +805,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden - Requires category read permission",
+          "400": {
+            "description": "Bad request - Invalid parameters",
             "content": {
               "application/json": {
                 "schema": {
@@ -4259,218 +816,16 @@
             }
           }
         }
-      },
+      }
+    },
+    "/sales/{id}/payment": {
       "post": {
-        "summary": "Create category",
-        "description": "Create a new category",
-        "tags": ["Categories"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
+        "summary": "Process payment for a sale",
+        "description": "Process payment for an existing sale using various payment methods",
+        "tags": [
+          "Sales",
+          "Payments"
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateCategoryRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Category created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Success"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error or circular reference",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires category create permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Category name already exists",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/categories/stats": {
-      "get": {
-        "summary": "Get category statistics",
-        "description": "Get statistics for categories in the tenant",
-        "tags": ["Categories"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Category statistics retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/StatsResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires category read permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/categories/search": {
-      "get": {
-        "summary": "Search categories",
-        "description": "Search categories by name or description",
-        "tags": ["Categories"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "q",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Search query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Categories search completed successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SearchResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Search query is required",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires category read permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/categories/sort-orders": {
-      "put": {
-        "summary": "Update category sort orders",
-        "description": "Update the sort order of multiple categories",
-        "tags": ["Categories"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateSortOrdersRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Category sort orders updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Success"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires category update permission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/categories/{id}": {
-      "get": {
-        "summary": "Get category by ID",
-        "description": "Retrieve a specific category by ID",
-        "tags": ["Categories"],
         "security": [
           {
             "bearerAuth": []
@@ -4485,12 +840,54 @@
               "type": "string",
               "format": "uuid"
             },
-            "description": "Category ID"
+            "description": "Sale ID"
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "amount",
+                  "method"
+                ],
+                "properties": {
+                  "amount": {
+                    "type": "number",
+                    "minimum": 0.01,
+                    "description": "Payment amount"
+                  },
+                  "method": {
+                    "type": "string",
+                    "enum": [
+                      "cash",
+                      "card",
+                      "bank_transfer",
+                      "digital_wallet",
+                      "other"
+                    ],
+                    "description": "Payment method"
+                  },
+                  "reference": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "description": "Payment reference or transaction ID"
+                  },
+                  "notes": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "description": "Payment notes"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "Category retrieved successfully",
+            "description": "Payment processed successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -4501,15 +898,19 @@
                       "example": true
                     },
                     "data": {
-                      "$ref": "#/components/schemas/Category"
+                      "$ref": "#/components/schemas/Sale"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Payment processed successfully"
                     }
                   }
                 }
               }
             }
           },
-          "403": {
-            "description": "Forbidden - Requires category read permission",
+          "400": {
+            "description": "Bad request - Invalid payment data or sale cannot accept payment",
             "content": {
               "application/json": {
                 "schema": {
@@ -4519,7 +920,7 @@
             }
           },
           "404": {
-            "description": "Category not found",
+            "description": "Sale not found",
             "content": {
               "application/json": {
                 "schema": {
@@ -4529,11 +930,15 @@
             }
           }
         }
-      },
-      "put": {
-        "summary": "Update category",
-        "description": "Update category information",
-        "tags": ["Categories"],
+      }
+    },
+    "/sales/{id}/complete": {
+      "post": {
+        "summary": "Complete a sale",
+        "description": "Mark a sale as completed and finalize all transactions",
+        "tags": [
+          "Sales"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -4548,7 +953,150 @@
               "type": "string",
               "format": "uuid"
             },
-            "description": "Category ID"
+            "description": "Sale ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sale completed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Sale"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Sale completed successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Sale cannot be completed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Sale not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sales/{id}/cancel": {
+      "post": {
+        "summary": "Cancel a sale",
+        "description": "Cancel a pending sale and restore inventory quantities",
+        "tags": [
+          "Sales"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Sale ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sale cancelled successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Sale"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Sale cancelled successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Sale cannot be cancelled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Sale not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sales/{id}/refund": {
+      "post": {
+        "summary": "Process refund for a sale",
+        "description": "Process a partial or full refund for a completed sale",
+        "tags": [
+          "Sales",
+          "Payments"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Sale ID"
           }
         ],
         "requestBody": {
@@ -4556,34 +1104,54 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateCategoryRequest"
+                "type": "object",
+                "required": [
+                  "refundAmount",
+                  "reason"
+                ],
+                "properties": {
+                  "refundAmount": {
+                    "type": "number",
+                    "minimum": 0.01,
+                    "description": "Amount to refund"
+                  },
+                  "reason": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 255,
+                    "description": "Reason for the refund"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Category updated successfully",
+            "description": "Refund processed successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Success"
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Sale"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Refund processed successfully"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error or circular reference",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Requires category update permission",
+            "description": "Bad request - Invalid refund data or sale cannot accept refund",
             "content": {
               "application/json": {
                 "schema": {
@@ -4593,17 +1161,7 @@
             }
           },
           "404": {
-            "description": "Category not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Category name already exists",
+            "description": "Sale not found",
             "content": {
               "application/json": {
                 "schema": {
@@ -4613,11 +1171,16 @@
             }
           }
         }
-      },
-      "delete": {
-        "summary": "Delete category",
-        "description": "Delete a category",
-        "tags": ["Categories"],
+      }
+    },
+    "/sales/stats": {
+      "get": {
+        "summary": "Get sales statistics for store",
+        "description": "Retrieve sales statistics and analytics for the current store",
+        "tags": [
+          "Sales",
+          "Analytics"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -4625,39 +1188,182 @@
         ],
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
+            "name": "startDate",
+            "in": "query",
             "schema": {
               "type": "string",
-              "format": "uuid"
+              "format": "date"
             },
-            "description": "Category ID"
+            "description": "Start date for statistics calculation (optional)"
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "End date for statistics calculation (optional)"
           }
         ],
         "responses": {
           "200": {
-            "description": "Category deleted successfully",
+            "description": "Sales statistics retrieved successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Success"
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "totalSales": {
+                          "type": "number",
+                          "example": 25000.5
+                        },
+                        "totalOrders": {
+                          "type": "number",
+                          "example": 250
+                        },
+                        "averageOrderValue": {
+                          "type": "number",
+                          "example": 100
+                        },
+                        "topSellingProducts": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "productId": {
+                                "type": "string",
+                                "format": "uuid"
+                              },
+                              "productName": {
+                                "type": "string"
+                              },
+                              "totalSold": {
+                                "type": "number"
+                              },
+                              "revenue": {
+                                "type": "number"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Cannot delete category that has subcategories or products",
+            "description": "Bad request - Invalid parameters",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sales/tenant/stats": {
+      "get": {
+        "summary": "Get tenant-wide sales statistics",
+        "description": "Retrieve aggregated sales statistics across all stores in the tenant",
+        "tags": [
+          "Sales",
+          "Multi-store Analytics"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Start date for filtering statistics (optional)"
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "End date for filtering statistics (optional)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tenant sales statistics retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "totalSales": {
+                          "type": "number",
+                          "example": 125000.5
+                        },
+                        "totalOrders": {
+                          "type": "number",
+                          "example": 1250
+                        },
+                        "averageOrderValue": {
+                          "type": "number",
+                          "example": 100
+                        },
+                        "topSellingProducts": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "productId": {
+                                "type": "string",
+                                "format": "uuid"
+                              },
+                              "productName": {
+                                "type": "string"
+                              },
+                              "totalSold": {
+                                "type": "number"
+                              },
+                              "revenue": {
+                                "type": "number"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
           },
           "403": {
-            "description": "Forbidden - Requires category delete permission",
+            "description": "Forbidden - Requires analytics tenant-wide permission",
             "content": {
               "application/json": {
                 "schema": {
@@ -4665,9 +1371,414 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/sales/tenant/compare": {
+      "get": {
+        "summary": "Compare sales performance across stores",
+        "description": "Compare sales performance metrics between different stores in the tenant",
+        "tags": [
+          "Sales",
+          "Multi-store Analytics"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Start date for comparison period (optional)"
           },
-          "404": {
-            "description": "Category not found",
+          {
+            "name": "endDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "End date for comparison period (optional)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Store sales comparison retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "storeId": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "storeName": {
+                            "type": "string"
+                          },
+                          "totalSales": {
+                            "type": "number"
+                          },
+                          "totalOrders": {
+                            "type": "number"
+                          },
+                          "averageOrderValue": {
+                            "type": "number"
+                          },
+                          "growthRate": {
+                            "type": "number"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Requires analytics tenant-wide permission",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sales/tenant/trends": {
+      "get": {
+        "summary": "Get tenant-wide sales trends",
+        "description": "Retrieve sales trends and patterns across all stores in the tenant over time",
+        "tags": [
+          "Sales",
+          "Multi-store Analytics"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Start date for trend analysis (optional)"
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "End date for trend analysis (optional)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sales trends retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "dailyTrends": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "date": {
+                                "type": "string",
+                                "format": "date"
+                              },
+                              "totalSales": {
+                                "type": "number"
+                              },
+                              "totalOrders": {
+                                "type": "number"
+                              }
+                            }
+                          }
+                        },
+                        "monthlyTrends": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "month": {
+                                "type": "string"
+                              },
+                              "year": {
+                                "type": "number"
+                              },
+                              "totalSales": {
+                                "type": "number"
+                              },
+                              "growthRate": {
+                                "type": "number"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Requires analytics tenant-wide permission",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sales/tenant/inventory-turnover": {
+      "get": {
+        "summary": "Get inventory turnover metrics",
+        "description": "Calculate inventory turnover rates and efficiency metrics across all stores",
+        "tags": [
+          "Sales",
+          "Multi-store Analytics"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "period",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "monthly",
+                "quarterly",
+                "yearly"
+              ],
+              "default": "monthly"
+            },
+            "description": "Time period for turnover calculation"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Inventory turnover metrics retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "overallTurnover": {
+                          "type": "number",
+                          "description": "Overall inventory turnover rate"
+                        },
+                        "byStore": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "storeId": {
+                                "type": "string"
+                              },
+                              "storeName": {
+                                "type": "string"
+                              },
+                              "turnoverRate": {
+                                "type": "number"
+                              },
+                              "avgDaysInInventory": {
+                                "type": "number"
+                              }
+                            }
+                          }
+                        },
+                        "byCategory": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "categoryId": {
+                                "type": "string"
+                              },
+                              "categoryName": {
+                                "type": "string"
+                              },
+                              "turnoverRate": {
+                                "type": "number"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Requires analytics tenant-wide permission",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sales/tenant/profitability": {
+      "get": {
+        "summary": "Get store profitability metrics",
+        "description": "Calculate profitability metrics and margins across all stores in the tenant",
+        "tags": [
+          "Sales",
+          "Multi-store Analytics"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Start date for profitability analysis (optional)"
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "End date for profitability analysis (optional)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Store profitability metrics retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "overallProfitability": {
+                          "type": "object",
+                          "properties": {
+                            "totalRevenue": {
+                              "type": "number"
+                            },
+                            "totalCost": {
+                              "type": "number"
+                            },
+                            "netProfit": {
+                              "type": "number"
+                            },
+                            "profitMargin": {
+                              "type": "number"
+                            }
+                          }
+                        },
+                        "byStore": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "storeId": {
+                                "type": "string"
+                              },
+                              "storeName": {
+                                "type": "string"
+                              },
+                              "revenue": {
+                                "type": "number"
+                              },
+                              "cost": {
+                                "type": "number"
+                              },
+                              "profit": {
+                                "type": "number"
+                              },
+                              "margin": {
+                                "type": "number"
+                              },
+                              "rank": {
+                                "type": "number"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Requires analytics tenant-wide permission",
             "content": {
               "application/json": {
                 "schema": {
@@ -4679,5 +1790,6 @@
         }
       }
     }
-  }
+  },
+  "tags": []
 }

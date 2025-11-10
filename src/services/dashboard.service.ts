@@ -93,6 +93,26 @@ export class DashboardService {
       type: 'stats',
       requiredPermissions: ['customers.view'],
     },
+    'store-comparison': {
+      title: 'Store Performance Comparison',
+      type: 'chart',
+      requiredPermissions: ['analytics:tenant_wide'],
+    },
+    'tenant-inventory-overview': {
+      title: 'Tenant Inventory Overview',
+      type: 'stats',
+      requiredPermissions: ['inventory:view_all'],
+    },
+    'multi-store-sales-trends': {
+      title: 'Multi-store Sales Trends',
+      type: 'chart',
+      requiredPermissions: ['analytics:tenant_wide'],
+    },
+    'inventory-transfer-summary': {
+      title: 'Inventory Transfer Summary',
+      type: 'stats',
+      requiredPermissions: ['inventory_transfer:view'],
+    },
   };
 
   /**
@@ -230,6 +250,19 @@ export class DashboardService {
 
         case 'loyalty-overview':
           return await this.getLoyaltyOverviewData(tenantId, config);
+
+        // Multi-store and tenant-wide widgets
+        case 'store-comparison':
+          return await this.getStoreComparisonData(tenantId, config);
+
+        case 'tenant-inventory-overview':
+          return await this.getTenantInventoryOverviewData(tenantId, config);
+
+        case 'multi-store-sales-trends':
+          return await this.getMultiStoreSalesTrendsData(tenantId, config);
+
+        case 'inventory-transfer-summary':
+          return await this.getInventoryTransferSummaryData(tenantId, config);
 
         default:
           return null;
@@ -412,6 +445,127 @@ export class DashboardService {
       averageSpent: stats.averageSpent,
       topSpenders: stats.topSpenders?.slice(0, 5),
     };
+  }
+
+  /**
+   * Get store comparison data for dashboard
+   */
+  private static async getStoreComparisonData(tenantId: string, config?: any): Promise<any> {
+    try {
+      const startDate = config?.startDate ? new Date(config.startDate) : undefined;
+      const endDate = config?.endDate ? new Date(config.endDate) : undefined;
+
+      const comparisonData = await SaleService.compareStoreSales(tenantId, startDate, endDate);
+
+      return {
+        stores: comparisonData.map(store => ({
+          storeId: store.storeId,
+          totalSales: store.totalSales,
+          totalRevenue: store.totalRevenue,
+          averageSaleValue: store.averageSaleValue,
+        })),
+        period: {
+          startDate: startDate?.toISOString(),
+          endDate: endDate?.toISOString(),
+        },
+      };
+    } catch (error) {
+      logger.error('Error getting store comparison data:', error);
+      return { stores: [], error: 'Failed to load store comparison data' };
+    }
+  }
+
+  /**
+   * Get tenant inventory overview data for dashboard
+   */
+  private static async getTenantInventoryOverviewData(tenantId: string, config?: any): Promise<any> {
+    try {
+      const stats = await InventoryService.getTenantInventoryStats(tenantId);
+
+      return {
+        totalItems: stats.totalItems,
+        lowStockItems: stats.lowStockItems,
+        outOfStockItems: stats.outOfStockItems,
+        totalValue: stats.totalValue,
+        expiringSoon: stats.expiringSoon,
+        storeBreakdown: stats.storeBreakdown,
+      };
+    } catch (error) {
+      logger.error('Error getting tenant inventory overview data:', error);
+      return { error: 'Failed to load tenant inventory overview' };
+    }
+  }
+
+  /**
+   * Get multi-store sales trends data for dashboard
+   */
+  private static async getMultiStoreSalesTrendsData(tenantId: string, config?: any): Promise<any> {
+    try {
+      const days = config?.days || 30;
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - days);
+
+      const trends = await SaleService.getTenantSalesTrends(tenantId, startDate);
+
+      return {
+        trends: trends.map(trend => ({
+          date: trend.date,
+          totalSales: trend.totalSales,
+          totalRevenue: trend.totalRevenue,
+        })),
+        period: {
+          days,
+          startDate: startDate.toISOString(),
+        },
+      };
+    } catch (error) {
+      logger.error('Error getting multi-store sales trends data:', error);
+      return { trends: [], error: 'Failed to load sales trends data' };
+    }
+  }
+
+  /**
+   * Get inventory transfer summary data for dashboard
+   */
+  private static async getInventoryTransferSummaryData(tenantId: string, config?: any): Promise<any> {
+    try {
+      const { InventoryTransfer } = await import('../db/models');
+      const { Op } = await import('sequelize');
+
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+      const transfers = await InventoryTransfer.findAll({
+        where: {
+          tenantId,
+          createdAt: { [Op.gte]: thirtyDaysAgo },
+        },
+        attributes: [
+          'status',
+          [InventoryTransfer.sequelize!.fn('COUNT', InventoryTransfer.sequelize!.col('id')), 'count'],
+        ],
+        group: ['status'],
+        raw: true,
+      });
+
+      const transferStats = transfers.reduce((acc: any, transfer: any) => {
+        acc[transfer.status] = parseInt(transfer.count);
+        return acc;
+      }, {});
+
+      return {
+        pending: transferStats.pending || 0,
+        approved: transferStats.approved || 0,
+        in_transit: transferStats.in_transit || 0,
+        completed: transferStats.completed || 0,
+        cancelled: transferStats.cancelled || 0,
+        total: Object.values(transferStats).reduce((sum: number, count: any) => sum + count, 0),
+        period: 'Last 30 days',
+      };
+    } catch (error) {
+      logger.error('Error getting inventory transfer summary data:', error);
+      return { error: 'Failed to load inventory transfer summary' };
+    }
   }
 
   /**

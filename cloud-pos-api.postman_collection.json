@@ -1,0 +1,608 @@
+{
+  "info": {
+    "name": "Cloud POS API",
+    "description": "Multi-tenant Point-of-Sale API with offline synchronization",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Create a new sale transaction",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/sales",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "sales"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"items\": [],\n  \"customerId\": \"123e4567-e89b-12d3-a456-426614174000\",\n  \"notes\": \"Customer requested gift wrapping\"\n}"
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get sale by ID",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/sales/{id}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "sales",
+            "{id}"
+          ],
+          "variable": [
+            {
+              "key": "id",
+              "value": "",
+              "description": "Sale ID"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update sale details",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/sales/{id}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "sales",
+            "{id}"
+          ],
+          "variable": [
+            {
+              "key": "id",
+              "value": "",
+              "description": "Sale ID"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"items\": [],\n  \"discount\": 1,\n  \"notes\": \"example\"\n}"
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete a sale",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/sales/{id}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "sales",
+            "{id}"
+          ],
+          "variable": [
+            {
+              "key": "id",
+              "value": "",
+              "description": "Sale ID"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get store sales with pagination and filters",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/sales/store",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "sales",
+            "store"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "",
+              "description": "Page number for pagination"
+            },
+            {
+              "key": "limit",
+              "value": "",
+              "description": "Number of items per page"
+            },
+            {
+              "key": "status",
+              "value": "",
+              "description": "Filter by sale status"
+            },
+            {
+              "key": "paymentStatus",
+              "value": "",
+              "description": "Filter by payment status"
+            },
+            {
+              "key": "startDate",
+              "value": "",
+              "description": "Filter sales from this date"
+            },
+            {
+              "key": "endDate",
+              "value": "",
+              "description": "Filter sales until this date"
+            },
+            {
+              "key": "customerId",
+              "value": "",
+              "description": "Filter by customer ID"
+            },
+            {
+              "key": "search",
+              "value": "",
+              "description": "Search in sale number or customer name"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Process payment for a sale",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/sales/{id}/payment",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "sales",
+            "{id}",
+            "payment"
+          ],
+          "variable": [
+            {
+              "key": "id",
+              "value": "",
+              "description": "Sale ID"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"amount\": 1,\n  \"method\": \"example\",\n  \"reference\": \"example\",\n  \"notes\": \"example\"\n}"
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Complete a sale",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/sales/{id}/complete",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "sales",
+            "{id}",
+            "complete"
+          ],
+          "variable": [
+            {
+              "key": "id",
+              "value": "",
+              "description": "Sale ID"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Cancel a sale",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/sales/{id}/cancel",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "sales",
+            "{id}",
+            "cancel"
+          ],
+          "variable": [
+            {
+              "key": "id",
+              "value": "",
+              "description": "Sale ID"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Process refund for a sale",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/sales/{id}/refund",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "sales",
+            "{id}",
+            "refund"
+          ],
+          "variable": [
+            {
+              "key": "id",
+              "value": "",
+              "description": "Sale ID"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"refundAmount\": 1,\n  \"reason\": \"example\"\n}"
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get sales statistics for store",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/sales/stats",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "sales",
+            "stats"
+          ],
+          "query": [
+            {
+              "key": "startDate",
+              "value": "",
+              "description": "Start date for statistics calculation (optional)"
+            },
+            {
+              "key": "endDate",
+              "value": "",
+              "description": "End date for statistics calculation (optional)"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get tenant-wide sales statistics",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/sales/tenant/stats",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "sales",
+            "tenant",
+            "stats"
+          ],
+          "query": [
+            {
+              "key": "startDate",
+              "value": "",
+              "description": "Start date for filtering statistics (optional)"
+            },
+            {
+              "key": "endDate",
+              "value": "",
+              "description": "End date for filtering statistics (optional)"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Compare sales performance across stores",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/sales/tenant/compare",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "sales",
+            "tenant",
+            "compare"
+          ],
+          "query": [
+            {
+              "key": "startDate",
+              "value": "",
+              "description": "Start date for comparison period (optional)"
+            },
+            {
+              "key": "endDate",
+              "value": "",
+              "description": "End date for comparison period (optional)"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get tenant-wide sales trends",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/sales/tenant/trends",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "sales",
+            "tenant",
+            "trends"
+          ],
+          "query": [
+            {
+              "key": "startDate",
+              "value": "",
+              "description": "Start date for trend analysis (optional)"
+            },
+            {
+              "key": "endDate",
+              "value": "",
+              "description": "End date for trend analysis (optional)"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get inventory turnover metrics",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/sales/tenant/inventory-turnover",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "sales",
+            "tenant",
+            "inventory-turnover"
+          ],
+          "query": [
+            {
+              "key": "period",
+              "value": "",
+              "description": "Time period for turnover calculation"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get store profitability metrics",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/sales/tenant/profitability",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "sales",
+            "tenant",
+            "profitability"
+          ],
+          "query": [
+            {
+              "key": "startDate",
+              "value": "",
+              "description": "Start date for profitability analysis (optional)"
+            },
+            {
+              "key": "endDate",
+              "value": "",
+              "description": "End date for profitability analysis (optional)"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

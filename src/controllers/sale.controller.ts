@@ -11,7 +11,83 @@ import logger from '../config/logger';
 
 export class SaleController {
   /**
-   * Create a new sale transaction
+   * @swagger
+   * /sales:
+   *   post:
+   *     summary: Create a new sale transaction
+   *     description: Create a new sale with items, calculate totals, and update inventory
+   *     tags: [Sales]
+   *     security:
+   *       - bearerAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required:
+   *               - items
+   *             properties:
+   *               items:
+   *                 type: array
+   *                 items:
+   *                   type: object
+   *                   required:
+   *                     - productId
+   *                     - quantity
+   *                     - unitPrice
+   *                   properties:
+   *                     productId:
+   *                       type: string
+   *                       format: uuid
+   *                       example: "123e4567-e89b-12d3-a456-426614174000"
+   *                     quantity:
+   *                       type: number
+   *                       minimum: 1
+   *                       example: 2
+   *                     unitPrice:
+   *                       type: number
+   *                       minimum: 0
+   *                       example: 29.99
+   *                     discount:
+   *                       type: number
+   *                       minimum: 0
+   *                       example: 0
+   *               customerId:
+   *                 type: string
+   *                 format: uuid
+   *                 example: "123e4567-e89b-12d3-a456-426614174000"
+   *               notes:
+   *                 type: string
+   *                 example: "Customer requested gift wrapping"
+   *     responses:
+   *       201:
+   *         description: Sale created successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                   example: true
+   *                 data:
+   *                   $ref: '#/components/schemas/Sale'
+   *                 message:
+   *                   type: string
+   *                   example: "Sale created successfully"
+   *       400:
+   *         description: Validation error or insufficient stock
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       403:
+   *         description: Forbidden - Requires sale create permission
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
    */
   static async createSale(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -74,7 +150,47 @@ export class SaleController {
   }
 
   /**
-   * Get sale by ID
+   * @swagger
+   * /sales/{id}:
+   *   get:
+   *     summary: Get sale by ID
+   *     description: Retrieve detailed information about a specific sale including items and payments
+   *     tags: [Sales]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - name: id
+   *         in: path
+   *         required: true
+   *         schema:
+   *           type: string
+   *           format: uuid
+   *         description: Sale ID
+   *     responses:
+   *       200:
+   *         description: Sale retrieved successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                   example: true
+   *                 data:
+   *                   $ref: '#/components/schemas/Sale'
+   *       403:
+   *         description: Forbidden - Requires sale read permission
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       404:
+   *         description: Sale not found
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
    */
   static async getSaleById(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -129,7 +245,101 @@ export class SaleController {
   }
 
   /**
-   * Get sales for a store with pagination and filters
+   * @swagger
+   * /sales/store:
+   *   get:
+   *     summary: Get store sales with pagination and filters
+   *     description: Retrieve sales for the current store with optional filtering and pagination
+   *     tags: [Sales]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - name: page
+   *         in: query
+   *         schema:
+   *           type: integer
+   *           minimum: 1
+   *           default: 1
+   *         description: Page number for pagination
+   *       - name: limit
+   *         in: query
+   *         schema:
+   *           type: integer
+   *           minimum: 1
+   *           maximum: 100
+   *           default: 20
+   *         description: Number of items per page
+   *       - name: status
+   *         in: query
+   *         schema:
+   *           type: string
+   *           enum: [pending, completed, cancelled]
+   *         description: Filter by sale status
+   *       - name: paymentStatus
+   *         in: query
+   *         schema:
+   *           type: string
+   *           enum: [pending, partial, paid, refunded]
+   *         description: Filter by payment status
+   *       - name: startDate
+   *         in: query
+   *         schema:
+   *           type: string
+   *           format: date
+   *         description: Filter sales from this date
+   *       - name: endDate
+   *         in: query
+   *         schema:
+   *           type: string
+   *           format: date
+   *         description: Filter sales until this date
+   *       - name: customerId
+   *         in: query
+   *         schema:
+   *           type: string
+   *           format: uuid
+   *         description: Filter by customer ID
+   *       - name: search
+   *         in: query
+   *         schema:
+   *           type: string
+   *         description: Search in sale number or customer name
+   *     responses:
+   *       200:
+   *         description: Store sales retrieved successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                   example: true
+   *                 data:
+   *                   type: array
+   *                   items:
+   *                     $ref: '#/components/schemas/Sale'
+   *                 pagination:
+   *                   type: object
+   *                   properties:
+   *                     page:
+   *                       type: integer
+   *                       example: 1
+   *                     limit:
+   *                       type: integer
+   *                       example: 20
+   *                     total:
+   *                       type: integer
+   *                       example: 150
+   *                     totalPages:
+   *                       type: integer
+   *                       example: 8
+   *       400:
+   *         description: Bad request - Invalid parameters
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
    */
   static async getStoreSales(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -201,7 +411,82 @@ export class SaleController {
   }
 
   /**
-   * Update sale details
+   * @swagger
+   * /sales/{id}:
+   *   put:
+   *     summary: Update sale details
+   *     description: Update sale information such as items, discounts, or notes
+   *     tags: [Sales]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - name: id
+   *         in: path
+   *         required: true
+   *         schema:
+   *           type: string
+   *           format: uuid
+   *         description: Sale ID
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               items:
+   *                 type: array
+   *                 items:
+   *                   type: object
+   *                   properties:
+   *                     productId:
+   *                       type: string
+   *                       format: uuid
+   *                     quantity:
+   *                       type: number
+   *                       minimum: 1
+   *                     unitPrice:
+   *                       type: number
+   *                       minimum: 0
+   *                     discount:
+   *                       type: number
+   *                       minimum: 0
+   *                       default: 0
+   *               discount:
+   *                 type: number
+   *                 minimum: 0
+   *                 default: 0
+   *               notes:
+   *                 type: string
+   *                 maxLength: 500
+   *     responses:
+   *       200:
+   *         description: Sale updated successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                   example: true
+   *                 data:
+   *                   $ref: '#/components/schemas/Sale'
+   *                 message:
+   *                   type: string
+   *                   example: "Sale updated successfully"
+   *       400:
+   *         description: Bad request - Invalid data or sale cannot be updated
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       404:
+   *         description: Sale not found
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
    */
   static async updateSale(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -267,7 +552,76 @@ export class SaleController {
   }
 
   /**
-   * Process payment for a sale
+   * @swagger
+   * /sales/{id}/payment:
+   *   post:
+   *     summary: Process payment for a sale
+   *     description: Process payment for an existing sale using various payment methods
+   *     tags: [Sales, Payments]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - name: id
+   *         in: path
+   *         required: true
+   *         schema:
+   *           type: string
+   *           format: uuid
+   *         description: Sale ID
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required:
+   *               - amount
+   *               - method
+   *             properties:
+   *               amount:
+   *                 type: number
+   *                 minimum: 0.01
+   *                 description: Payment amount
+   *               method:
+   *                 type: string
+   *                 enum: [cash, card, bank_transfer, digital_wallet, other]
+   *                 description: Payment method
+   *               reference:
+   *                 type: string
+   *                 maxLength: 100
+   *                 description: Payment reference or transaction ID
+   *               notes:
+   *                 type: string
+   *                 maxLength: 255
+   *                 description: Payment notes
+   *     responses:
+   *       200:
+   *         description: Payment processed successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                   example: true
+   *                 data:
+   *                   $ref: '#/components/schemas/Sale'
+   *                 message:
+   *                   type: string
+   *                   example: "Payment processed successfully"
+   *       400:
+   *         description: Bad request - Invalid payment data or sale cannot accept payment
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       404:
+   *         description: Sale not found
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
    */
   static async processPayment(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -325,7 +679,50 @@ export class SaleController {
   }
 
   /**
-   * Complete a sale
+   * @swagger
+   * /sales/{id}/complete:
+   *   post:
+   *     summary: Complete a sale
+   *     description: Mark a sale as completed and finalize all transactions
+   *     tags: [Sales]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - name: id
+   *         in: path
+   *         required: true
+   *         schema:
+   *           type: string
+   *           format: uuid
+   *         description: Sale ID
+   *     responses:
+   *       200:
+   *         description: Sale completed successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                   example: true
+   *                 data:
+   *                   $ref: '#/components/schemas/Sale'
+   *                 message:
+   *                   type: string
+   *                   example: "Sale completed successfully"
+   *       400:
+   *         description: Bad request - Sale cannot be completed
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       404:
+   *         description: Sale not found
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
    */
   static async completeSale(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -381,7 +778,50 @@ export class SaleController {
   }
 
   /**
-   * Cancel a sale
+   * @swagger
+   * /sales/{id}/cancel:
+   *   post:
+   *     summary: Cancel a sale
+   *     description: Cancel a pending sale and restore inventory quantities
+   *     tags: [Sales]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - name: id
+   *         in: path
+   *         required: true
+   *         schema:
+   *           type: string
+   *           format: uuid
+   *         description: Sale ID
+   *     responses:
+   *       200:
+   *         description: Sale cancelled successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                   example: true
+   *                 data:
+   *                   $ref: '#/components/schemas/Sale'
+   *                 message:
+   *                   type: string
+   *                   example: "Sale cancelled successfully"
+   *       400:
+   *         description: Bad request - Sale cannot be cancelled
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       404:
+   *         description: Sale not found
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
    */
   static async cancelSale(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -437,7 +877,69 @@ export class SaleController {
   }
 
   /**
-   * Process refund for a sale
+   * @swagger
+   * /sales/{id}/refund:
+   *   post:
+   *     summary: Process refund for a sale
+   *     description: Process a partial or full refund for a completed sale
+   *     tags: [Sales, Payments]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - name: id
+   *         in: path
+   *         required: true
+   *         schema:
+   *           type: string
+   *           format: uuid
+   *         description: Sale ID
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required:
+   *               - refundAmount
+   *               - reason
+   *             properties:
+   *               refundAmount:
+   *                 type: number
+   *                 minimum: 0.01
+   *                 description: Amount to refund
+   *               reason:
+   *                 type: string
+   *                 minLength: 1
+   *                 maxLength: 255
+   *                 description: Reason for the refund
+   *     responses:
+   *       200:
+   *         description: Refund processed successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                   example: true
+   *                 data:
+   *                   $ref: '#/components/schemas/Sale'
+   *                 message:
+   *                   type: string
+   *                   example: "Refund processed successfully"
+   *       400:
+   *         description: Bad request - Invalid refund data or sale cannot accept refund
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       404:
+   *         description: Sale not found
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
    */
   static async processRefund(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -510,7 +1012,70 @@ export class SaleController {
   }
 
   /**
-   * Get sales statistics for a store
+   * @swagger
+   * /sales/stats:
+   *   get:
+   *     summary: Get sales statistics for store
+   *     description: Retrieve sales statistics and analytics for the current store
+   *     tags: [Sales, Analytics]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - name: startDate
+   *         in: query
+   *         schema:
+   *           type: string
+   *           format: date
+   *         description: Start date for statistics calculation (optional)
+   *       - name: endDate
+   *         in: query
+   *         schema:
+   *           type: string
+   *           format: date
+   *         description: End date for statistics calculation (optional)
+   *     responses:
+   *       200:
+   *         description: Sales statistics retrieved successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                   example: true
+   *                 data:
+   *                   type: object
+   *                   properties:
+   *                     totalSales:
+   *                       type: number
+   *                       example: 25000.50
+   *                     totalOrders:
+   *                       type: number
+   *                       example: 250
+   *                     averageOrderValue:
+   *                       type: number
+   *                       example: 100.00
+   *                     topSellingProducts:
+   *                       type: array
+   *                       items:
+   *                         type: object
+   *                         properties:
+   *                           productId:
+   *                             type: string
+   *                             format: uuid
+   *                           productName:
+   *                             type: string
+   *                           totalSold:
+   *                             type: number
+   *                           revenue:
+   *                             type: number
+   *       400:
+   *         description: Bad request - Invalid parameters
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
    */
   static async getSalesStats(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -553,7 +1118,48 @@ export class SaleController {
   }
 
   /**
-   * Delete a sale (admin only, for data cleanup)
+   * @swagger
+   * /sales/{id}:
+   *   delete:
+   *     summary: Delete a sale
+   *     description: Permanently delete a sale (admin only, for data cleanup)
+   *     tags: [Sales, Admin]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - name: id
+   *         in: path
+   *         required: true
+   *         schema:
+   *           type: string
+   *           format: uuid
+   *         description: Sale ID
+   *     responses:
+   *       200:
+   *         description: Sale deleted successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                   example: true
+   *                 message:
+   *                   type: string
+   *                   example: "Sale deleted successfully"
+   *       400:
+   *         description: Bad request - Sale cannot be deleted
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       404:
+   *         description: Sale not found
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
    */
   static async deleteSale(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -616,7 +1222,70 @@ export class SaleController {
   }
 
   /**
-   * Get tenant-wide sales statistics
+   * @swagger
+   * /sales/tenant/stats:
+   *   get:
+   *     summary: Get tenant-wide sales statistics
+   *     description: Retrieve aggregated sales statistics across all stores in the tenant
+   *     tags: [Sales, Multi-store Analytics]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - name: startDate
+   *         in: query
+   *         schema:
+   *           type: string
+   *           format: date
+   *         description: Start date for filtering statistics (optional)
+   *       - name: endDate
+   *         in: query
+   *         schema:
+   *           type: string
+   *           format: date
+   *         description: End date for filtering statistics (optional)
+   *     responses:
+   *       200:
+   *         description: Tenant sales statistics retrieved successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                   example: true
+   *                 data:
+   *                   type: object
+   *                   properties:
+   *                     totalSales:
+   *                       type: number
+   *                       example: 125000.50
+   *                     totalOrders:
+   *                       type: number
+   *                       example: 1250
+   *                     averageOrderValue:
+   *                       type: number
+   *                       example: 100.00
+   *                     topSellingProducts:
+   *                       type: array
+   *                       items:
+   *                         type: object
+   *                         properties:
+   *                           productId:
+   *                             type: string
+   *                             format: uuid
+   *                           productName:
+   *                             type: string
+   *                           totalSold:
+   *                             type: number
+   *                           revenue:
+   *                             type: number
+   *       403:
+   *         description: Forbidden - Requires analytics tenant-wide permission
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
    */
   static async getTenantSalesStats(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -650,7 +1319,62 @@ export class SaleController {
   }
 
   /**
-   * Compare sales performance across stores
+   * @swagger
+   * /sales/tenant/compare:
+   *   get:
+   *     summary: Compare sales performance across stores
+   *     description: Compare sales performance metrics between different stores in the tenant
+   *     tags: [Sales, Multi-store Analytics]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - name: startDate
+   *         in: query
+   *         schema:
+   *           type: string
+   *           format: date
+   *         description: Start date for comparison period (optional)
+   *       - name: endDate
+   *         in: query
+   *         schema:
+   *           type: string
+   *           format: date
+   *         description: End date for comparison period (optional)
+   *     responses:
+   *       200:
+   *         description: Store sales comparison retrieved successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                   example: true
+   *                 data:
+   *                   type: array
+   *                   items:
+   *                     type: object
+   *                     properties:
+   *                       storeId:
+   *                         type: string
+   *                         format: uuid
+   *                       storeName:
+   *                         type: string
+   *                       totalSales:
+   *                         type: number
+   *                       totalOrders:
+   *                         type: number
+   *                       averageOrderValue:
+   *                         type: number
+   *                       growthRate:
+   *                         type: number
+   *       403:
+   *         description: Forbidden - Requires analytics tenant-wide permission
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
    */
   static async compareStoreSales(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -684,7 +1408,72 @@ export class SaleController {
   }
 
   /**
-   * Get sales trends across all stores
+   * @swagger
+   * /sales/tenant/trends:
+   *   get:
+   *     summary: Get tenant-wide sales trends
+   *     description: Retrieve sales trends and patterns across all stores in the tenant over time
+   *     tags: [Sales, Multi-store Analytics]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - name: startDate
+   *         in: query
+   *         schema:
+   *           type: string
+   *           format: date
+   *         description: Start date for trend analysis (optional)
+   *       - name: endDate
+   *         in: query
+   *         schema:
+   *           type: string
+   *           format: date
+   *         description: End date for trend analysis (optional)
+   *     responses:
+   *       200:
+   *         description: Sales trends retrieved successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                   example: true
+   *                 data:
+   *                   type: object
+   *                   properties:
+   *                     dailyTrends:
+   *                       type: array
+   *                       items:
+   *                         type: object
+   *                         properties:
+   *                           date:
+   *                             type: string
+   *                             format: date
+   *                           totalSales:
+   *                             type: number
+   *                           totalOrders:
+   *                             type: number
+   *                     monthlyTrends:
+   *                       type: array
+   *                       items:
+   *                         type: object
+   *                         properties:
+   *                           month:
+   *                             type: string
+   *                           year:
+   *                             type: number
+   *                           totalSales:
+   *                             type: number
+   *                           growthRate:
+   *                             type: number
+   *       403:
+   *         description: Forbidden - Requires analytics tenant-wide permission
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
    */
   static async getTenantSalesTrends(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -718,7 +1507,69 @@ export class SaleController {
   }
 
   /**
-   * Get inventory turnover metrics across stores
+   * @swagger
+   * /sales/tenant/inventory-turnover:
+   *   get:
+   *     summary: Get inventory turnover metrics
+   *     description: Calculate inventory turnover rates and efficiency metrics across all stores
+   *     tags: [Sales, Multi-store Analytics]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - name: period
+   *         in: query
+   *         schema:
+   *           type: string
+   *           enum: [monthly, quarterly, yearly]
+   *           default: monthly
+   *         description: Time period for turnover calculation
+   *     responses:
+   *       200:
+   *         description: Inventory turnover metrics retrieved successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                   example: true
+   *                 data:
+   *                   type: object
+   *                   properties:
+   *                     overallTurnover:
+   *                       type: number
+   *                       description: Overall inventory turnover rate
+   *                     byStore:
+   *                       type: array
+   *                       items:
+   *                         type: object
+   *                         properties:
+   *                           storeId:
+   *                             type: string
+   *                           storeName:
+   *                             type: string
+   *                           turnoverRate:
+   *                             type: number
+   *                           avgDaysInInventory:
+   *                             type: number
+   *                     byCategory:
+   *                       type: array
+   *                       items:
+   *                         type: object
+   *                         properties:
+   *                           categoryId:
+   *                             type: string
+   *                           categoryName:
+   *                             type: string
+   *                           turnoverRate:
+   *                             type: number
+   *       403:
+   *         description: Forbidden - Requires analytics tenant-wide permission
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
    */
   static async getInventoryTurnoverMetrics(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -752,7 +1603,77 @@ export class SaleController {
   }
 
   /**
-   * Get profitability metrics across stores
+   * @swagger
+   * /sales/tenant/profitability:
+   *   get:
+   *     summary: Get store profitability metrics
+   *     description: Calculate profitability metrics and margins across all stores in the tenant
+   *     tags: [Sales, Multi-store Analytics]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - name: startDate
+   *         in: query
+   *         schema:
+   *           type: string
+   *           format: date
+   *         description: Start date for profitability analysis (optional)
+   *       - name: endDate
+   *         in: query
+   *         schema:
+   *           type: string
+   *           format: date
+   *         description: End date for profitability analysis (optional)
+   *     responses:
+   *       200:
+   *         description: Store profitability metrics retrieved successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                   example: true
+   *                 data:
+   *                   type: object
+   *                   properties:
+   *                     overallProfitability:
+   *                       type: object
+   *                       properties:
+   *                         totalRevenue:
+   *                           type: number
+   *                         totalCost:
+   *                           type: number
+   *                         netProfit:
+   *                           type: number
+   *                         profitMargin:
+   *                           type: number
+   *                     byStore:
+   *                       type: array
+   *                       items:
+   *                         type: object
+   *                         properties:
+   *                           storeId:
+   *                             type: string
+   *                           storeName:
+   *                             type: string
+   *                           revenue:
+   *                             type: number
+   *                           cost:
+   *                             type: number
+   *                           profit:
+   *                             type: number
+   *                           margin:
+   *                             type: number
+   *                           rank:
+   *                             type: number
+   *       403:
+   *         description: Forbidden - Requires analytics tenant-wide permission
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
    */
   static async getStoreProfitabilityMetrics(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
