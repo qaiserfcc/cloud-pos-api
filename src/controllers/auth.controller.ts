@@ -14,7 +14,39 @@ export interface AuthRequest extends Request {
 }
 
 export class AuthController {
-  // Login user
+  /**
+   * @swagger
+   * /auth/login:
+   *   post:
+   *     summary: Login user
+   *     description: Authenticate user with email and password
+   *     tags: [Authentication]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/LoginRequest'
+   *     responses:
+   *       200:
+   *         description: Login successful
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/LoginResponse'
+   *       401:
+   *         description: Invalid credentials
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       500:
+   *         description: Internal server error
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   */
   static async login(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { email, password } = req.body;
@@ -40,7 +72,81 @@ export class AuthController {
     }
   }
 
-  // Register new user
+  /**
+   * @swagger
+   * /auth/register:
+   *   post:
+   *     summary: Register new user
+   *     description: Create a new user account
+   *     tags: [Authentication]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required:
+   *               - email
+   *               - password
+   *               - firstName
+   *               - lastName
+   *             properties:
+   *               email:
+   *                 type: string
+   *                 format: email
+   *                 example: user@example.com
+   *               password:
+   *                 type: string
+   *                 minLength: 6
+   *                 example: password123
+   *               firstName:
+   *                 type: string
+   *                 example: John
+   *               lastName:
+   *                 type: string
+   *                 example: Doe
+   *               tenantId:
+   *                 type: string
+   *                 format: uuid
+   *                 example: 123e4567-e89b-12d3-a456-426614174000
+   *     responses:
+   *       201:
+   *         description: User registered successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                   example: true
+   *                 data:
+   *                   type: object
+   *                   properties:
+   *                     user:
+   *                       $ref: '#/components/schemas/User'
+   *                     accessToken:
+   *                       type: string
+   *                       example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+   *                     refreshToken:
+   *                       type: string
+   *                       example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+   *                 message:
+   *                   type: string
+   *                   example: User registered successfully
+   *       409:
+   *         description: User with this email already exists
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       500:
+   *         description: Internal server error
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   */
   static async register(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const { email, password, firstName, lastName, tenantId } = req.body;
@@ -73,7 +179,64 @@ export class AuthController {
     }
   }
 
-  // Refresh access token
+  /**
+   * @swagger
+   * /auth/refresh:
+   *   post:
+   *     summary: Refresh access token
+   *     description: Generate new access token using refresh token
+   *     tags: [Authentication]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required:
+   *               - refreshToken
+   *             properties:
+   *               refreshToken:
+   *                 type: string
+   *                 example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+   *     responses:
+   *       200:
+   *         description: Token refreshed successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                   example: true
+   *                 data:
+   *                   type: object
+   *                   properties:
+   *                     accessToken:
+   *                       type: string
+   *                       example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+   *                     refreshToken:
+   *                       type: string
+   *                       example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+   *       400:
+   *         description: Refresh token is required
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       401:
+   *         description: Invalid refresh token
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       500:
+   *         description: Internal server error
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   */
   static async refreshToken(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { refreshToken } = req.body;
@@ -131,7 +294,42 @@ export class AuthController {
     }
   }
 
-  // Logout user (client-side token removal, but we can log the event)
+  /**
+   * @swagger
+   * /auth/logout:
+   *   post:
+   *     summary: Logout user
+   *     description: Logout the authenticated user
+   *     tags: [Authentication]
+   *     security:
+   *       - bearerAuth: []
+   *     responses:
+   *       200:
+   *         description: Logout successful
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                   example: true
+   *                 message:
+   *                   type: string
+   *                   example: Logged out successfully
+   *       401:
+   *         description: Unauthorized
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       500:
+   *         description: Internal server error
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   */
   static async logout(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user?.id;
@@ -150,7 +348,47 @@ export class AuthController {
     }
   }
 
-  // Get current user profile
+  /**
+   * @swagger
+   * /auth/profile:
+   *   get:
+   *     summary: Get user profile
+   *     description: Get the profile of the authenticated user
+   *     tags: [Authentication]
+   *     security:
+   *       - bearerAuth: []
+   *     responses:
+   *       200:
+   *         description: User profile retrieved successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                   example: true
+   *                 data:
+   *                   $ref: '#/components/schemas/UserWithAssociations'
+   *       401:
+   *         description: Unauthorized
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       404:
+   *         description: User not found
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       500:
+   *         description: Internal server error
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   */
   static async getProfile(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user?.id;

@@ -18,255 +18,6 @@
   ],
   "item": [
     {
-      "name": "Login user",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test(\"Status code is 200\", function () {",
-              "    pm.response.to.have.status(200);",
-              "});",
-              "",
-              "pm.test(\"Response has success\", function () {",
-              "    var jsonData = pm.response.json();",
-              "    pm.expect(jsonData).to.have.property('success', true);",
-              "    pm.expect(jsonData).to.have.property('data');",
-              "});",
-              "",
-              "pm.test(\"Response has tokens\", function () {",
-              "    var jsonData = pm.response.json();",
-              "    pm.expect(jsonData.data).to.have.property('tokens');",
-              "    pm.expect(jsonData.data.tokens).to.have.property('accessToken');",
-              "    pm.expect(jsonData.data.tokens).to.have.property('refreshToken');",
-              "});",
-              "",
-              "pm.test(\"Set auth token in environment\", function () {",
-              "    var jsonData = pm.response.json();",
-              "    pm.environment.set(\"authToken\", jsonData.data.tokens.accessToken);",
-              "    pm.environment.set(\"refreshToken\", jsonData.data.tokens.refreshToken);",
-              "});"
-            ],
-            "type": "text/javascript"
-          }
-        }
-      ],
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\"email\": \"qaiserfcc@gmail.com\", \"password\": \"12345678\"}"
-        },
-        "url": {
-          "raw": "{{baseUrl}}/auth/login",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "auth",
-            "login"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Register new user",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test(\"Status code is 201\", function () {",
-              "    pm.response.to.have.status(201);",
-              "});",
-              "",
-              "pm.test(\"Response has user data\", function () {",
-              "    var jsonData = pm.response.json();",
-              "    pm.expect(jsonData).to.have.property('user');",
-              "    pm.expect(jsonData).to.have.property('accessToken');",
-              "});"
-            ],
-            "type": "text/javascript"
-          }
-        }
-      ],
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\"email\": \"test@example.com\", \"password\": \"password123\", \"firstName\": \"Test\", \"lastName\": \"User\", \"tenantId\": \"550e8400-e29b-41d4-a716-446655440000\"}"
-        },
-        "url": {
-          "raw": "{{baseUrl}}/auth/register",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "auth",
-            "register"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Refresh access token",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test(\"Status code is 200\", function () {",
-              "    pm.response.to.have.status(200);",
-              "});",
-              "",
-              "pm.test(\"Response has new tokens\", function () {",
-              "    var jsonData = pm.response.json();",
-              "    pm.expect(jsonData).to.have.property('accessToken');",
-              "    pm.expect(jsonData).to.have.property('refreshToken');",
-              "});",
-              "",
-              "pm.test(\"Update environment tokens\", function () {",
-              "    var jsonData = pm.response.json();",
-              "    pm.environment.set(\"authToken\", jsonData.accessToken);",
-              "    pm.environment.set(\"refreshToken\", jsonData.refreshToken);",
-              "});"
-            ],
-            "type": "text/javascript"
-          }
-        }
-      ],
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\"refreshToken\": \"{{refreshToken}}\"}"
-        },
-        "url": {
-          "raw": "{{baseUrl}}/auth/refresh",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "auth",
-            "refresh"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Logout user",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test(\"Status code is 200\", function () {",
-              "    pm.response.to.have.status(200);",
-              "});",
-              "",
-              "pm.test(\"Logout successful\", function () {",
-              "    var jsonData = pm.response.json();",
-              "    pm.expect(jsonData).to.have.property('message');",
-              "});"
-            ],
-            "type": "text/javascript"
-          }
-        }
-      ],
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          },
-          {
-            "key": "Authorization",
-            "value": "Bearer {{authToken}}"
-          }
-        ],
-        "url": {
-          "raw": "{{baseUrl}}/auth/logout",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "auth",
-            "logout"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Get user profile",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test(\"Status code is 200\", function () {",
-              "    pm.response.to.have.status(200);",
-              "});",
-              "",
-              "pm.test(\"Response has user profile\", function () {",
-              "    var jsonData = pm.response.json();",
-              "    pm.expect(jsonData).to.have.property('user');",
-              "    pm.expect(jsonData.user).to.have.property('id');",
-              "    pm.expect(jsonData.user).to.have.property('email');",
-              "});"
-            ],
-            "type": "text/javascript"
-          }
-        }
-      ],
-      "request": {
-        "method": "GET",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          },
-          {
-            "key": "Authorization",
-            "value": "Bearer {{authToken}}"
-          }
-        ],
-        "url": {
-          "raw": "{{baseUrl}}/auth/profile",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "auth",
-            "profile"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
       "name": "Create a new bulk inventory transfer",
       "request": {
         "method": "POST",
@@ -281,11 +32,13 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/bulk-transfers",
+          "raw": "{{baseUrl}}/api/v1/bulk-transfers",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
+            "api",
+            "v1",
             "bulk-transfers"
           ]
         },
@@ -311,11 +64,13 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/bulk-transfers",
+          "raw": "{{baseUrl}}/api/v1/bulk-transfers",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
+            "api",
+            "v1",
             "bulk-transfers"
           ],
           "query": [
@@ -375,11 +130,13 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/bulk-transfers/{id}/submit",
+          "raw": "{{baseUrl}}/api/v1/bulk-transfers/{id}/submit",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
+            "api",
+            "v1",
             "bulk-transfers",
             "{id}",
             "submit"
@@ -409,11 +166,13 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/bulk-transfers/{id}/approve",
+          "raw": "{{baseUrl}}/api/v1/bulk-transfers/{id}/approve",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
+            "api",
+            "v1",
             "bulk-transfers",
             "{id}",
             "approve"
@@ -447,11 +206,13 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/bulk-transfers/{id}",
+          "raw": "{{baseUrl}}/api/v1/bulk-transfers/{id}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
+            "api",
+            "v1",
             "bulk-transfers",
             "{id}"
           ],
@@ -480,11 +241,13 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/bulk-transfers/{id}/cancel",
+          "raw": "{{baseUrl}}/api/v1/bulk-transfers/{id}/cancel",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
+            "api",
+            "v1",
             "bulk-transfers",
             "{id}",
             "cancel"
@@ -518,11 +281,13 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/inventory-regions",
+          "raw": "{{baseUrl}}/api/v1/inventory-regions",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
+            "api",
+            "v1",
             "inventory-regions"
           ]
         }
@@ -544,11 +309,13 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/inventory-regions",
+          "raw": "{{baseUrl}}/api/v1/inventory-regions",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
+            "api",
+            "v1",
             "inventory-regions"
           ],
           "query": [
@@ -580,11 +347,13 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/inventory-regions/{id}",
+          "raw": "{{baseUrl}}/api/v1/inventory-regions/{id}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
+            "api",
+            "v1",
             "inventory-regions",
             "{id}"
           ],
@@ -613,11 +382,13 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/inventory-regions/{id}",
+          "raw": "{{baseUrl}}/api/v1/inventory-regions/{id}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
+            "api",
+            "v1",
             "inventory-regions",
             "{id}"
           ],
@@ -646,11 +417,13 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/inventory-regions/{id}",
+          "raw": "{{baseUrl}}/api/v1/inventory-regions/{id}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
+            "api",
+            "v1",
             "inventory-regions",
             "{id}"
           ],
@@ -685,11 +458,13 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/inventory-regions/{id}/inventory",
+          "raw": "{{baseUrl}}/api/v1/inventory-regions/{id}/inventory",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
+            "api",
+            "v1",
             "inventory-regions",
             "{id}",
             "inventory"
@@ -729,11 +504,13 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/inventory-regions/{id}/stores",
+          "raw": "{{baseUrl}}/api/v1/inventory-regions/{id}/stores",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
+            "api",
+            "v1",
             "inventory-regions",
             "{id}",
             "stores"
@@ -767,11 +544,13 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/inventory-regions/{id}/stores",
+          "raw": "{{baseUrl}}/api/v1/inventory-regions/{id}/stores",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
+            "api",
+            "v1",
             "inventory-regions",
             "{id}",
             "stores"
@@ -805,11 +584,13 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/stores/{storeId}/regions",
+          "raw": "{{baseUrl}}/api/v1/stores/{storeId}/regions",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
+            "api",
+            "v1",
             "stores",
             "{storeId}",
             "regions"
@@ -826,33 +607,6 @@
     },
     {
       "name": "Create a new sale transaction",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test(\"Status code is 201\", function () {",
-              "    pm.response.to.have.status(201);",
-              "});",
-              "",
-              "pm.test(\"Response has sale data\", function () {",
-              "    var jsonData = pm.response.json();",
-              "    pm.expect(jsonData).to.have.property('sale');",
-              "    pm.expect(jsonData.sale).to.have.property('id');",
-              "    pm.expect(jsonData.sale).to.have.property('total');",
-              "});",
-              "",
-              "pm.test(\"Store sale ID for later tests\", function () {",
-              "    var jsonData = pm.response.json();",
-              "    if (jsonData.sale && jsonData.sale.id) {",
-              "        pm.environment.set(\"saleId\", jsonData.sale.id);",
-              "    }",
-              "});"
-            ],
-            "type": "text/javascript"
-          }
-        }
-      ],
       "request": {
         "method": "POST",
         "header": [
@@ -865,10 +619,6 @@
             "value": "Bearer {{authToken}}"
           }
         ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\"items\": [{\"productId\": \"550e8400-e29b-41d4-a716-446655440001\", \"quantity\": 2, \"unitPrice\": 10.99}], \"customerId\": \"550e8400-e29b-41d4-a716-446655440002\", \"notes\": \"Test sale from API\"}"
-        },
         "url": {
           "raw": "{{baseUrl}}/sales",
           "host": [
@@ -877,31 +627,16 @@
           "path": [
             "sales"
           ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"items\": [],\n  \"customerId\": \"123e4567-e89b-12d3-a456-426614174000\",\n  \"notes\": \"Customer requested gift wrapping\"\n}"
         }
       },
       "response": []
     },
     {
       "name": "Get sale by ID",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test(\"Status code is 200\", function () {",
-              "    pm.response.to.have.status(200);",
-              "});",
-              "",
-              "pm.test(\"Response has sale data\", function () {",
-              "    var jsonData = pm.response.json();",
-              "    pm.expect(jsonData).to.have.property('sale');",
-              "    pm.expect(jsonData.sale).to.have.property('id');",
-              "});"
-            ],
-            "type": "text/javascript"
-          }
-        }
-      ],
       "request": {
         "method": "GET",
         "header": [
@@ -915,13 +650,20 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/sales/{{saleId}}",
+          "raw": "{{baseUrl}}/sales/{id}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
             "sales",
-            "{{saleId}}"
+            "{id}"
+          ],
+          "variable": [
+            {
+              "key": "id",
+              "value": "",
+              "description": "Sale ID"
+            }
           ]
         }
       },
@@ -1001,26 +743,6 @@
     },
     {
       "name": "Get store sales with pagination and filters",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test(\"Status code is 200\", function () {",
-              "    pm.response.to.have.status(200);",
-              "});",
-              "",
-              "pm.test(\"Response has sales data\", function () {",
-              "    var jsonData = pm.response.json();",
-              "    pm.expect(jsonData).to.have.property('sales');",
-              "    pm.expect(jsonData).to.have.property('pagination');",
-              "    pm.expect(jsonData.sales).to.be.an('array');",
-              "});"
-            ],
-            "type": "text/javascript"
-          }
-        }
-      ],
       "request": {
         "method": "GET",
         "header": [
@@ -1034,7 +756,7 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/sales/store?page=1&limit=10",
+          "raw": "{{baseUrl}}/sales/store",
           "host": [
             "{{baseUrl}}"
           ],
@@ -1045,12 +767,12 @@
           "query": [
             {
               "key": "page",
-              "value": "1",
+              "value": "",
               "description": "Page number for pagination"
             },
             {
               "key": "limit",
-              "value": "10",
+              "value": "",
               "description": "Number of items per page"
             },
             {
@@ -1472,25 +1194,6 @@
     },
     {
       "name": "Get all users for the tenant",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test(\"Status code is 200\", function () {",
-              "    pm.response.to.have.status(200);",
-              "});",
-              "",
-              "pm.test(\"Response has users array\", function () {",
-              "    var jsonData = pm.response.json();",
-              "    pm.expect(jsonData).to.have.property('users');",
-              "    pm.expect(jsonData.users).to.be.an('array');",
-              "});"
-            ],
-            "type": "text/javascript"
-          }
-        }
-      ],
       "request": {
         "method": "GET",
         "header": [
@@ -1920,11 +1623,13 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/approvals/rules",
+          "raw": "{{baseUrl}}/api/v1/approvals/rules",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
+            "api",
+            "v1",
             "approvals",
             "rules"
           ]
@@ -1951,11 +1656,13 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/approvals/rules",
+          "raw": "{{baseUrl}}/api/v1/approvals/rules",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
+            "api",
+            "v1",
             "approvals",
             "rules"
           ],
@@ -1988,11 +1695,13 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/approvals/rules/{ruleId}",
+          "raw": "{{baseUrl}}/api/v1/approvals/rules/{ruleId}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
+            "api",
+            "v1",
             "approvals",
             "rules",
             "{ruleId}"
@@ -2026,11 +1735,13 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/approvals/rules/{ruleId}",
+          "raw": "{{baseUrl}}/api/v1/approvals/rules/{ruleId}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
+            "api",
+            "v1",
             "approvals",
             "rules",
             "{ruleId}"
@@ -2060,11 +1771,13 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/approvals/requests",
+          "raw": "{{baseUrl}}/api/v1/approvals/requests",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
+            "api",
+            "v1",
             "approvals",
             "requests"
           ]
@@ -2091,11 +1804,13 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/approvals/requests/pending",
+          "raw": "{{baseUrl}}/api/v1/approvals/requests/pending",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
+            "api",
+            "v1",
             "approvals",
             "requests",
             "pending"
@@ -2119,11 +1834,13 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/approvals/requests/{requestId}",
+          "raw": "{{baseUrl}}/api/v1/approvals/requests/{requestId}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
+            "api",
+            "v1",
             "approvals",
             "requests",
             "{requestId}"
@@ -2153,11 +1870,13 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/approvals/requests/{requestId}/process",
+          "raw": "{{baseUrl}}/api/v1/approvals/requests/{requestId}/process",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
+            "api",
+            "v1",
             "approvals",
             "requests",
             "{requestId}",
@@ -2192,11 +1911,13 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/approvals/requests/{requestId}/cancel",
+          "raw": "{{baseUrl}}/api/v1/approvals/requests/{requestId}/cancel",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
+            "api",
+            "v1",
             "approvals",
             "requests",
             "{requestId}",
@@ -2231,11 +1952,13 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/approvals/check-required",
+          "raw": "{{baseUrl}}/api/v1/approvals/check-required",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
+            "api",
+            "v1",
             "approvals",
             "check-required"
           ]
@@ -2262,11 +1985,13 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/approvals/statistics",
+          "raw": "{{baseUrl}}/api/v1/approvals/statistics",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
+            "api",
+            "v1",
             "approvals",
             "statistics"
           ],
