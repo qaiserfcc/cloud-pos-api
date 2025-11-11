@@ -12,5 +12,28 @@
             "username": "qaisu",
             "password": "password"
         }
+    ],
+    "dbcode.connections": [
+        {
+            "connectionId": "BGoJgOSS6pmsiE6OHMI5V",
+            "name": "cloud_pos_db",
+            "driver": "postgres",
+            "color": "#BD0014",
+            "connectionType": "host",
+            "host": "localhost",
+            "port": 5432,
+            "ssl": false,
+            "username": "qaisu",
+            "password": "",
+            "savePassword": "secretStorage",
+            "database": "cloud_pos_db",
+            "readOnly": false,
+            "role": "development",
+            "postConnectionSqlType": "inline",
+            "connectionTimeout": 30
+        }
+    ],
+    "dataworkspace.excludedProjects": [
+        "test/test.sqlproj"
     ]
 }

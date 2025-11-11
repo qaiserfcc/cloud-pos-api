@@ -6,6 +6,16 @@ class Role extends Model {
   readonly tenant?: any;
   readonly users?: any[];
   readonly permissions?: any[];
+
+  // Property declarations
+  declare id: string;
+  declare tenantId: string;
+  declare name: string;
+  declare description?: string;
+  declare is_system: boolean;
+  declare created_at: Date;
+  declare updated_at: Date;
+  declare deleted_at?: Date;
 }
 
 Role.init(

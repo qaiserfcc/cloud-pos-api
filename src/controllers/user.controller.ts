@@ -5,7 +5,53 @@ import logger from '../config/logger';
 
 export class UserController {
   /**
-   * Get all users for the tenant
+   * @swagger
+   * /users:
+   *   get:
+   *     summary: Get all users for the tenant
+   *     description: Retrieve a list of all users belonging to the authenticated user's tenant
+   *     tags: [Users]
+   *     security:
+   *       - bearerAuth: []
+   *     responses:
+   *       200:
+   *         description: List of users retrieved successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                   example: true
+   *                 data:
+   *                   type: array
+   *                   items:
+   *                     $ref: '#/components/schemas/UserWithAssociations'
+   *       400:
+   *         description: Tenant ID is required
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       401:
+   *         description: Unauthorized
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       404:
+   *         description: Tenant not found
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       500:
+   *         description: Internal server error
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
    */
   static async getAllUsers(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -40,7 +86,60 @@ export class UserController {
   }
 
   /**
-   * Get user by ID
+   * @swagger
+   * /users/{id}:
+   *   get:
+   *     summary: Get user by ID
+   *     description: Retrieve a specific user by their ID within the tenant
+   *     tags: [Users]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: string
+   *           format: uuid
+   *         description: User ID
+   *         example: "123e4567-e89b-12d3-a456-426614174000"
+   *     responses:
+   *       200:
+   *         description: User retrieved successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                   example: true
+   *                 data:
+   *                   $ref: '#/components/schemas/UserWithAssociations'
+   *       400:
+   *         description: User ID or Tenant ID is required
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       401:
+   *         description: Unauthorized
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       404:
+   *         description: User not found
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       500:
+   *         description: Internal server error
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
    */
   static async getUserById(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -85,7 +184,60 @@ export class UserController {
   }
 
   /**
-   * Create a new user
+   * @swagger
+   * /users:
+   *   post:
+   *     summary: Create a new user
+   *     description: Create a new user account within the tenant with specified roles and details
+   *     tags: [Users]
+   *     security:
+   *       - bearerAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/CreateUserData'
+   *     responses:
+   *       201:
+   *         description: User created successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                   example: true
+   *                 data:
+   *                   $ref: '#/components/schemas/UserWithAssociations'
+   *                 message:
+   *                   type: string
+   *                   example: "User created successfully"
+   *       400:
+   *         description: Tenant ID is required or invalid data
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       401:
+   *         description: Unauthorized
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       409:
+   *         description: User with this email already exists
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       500:
+   *         description: Internal server error
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
    */
   static async createUser(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -140,7 +292,69 @@ export class UserController {
   }
 
   /**
-   * Update user
+   * @swagger
+   * /users/{id}:
+   *   put:
+   *     summary: Update user
+   *     description: Update an existing user's information within the tenant
+   *     tags: [Users]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: string
+   *           format: uuid
+   *         description: User ID
+   *         example: "123e4567-e89b-12d3-a456-426614174000"
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/UpdateUserData'
+   *     responses:
+   *       200:
+   *         description: User updated successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                   example: true
+   *                 data:
+   *                   $ref: '#/components/schemas/UserWithAssociations'
+   *                 message:
+   *                   type: string
+   *                   example: "User updated successfully"
+   *       400:
+   *         description: User ID, Tenant ID is required or invalid data
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       401:
+   *         description: Unauthorized
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       404:
+   *         description: User not found
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       500:
+   *         description: Internal server error
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
    */
   static async updateUser(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -204,7 +418,61 @@ export class UserController {
   }
 
   /**
-   * Delete user
+   * @swagger
+   * /users/{id}:
+   *   delete:
+   *     summary: Delete user
+   *     description: Delete a user account within the tenant
+   *     tags: [Users]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: string
+   *           format: uuid
+   *         description: User ID
+   *         example: "123e4567-e89b-12d3-a456-426614174000"
+   *     responses:
+   *       200:
+   *         description: User deleted successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                   example: true
+   *                 message:
+   *                   type: string
+   *                   example: "User deleted successfully"
+   *       400:
+   *         description: User ID or Tenant ID is required
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       401:
+   *         description: Unauthorized
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       404:
+   *         description: User not found
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       500:
+   *         description: Internal server error
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
    */
   static async deleteUser(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -249,7 +517,85 @@ export class UserController {
   }
 
   /**
-   * Change user password
+   * @swagger
+   * /users/{id}/change-password:
+   *   put:
+   *     summary: Change user password
+   *     description: Change the password for a user (users can only change their own password, or superadmin can change any)
+   *     tags: [Users]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: string
+   *           format: uuid
+   *         description: User ID
+   *         example: "123e4567-e89b-12d3-a456-426614174000"
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required:
+   *               - currentPassword
+   *               - newPassword
+   *             properties:
+   *               currentPassword:
+   *                 type: string
+   *                 description: Current password
+   *                 example: "currentPassword123"
+   *               newPassword:
+   *                 type: string
+   *                 description: New password
+   *                 example: "newPassword456"
+   *     responses:
+   *       200:
+   *         description: Password changed successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                   example: true
+   *                 message:
+   *                   type: string
+   *                   example: "Password changed successfully"
+   *       400:
+   *         description: User ID, Tenant ID is required or current password is incorrect
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       401:
+   *         description: Unauthorized
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       403:
+   *         description: Forbidden - can only change own password
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       404:
+   *         description: User not found
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       500:
+   *         description: Internal server error
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
    */
   static async changePassword(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -315,7 +661,74 @@ export class UserController {
   }
 
   /**
-   * Reset user password (admin only)
+   * @swagger
+   * /users/{id}/reset-password:
+   *   put:
+   *     summary: Reset user password (admin only)
+   *     description: Reset the password for a user (admin only operation)
+   *     tags: [Users]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: string
+   *           format: uuid
+   *         description: User ID
+   *         example: "123e4567-e89b-12d3-a456-426614174000"
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required:
+   *               - newPassword
+   *             properties:
+   *               newPassword:
+   *                 type: string
+   *                 description: New password
+   *                 example: "newPassword456"
+   *     responses:
+   *       200:
+   *         description: Password reset successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                   example: true
+   *                 message:
+   *                   type: string
+   *                   example: "Password reset successfully"
+   *       400:
+   *         description: User ID or Tenant ID is required
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       401:
+   *         description: Unauthorized
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       404:
+   *         description: User not found
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       500:
+   *         description: Internal server error
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
    */
   static async resetPassword(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -361,7 +774,55 @@ export class UserController {
   }
 
   /**
-   * Get user statistics
+   * @swagger
+   * /users/stats:
+   *   get:
+   *     summary: Get user statistics
+   *     description: Retrieve statistics about users within the tenant
+   *     tags: [Users]
+   *     security:
+   *       - bearerAuth: []
+   *     responses:
+   *       200:
+   *         description: User statistics retrieved successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                   example: true
+   *                 data:
+   *                   type: object
+   *                   properties:
+   *                     totalUsers:
+   *                       type: integer
+   *                       example: 25
+   *                     activeUsers:
+   *                       type: integer
+   *                       example: 22
+   *                     inactiveUsers:
+   *                       type: integer
+   *                       example: 3
+   *       400:
+   *         description: Tenant ID is required
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       401:
+   *         description: Unauthorized
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       500:
+   *         description: Internal server error
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
    */
   static async getUserStats(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -388,7 +849,69 @@ export class UserController {
   }
 
   /**
-   * Check if email is available
+   * @swagger
+   * /users/check-email/{email}:
+   *   get:
+   *     summary: Check if email is available
+   *     description: Check if an email address is available for registration
+   *     tags: [Users]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: email
+   *         required: true
+   *         schema:
+   *           type: string
+   *           format: email
+   *         description: Email address to check
+   *         example: "user@example.com"
+   *       - in: query
+   *         name: excludeUserId
+   *         schema:
+   *           type: string
+   *           format: uuid
+   *         description: User ID to exclude from the check (useful for updates)
+   *         example: "123e4567-e89b-12d3-a456-426614174000"
+   *     responses:
+   *       200:
+   *         description: Email availability checked successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                   example: true
+   *                 data:
+   *                   type: object
+   *                   properties:
+   *                     email:
+   *                       type: string
+   *                       format: email
+   *                       example: "user@example.com"
+   *                     available:
+   *                       type: boolean
+   *                       example: true
+   *       400:
+   *         description: Email is required
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       401:
+   *         description: Unauthorized
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       500:
+   *         description: Internal server error
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
    */
   static async checkEmailAvailability(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -419,7 +942,73 @@ export class UserController {
   }
 
   /**
-   * Get all roles assigned to a user
+   * @swagger
+   * /users/{userId}/roles:
+   *   get:
+   *     summary: Get all roles assigned to a user
+   *     description: Retrieve all roles assigned to a specific user within the tenant
+   *     tags: [Users]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: userId
+   *         required: true
+   *         schema:
+   *           type: string
+   *           format: uuid
+   *         description: User ID
+   *         example: "123e4567-e89b-12d3-a456-426614174000"
+   *     responses:
+   *       200:
+   *         description: User roles retrieved successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                   example: true
+   *                 data:
+   *                   type: array
+   *                   items:
+   *                     type: object
+   *                     properties:
+   *                       id:
+   *                         type: string
+   *                         format: uuid
+   *                         example: "123e4567-e89b-12d3-a456-426614174000"
+   *                       name:
+   *                         type: string
+   *                         example: "Store Manager"
+   *                       description:
+   *                         type: string
+   *                         example: "Can manage store operations"
+   *       400:
+   *         description: User ID or Tenant ID is required
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       401:
+   *         description: Unauthorized
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       404:
+   *         description: User not found
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       500:
+   *         description: Internal server error
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
    */
   static async getUserRoles(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -464,7 +1053,77 @@ export class UserController {
   }
 
   /**
-   * Assign roles to a user
+   * @swagger
+   * /users/{userId}/roles:
+   *   post:
+   *     summary: Assign roles to a user
+   *     description: Assign one or more roles to a specific user within the tenant
+   *     tags: [Users]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: userId
+   *         required: true
+   *         schema:
+   *           type: string
+   *           format: uuid
+   *         description: User ID
+   *         example: "123e4567-e89b-12d3-a456-426614174000"
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required:
+   *               - roleIds
+   *             properties:
+   *               roleIds:
+   *                 type: array
+   *                 items:
+   *                   type: string
+   *                   format: uuid
+   *                 description: Array of role IDs to assign
+   *                 example: ["123e4567-e89b-12d3-a456-426614174000", "456e7890-e89b-12d3-a456-426614174001"]
+   *     responses:
+   *       200:
+   *         description: Roles assigned to user successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                   example: true
+   *                 message:
+   *                   type: string
+   *                   example: "Roles assigned to user successfully"
+   *       400:
+   *         description: User ID, Tenant ID is required or invalid role data
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       401:
+   *         description: Unauthorized
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       404:
+   *         description: User not found
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       500:
+   *         description: Internal server error
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
    */
   static async assignRolesToUser(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -526,7 +1185,69 @@ export class UserController {
   }
 
   /**
-   * Remove a role from a user
+   * @swagger
+   * /users/{userId}/roles/{roleId}:
+   *   delete:
+   *     summary: Remove a role from a user
+   *     description: Remove a specific role assignment from a user within the tenant
+   *     tags: [Users]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: userId
+   *         required: true
+   *         schema:
+   *           type: string
+   *           format: uuid
+   *         description: User ID
+   *         example: "123e4567-e89b-12d3-a456-426614174000"
+   *       - in: path
+   *         name: roleId
+   *         required: true
+   *         schema:
+   *           type: string
+   *           format: uuid
+   *         description: Role ID to remove
+   *         example: "456e7890-e89b-12d3-a456-426614174001"
+   *     responses:
+   *       200:
+   *         description: Role removed from user successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                   example: true
+   *                 message:
+   *                   type: string
+   *                   example: "Role removed from user successfully"
+   *       400:
+   *         description: User ID, Role ID, or Tenant ID is required
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       401:
+   *         description: Unauthorized
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       404:
+   *         description: User not found
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   *       500:
+   *         description: Internal server error
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
    */
   static async removeRoleFromUser(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {

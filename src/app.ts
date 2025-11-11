@@ -64,7 +64,43 @@ app.use(helmet({
 
 // CORS configuration
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+
+    const allowedOrigins = [
+      'http://localhost:3000',  // Backend/Swagger docs
+      'http://localhost:4000',  // Frontend development
+      'http://localhost:5173',  // Vite dev server (common React port)
+      'http://localhost:8080',  // Alternative frontend port
+      'http://127.0.0.1:3000',
+      'http://127.0.0.1:4000',
+      'http://127.0.0.1:5173',
+      'http://127.0.0.1:8080',
+    ];
+
+    // Check if origin is in allowed list
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    // Allow if CORS_ORIGIN environment variable matches
+    if (process.env.CORS_ORIGIN && origin === process.env.CORS_ORIGIN) {
+      return callback(null, true);
+    }
+
+    // In production, you might want to restrict this further
+    if (process.env.NODE_ENV === 'production') {
+      return callback(new Error('Not allowed by CORS'));
+    }
+
+    // For development, allow localhost origins
+    if (origin.match(/^http:\/\/localhost:\d+$/) || origin.match(/^http:\/\/127\.0\.0\.1:\d+$/)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Tenant-ID', 'X-Store-ID'],
@@ -288,6 +324,232 @@ if (process.env.NODE_ENV !== 'production') {
             updatedAt: {
               type: 'string',
               format: 'date-time',
+            },
+          },
+        },
+        User: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'string',
+              format: 'uuid',
+              example: '123e4567-e89b-12d3-a456-426614174000',
+            },
+            tenantId: {
+              type: 'string',
+              format: 'uuid',
+              example: '123e4567-e89b-12d3-a456-426614174000',
+            },
+            email: {
+              type: 'string',
+              format: 'email',
+              example: 'user@example.com',
+            },
+            firstName: {
+              type: 'string',
+              example: 'John',
+            },
+            lastName: {
+              type: 'string',
+              example: 'Doe',
+            },
+            phone: {
+              type: 'string',
+              example: '+1234567890',
+            },
+            avatar: {
+              type: 'string',
+              format: 'uri',
+              example: 'https://example.com/avatar.jpg',
+            },
+            defaultStoreId: {
+              type: 'string',
+              format: 'uuid',
+              example: '123e4567-e89b-12d3-a456-426614174000',
+            },
+            isActive: {
+              type: 'boolean',
+              example: true,
+            },
+            lastLoginAt: {
+              type: 'string',
+              format: 'date-time',
+              example: '2024-01-15T10:30:00Z',
+            },
+            createdAt: {
+              type: 'string',
+              format: 'date-time',
+              example: '2024-01-01T00:00:00Z',
+            },
+            updatedAt: {
+              type: 'string',
+              format: 'date-time',
+              example: '2024-01-15T10:30:00Z',
+            },
+          },
+        },
+        UserWithAssociations: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'string',
+              format: 'uuid',
+              example: '123e4567-e89b-12d3-a456-426614174000',
+            },
+            email: {
+              type: 'string',
+              format: 'email',
+              example: 'user@example.com',
+            },
+            firstName: {
+              type: 'string',
+              example: 'John',
+            },
+            lastName: {
+              type: 'string',
+              example: 'Doe',
+            },
+            phone: {
+              type: 'string',
+              example: '+1234567890',
+            },
+            avatar: {
+              type: 'string',
+              format: 'uri',
+              example: 'https://example.com/avatar.jpg',
+            },
+            defaultStoreId: {
+              type: 'string',
+              format: 'uuid',
+              example: '123e4567-e89b-12d3-a456-426614174000',
+            },
+            isActive: {
+              type: 'boolean',
+              example: true,
+            },
+            lastLoginAt: {
+              type: 'string',
+              format: 'date-time',
+              example: '2024-01-15T10:30:00Z',
+            },
+            tenantId: {
+              type: 'string',
+              format: 'uuid',
+              example: '123e4567-e89b-12d3-a456-426614174000',
+            },
+            tenantName: {
+              type: 'string',
+              example: 'Main Tenant',
+            },
+            defaultStoreName: {
+              type: 'string',
+              example: 'Downtown Store',
+            },
+            roles: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
+              example: ['Store Manager', 'Cashier'],
+            },
+            roleCount: {
+              type: 'integer',
+              example: 2,
+            },
+            createdAt: {
+              type: 'string',
+              format: 'date-time',
+              example: '2024-01-01T00:00:00Z',
+            },
+            updatedAt: {
+              type: 'string',
+              format: 'date-time',
+              example: '2024-01-15T10:30:00Z',
+            },
+          },
+        },
+        CreateUserData: {
+          type: 'object',
+          required: ['email', 'password', 'firstName', 'lastName'],
+          properties: {
+            email: {
+              type: 'string',
+              format: 'email',
+              example: 'user@example.com',
+            },
+            password: {
+              type: 'string',
+              minLength: 8,
+              example: 'password123',
+            },
+            firstName: {
+              type: 'string',
+              example: 'John',
+            },
+            lastName: {
+              type: 'string',
+              example: 'Doe',
+            },
+            phone: {
+              type: 'string',
+              example: '+1234567890',
+            },
+            avatar: {
+              type: 'string',
+              format: 'uri',
+              example: 'https://example.com/avatar.jpg',
+            },
+            defaultStoreId: {
+              type: 'string',
+              format: 'uuid',
+              example: '123e4567-e89b-12d3-a456-426614174000',
+            },
+            roleIds: {
+              type: 'array',
+              items: {
+                type: 'string',
+                format: 'uuid',
+              },
+              example: ['123e4567-e89b-12d3-a456-426614174000'],
+            },
+          },
+        },
+        UpdateUserData: {
+          type: 'object',
+          properties: {
+            firstName: {
+              type: 'string',
+              example: 'John',
+            },
+            lastName: {
+              type: 'string',
+              example: 'Doe',
+            },
+            phone: {
+              type: 'string',
+              example: '+1234567890',
+            },
+            avatar: {
+              type: 'string',
+              format: 'uri',
+              example: 'https://example.com/avatar.jpg',
+            },
+            defaultStoreId: {
+              type: 'string',
+              format: 'uuid',
+              example: '123e4567-e89b-12d3-a456-426614174000',
+            },
+            isActive: {
+              type: 'boolean',
+              example: true,
+            },
+            roleIds: {
+              type: 'array',
+              items: {
+                type: 'string',
+                format: 'uuid',
+              },
+              example: ['123e4567-e89b-12d3-a456-426614174000'],
             },
           },
         },

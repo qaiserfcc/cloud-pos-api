@@ -6,6 +6,25 @@ class User extends Model {
   readonly tenant?: any;
   readonly defaultStore?: any;
   readonly roles?: any[];
+
+  // Property declarations
+  declare id: string;
+  declare tenantId: string;
+  declare defaultStoreId?: string;
+  declare email: string;
+  declare password: string;
+  declare firstName: string;
+  declare lastName: string;
+  declare phone?: string;
+  declare avatar?: string;
+  declare isActive: boolean;
+  declare lastLoginAt?: Date;
+  declare passwordChangedAt?: Date;
+  declare loginAttempts: number;
+  declare lockoutUntil?: Date;
+  declare createdAt: Date;
+  declare updatedAt: Date;
+  declare deletedAt?: Date;
 }
 
 User.init(

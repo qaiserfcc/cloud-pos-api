@@ -1,8 +1,4 @@
-import { User } from '../models/user.model';
-import { Tenant } from '../models/tenant.model';
-import { Store } from '../models/store.model';
-import { Role } from '../models/role.model';
-import { Permission } from '../models/permission.model';
+import { User, Tenant, Store, Role, Permission } from '../db/models';
 import {
   hashPassword,
   comparePassword,

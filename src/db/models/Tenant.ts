@@ -5,6 +5,16 @@ class Tenant extends Model {
   // Association mixins
   readonly stores?: any[];
   readonly users?: any[];
+
+  // Property declarations
+  declare id: string;
+  declare name: string;
+  declare domain: string;
+  declare settings: any;
+  declare isActive: boolean;
+  declare createdAt: Date;
+  declare updatedAt: Date;
+  declare deletedAt?: Date;
 }
 
 Tenant.init(

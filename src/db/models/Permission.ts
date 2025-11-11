@@ -5,6 +5,16 @@ class Permission extends Model {
   // Association mixins
   readonly tenant?: any;
   readonly roles?: any[];
+
+  // Property declarations
+  declare id: string;
+  declare tenantId: string;
+  declare resource: string;
+  declare action: string;
+  declare description?: string;
+  declare createdAt: Date;
+  declare updatedAt: Date;
+  declare deletedAt?: Date;
 }
 
 Permission.init(

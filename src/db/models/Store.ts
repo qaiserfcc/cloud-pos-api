@@ -5,6 +5,20 @@ class Store extends Model {
   // Association mixins
   readonly tenant?: any;
   readonly storeUsers?: any[];
+
+  // Property declarations
+  declare id: string;
+  declare tenantId: string;
+  declare name: string;
+  declare code: string;
+  declare address: string;
+  declare phone?: string;
+  declare email?: string;
+  declare settings: any;
+  declare isActive: boolean;
+  declare createdAt: Date;
+  declare updatedAt: Date;
+  declare deletedAt?: Date;
 }
 
 Store.init(
