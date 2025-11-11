@@ -1,13 +1,13 @@
-const { Tenant } = require('../../../dist/models/tenant.model');
-const { Store } = require('../../../dist/models/store.model');
-const { User } = require('../../../dist/models/user.model');
-const { Role } = require('../../../dist/models/role.model');
-const { Permission } = require('../../../dist/models/permission.model');
-const { UserRole, RolePermission } = require('../../../dist/models/index');
-const { hashPassword } = require('../../../dist/utils/jwt');
-const logger = require('../../../dist/config/logger').default;
+const { Tenant } = require('../../dist/models/tenant.model');
+const { Store } = require('../../dist/models/store.model');
+const { User } = require('../../dist/models/user.model');
+const { Role } = require('../../dist/models/role.model');
+const { Permission } = require('../../dist/models/permission.model');
+const { UserRole, RolePermission } = require('../../dist/models/index');
+const { hashPassword } = require('../../dist/utils/jwt');
+const logger = require('../../dist/config/logger').default;
 const { Sequelize } = require('sequelize');
-const sequelize = require('../../../dist/config/database').default;
+const sequelize = require('../../dist/config/database').default;
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {

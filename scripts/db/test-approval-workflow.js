@@ -7,7 +7,7 @@
 
 require('dotenv').config();
 
-const sequelize = require('./dist/config/database').default;
+const sequelize = require('../dist/config/database').default;
 
 async function testApprovalWorkflow() {
   const transaction = await sequelize.transaction();
@@ -15,8 +15,8 @@ async function testApprovalWorkflow() {
     console.log('🔄 Testing end-to-end approval workflow...');
 
     // Import required modules
-    const { Tenant, Store, User, ApprovalRule, ApprovalRequest } = require('./dist/db/models');
-    const ApprovalService = require('./dist/services/approval.service').default;
+    const { Tenant, Store, User, ApprovalRule, ApprovalRequest } = require('../dist/db/models');
+    const ApprovalService = require('../dist/services/approval.service').default;
 
     // Test connection
     await sequelize.authenticate();

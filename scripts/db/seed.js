@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 require('dotenv').config();
-const { seedInitialData } = require('./dist/db/seeders/initial-seed');
-const sequelize = require('./dist/config/database').default;
-const logger = require('./dist/config/logger').default;
+const { up: seedInitialData } = require('./initial-seed');
+const sequelize = require('../../dist/config/database').default;
+const logger = require('../../dist/config/logger').default;
 
 const runSeeder = async () => {
   try {

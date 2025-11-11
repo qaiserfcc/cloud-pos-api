@@ -191,17 +191,20 @@ export const seedInitialData = async (): Promise<void> => {
     logger.info('Assigned permissions to roles');
 
     // Create superadmin user
-    const hashedPassword = await hashPassword('SuperAdmin123!');
-    const superAdmin = await User.create({
-      tenantId: tenant.dataValues.id,
-      defaultStoreId: store.dataValues.id,
-      email: 'superadmin@default.local',
-      password: hashedPassword,
-      firstName: 'Super',
-      lastName: 'Admin',
-      phone: '+1-555-0000',
-      isActive: true,
-      loginAttempts: 0,
+    const hashedPassword = await hashPassword('12345678');
+    const [superAdmin] = await User.findOrCreate({
+      where: { email: 'qaiserfcc@gmail.com', tenantId: tenant.dataValues.id },
+      defaults: {
+        tenantId: tenant.dataValues.id,
+        defaultStoreId: store.dataValues.id,
+        email: 'qaiserfcc@gmail.com',
+        password: hashedPassword,
+        firstName: 'Super',
+        lastName: 'Admin',
+        phone: '+1-555-0000',
+        isActive: true,
+        loginAttempts: 0,
+      },
     });
 
     // Assign superadmin role to user

@@ -12,10 +12,10 @@ async function syncDatabase() {
     console.log('🔄 Synchronizing Sequelize models with database...');
 
     // Import the database instance that models use
-    const sequelize = require('./dist/config/database').default;
+    const sequelize = require('../dist/config/database').default;
 
     // Import models (this registers them with the sequelize instance)
-    const models = require('./dist/db/models');
+    const models = require('../dist/db/models');
 
     // Test connection
     await sequelize.authenticate();
