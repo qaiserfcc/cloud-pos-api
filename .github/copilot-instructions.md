@@ -234,7 +234,7 @@ cloud-pos-api/
 6. Sync Worker: Picks up change_queue → pushes to desktop or next cloud sync batch.
 7. Response: Returns sale with id + updated totals.
 
----
+--- 
 
 ### 5. AI Agent Best Practices
 - **Autonomy**: AI agents generate code, hooks, and endpoints without hardcoding tenant/store IDs.
