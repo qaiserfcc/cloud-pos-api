@@ -51,6 +51,10 @@ export const validateRegister = [
     .optional()
     .isUUID()
     .withMessage('Invalid tenant ID'),
+  body('roleId')
+    .optional()
+    .isUUID()
+    .withMessage('Invalid role ID'),
 ];
 
 export const validateRefreshToken = [

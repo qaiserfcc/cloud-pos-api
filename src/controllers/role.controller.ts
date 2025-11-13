@@ -5,18 +5,12 @@ import logger from '../config/logger';
 
 export class RoleController {
   /**
-   * Get all roles for the tenant
+   * Get all roles for the tenant (public for registration)
    */
-  static async getAllRoles(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+  static async getAllRoles(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const tenantId = req.user?.tenantId;
-      if (!tenantId) {
-        res.status(400).json({
-          success: false,
-          error: 'Tenant ID is required',
-        });
-        return;
-      }
+      // For public access (registration), if no tenantId, get all roles
+      const tenantId = (req as any).user?.tenantId;
 
       const roles = await RoleService.getAllRoles(tenantId);
 

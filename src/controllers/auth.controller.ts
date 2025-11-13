@@ -43,15 +43,17 @@ export class AuthController {
   // Register new user
   static async register(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { email, password, firstName, lastName, tenantId } = req.body;
+      const { email, password, firstName, lastName, tenantId, roleId } = req.body;
 
-      const result = await AuthService.registerUser(
+      const result = await AuthService.registerUser({
         email,
         password,
         firstName,
         lastName,
-        tenantId || req.user?.tenantId
-      );
+        tenantId,
+        roleId,
+        requesterTenantId: req.user?.tenantId,
+      });
 
       res.status(201).json({
         success: true,
@@ -74,7 +76,7 @@ export class AuthController {
   }
 
   // Refresh access token
-  static async refreshToken(req: Request, res: Response, next: NextFunction): Promise<void> {
+  static async refreshToken(req: Request, res: Response, _next: NextFunction): Promise<void> {
     try {
       const { refreshToken } = req.body;
 

@@ -4,12 +4,13 @@ import { authenticateToken, requireTenantAccess, requirePermission } from '../mi
 
 const router = Router();
 
-// All role routes require authentication and tenant access
+// Public route for registration - no auth required
+// GET /api/v1/roles - Get all roles (public for registration)
+router.get('/', RoleController.getAllRoles);
+
+// All other role routes require authentication and tenant access
 router.use(authenticateToken);
 router.use(requireTenantAccess);
-
-// GET /api/v1/roles - Get all roles for tenant
-router.get('/', requirePermission('role:read'), RoleController.getAllRoles);
 
 // GET /api/v1/roles/stats - Get role statistics
 router.get('/stats', requirePermission('role:read'), RoleController.getRoleStats);

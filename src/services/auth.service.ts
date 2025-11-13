@@ -32,7 +32,20 @@ export interface RegisterResult {
     firstName: string;
     lastName: string;
     tenant?: any;
+    roles?: string[];
   };
+}
+
+const DEFAULT_SUPERADMIN_TENANT_ID = 'cf390fdc-c07d-4146-a914-96529d51e779';
+
+interface RegisterUserParams {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  tenantId?: string;
+  roleId?: string;
+  requesterTenantId?: string | undefined;
 }
 
 export class AuthService {
@@ -146,17 +159,41 @@ export class AuthService {
   /**
    * Register a new user
    */
-  static async registerUser(
-    email: string,
-    password: string,
-    firstName: string,
-    lastName: string,
-    tenantId?: string
-  ): Promise<RegisterResult> {
+  static async registerUser(params: RegisterUserParams): Promise<RegisterResult> {
+    const {
+      email,
+      password,
+      firstName,
+      lastName,
+      tenantId,
+      roleId,
+      requesterTenantId,
+    } = params;
+
     // Check if user already exists
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
       throw new Error('User with this email already exists');
+    }
+
+    const normalizedRoleId = roleId?.trim();
+
+    let resolvedTenantId: string | undefined;
+    let roleToAssign: any = null;
+
+    if (normalizedRoleId) {
+      roleToAssign = await Role.findByPk(normalizedRoleId);
+      if (!roleToAssign) {
+        throw new Error('Role not found');
+      }
+      // For Super Admin, always use default tenant
+      resolvedTenantId = roleToAssign.name === 'Super Admin' ? DEFAULT_SUPERADMIN_TENANT_ID : roleToAssign.tenantId;
+    } else {
+      resolvedTenantId = tenantId || requesterTenantId;
+    }
+
+    if (!resolvedTenantId) {
+      throw new Error('Tenant ID is required for registration');
     }
 
     // Hash password
@@ -168,13 +205,14 @@ export class AuthService {
       password: hashedPassword,
       firstName,
       lastName,
-      tenantId: tenantId!, // Will be validated by controller
+      tenantId: resolvedTenantId,
       isActive: true,
       loginAttempts: 0,
     });
 
     // Get user with associations
-    const userWithAssociations = await User.findByPk(user.id, {
+    const userWithAssociations = await User.findOne({
+      where: { id: user.id },
       include: [
         {
           model: Tenant,
@@ -184,26 +222,40 @@ export class AuthService {
       ],
     });
 
+    let assignedRoleNames: string[] | undefined;
+
+    if (roleToAssign) {
+      await (user as any).setRoles([roleToAssign]);
+      assignedRoleNames = [roleToAssign.name];
+    }
+
     logger.info(`New user registered: ${email}`, {
       userId: user.id,
       tenantId: user.tenantId,
+      role: roleToAssign?.name,
     });
 
+    const responseUser: RegisterResult['user'] = {
+      id: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      tenant: userWithAssociations?.tenant,
+    };
+
+    if (assignedRoleNames) {
+      responseUser.roles = assignedRoleNames;
+    }
+
     return {
-      user: {
-        id: user.id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        tenant: userWithAssociations?.tenant,
-      },
+      user: responseUser,
     };
   }
 
   /**
    * Refresh access token using refresh token
    */
-  static async refreshUserToken(refreshToken: string): Promise<{
+  static async refreshUserToken(_refreshToken: string): Promise<{
     accessToken: string;
     refreshToken: string;
     expiresIn: string;
@@ -275,7 +327,7 @@ export class AuthService {
   /**
    * Find user by refresh token (placeholder for future implementation)
    */
-  static async findUserByRefreshToken(refreshToken: string): Promise<User | null> {
+  static async findUserByRefreshToken(_refreshToken: string): Promise<User | null> {
     // This will be implemented when we add refresh token storage
     // For now, return null
     return null;

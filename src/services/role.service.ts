@@ -33,15 +33,18 @@ export interface RoleWithPermissions {
 
 class RoleService {
   /**
-   * Get all roles for a tenant
+   * Get all roles for a tenant (or all if no tenant specified)
    */
-  async getAllRoles(tenantId: string): Promise<RoleWithPermissions[]> {
+  async getAllRoles(tenantId?: string): Promise<RoleWithPermissions[]> {
     try {
+      const whereClause: any = {};
+      if (tenantId) {
+        whereClause.tenantId = tenantId;
+      }
+
       const roles = await Role.findAll({
-        where: {
-          tenantId,
-        },
-        include: [
+        where: whereClause,
+        include: tenantId ? [
           {
             model: Permission,
             as: 'permissions',
@@ -53,7 +56,7 @@ class RoleService {
               attributes: [],
             },
           },
-        ],
+        ] : [],
         order: [['name', 'ASC']],
       });
 
