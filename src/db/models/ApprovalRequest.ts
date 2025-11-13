@@ -1,12 +1,103 @@
-import { DataTypes, Model } from 'sequelize';
+import { DataTypes, Model, Optional } from 'sequelize';
 import sequelize from '../../config/database';
 
-class ApprovalRequest extends Model {
+export interface ApprovalDecisionRecord {
+  level: number;
+  approverId: string;
+  approverRole?: string;
+  decision: 'approved' | 'rejected';
+  comments?: string;
+  approvedAt: Date;
+}
+
+export interface ApprovalRequestData {
+  amount?: number;
+  currency?: string;
+  details?: unknown;
+  metadata?: Record<string, unknown>;
+}
+
+export interface ApprovalRequestAttributes {
+  id: string;
+  tenantId: string;
+  storeId?: string;
+  requestedById: string;
+  objectType: 'inventory_transfer' | 'inventory_adjustment' | 'sale' | 'refund';
+  objectId: string;
+  title: string;
+  description?: string;
+  status: 'pending' | 'approved' | 'rejected' | 'cancelled' | 'expired';
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+  approvalRuleId?: string;
+  currentLevel: number;
+  totalLevels: number;
+  requiredApprovals: number;
+  approvedCount: number;
+  rejectedCount: number;
+  approvalData: ApprovalRequestData;
+  approvals: ApprovalDecisionRecord[];
+  expiresAt?: Date;
+  approvedAt?: Date;
+  rejectedAt?: Date;
+  cancelledAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export type ApprovalRequestCreationAttributes = Optional<
+  ApprovalRequestAttributes,
+  | 'id'
+  | 'storeId'
+  | 'description'
+  | 'status'
+  | 'priority'
+  | 'approvalRuleId'
+  | 'currentLevel'
+  | 'totalLevels'
+  | 'requiredApprovals'
+  | 'approvedCount'
+  | 'rejectedCount'
+  | 'approvalData'
+  | 'approvals'
+  | 'expiresAt'
+  | 'approvedAt'
+  | 'rejectedAt'
+  | 'cancelledAt'
+  | 'createdAt'
+  | 'updatedAt'
+>;
+
+class ApprovalRequest extends Model<ApprovalRequestAttributes, ApprovalRequestCreationAttributes> implements ApprovalRequestAttributes {
+  declare id: string;
+  declare tenantId: string;
+  declare storeId?: string;
+  declare requestedById: string;
+  declare objectType: 'inventory_transfer' | 'inventory_adjustment' | 'sale' | 'refund';
+  declare objectId: string;
+  declare title: string;
+  declare description?: string;
+  declare status: 'pending' | 'approved' | 'rejected' | 'cancelled' | 'expired';
+  declare priority: 'low' | 'medium' | 'high' | 'urgent';
+  declare approvalRuleId?: string;
+  declare currentLevel: number;
+  declare totalLevels: number;
+  declare requiredApprovals: number;
+  declare approvedCount: number;
+  declare rejectedCount: number;
+  declare approvalData: ApprovalRequestData;
+  declare approvals: ApprovalDecisionRecord[];
+  declare expiresAt?: Date;
+  declare approvedAt?: Date;
+  declare rejectedAt?: Date;
+  declare cancelledAt?: Date;
+  declare createdAt: Date;
+  declare updatedAt: Date;
+
   // Association mixins
-  readonly tenant?: any;
-  readonly store?: any;
-  readonly requestedBy?: any;
-  readonly approvalRule?: any;
+  declare readonly tenant?: unknown;
+  declare readonly store?: unknown;
+  declare readonly requestedBy?: unknown;
+  declare readonly approvalRule?: unknown;
 }
 
 ApprovalRequest.init(

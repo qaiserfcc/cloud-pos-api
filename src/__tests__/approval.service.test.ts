@@ -1,5 +1,5 @@
 import { ApprovalService } from '../services/approval.service';
-import { ApprovalRule, ApprovalRequest } from '../models';
+import { ApprovalRule, ApprovalRequest } from '../db/models';
 
 describe('ApprovalService', () => {
   let approvalService: ApprovalService;

@@ -22,6 +22,7 @@ import ApprovalRule from './ApprovalRule';
 import ApprovalRequest from './ApprovalRequest';
 import ReportTemplate from './ReportTemplate';
 import Theme from './Theme';
+import AuditLog from './AuditLog';
 
 // Tenant associations
 Tenant.hasMany(Store, {
@@ -60,6 +61,12 @@ Store.hasMany(User, {
   onDelete: 'SET NULL',
 });
 
+Store.hasMany(AuditLog, {
+  foreignKey: 'storeId',
+  as: 'auditLogs',
+  onDelete: 'SET NULL',
+});
+
 // Role associations
 Role.belongsTo(Tenant, {
   foreignKey: 'tenantId',
@@ -81,6 +88,12 @@ User.belongsTo(Tenant, {
 User.belongsTo(Store, {
   foreignKey: 'defaultStoreId',
   as: 'defaultStore',
+});
+
+User.hasMany(AuditLog, {
+  foreignKey: 'userId',
+  as: 'auditLogs',
+  onDelete: 'SET NULL',
 });
 
 // Many-to-many: User <-> Role
@@ -516,6 +529,27 @@ ApprovalRule.hasMany(ApprovalRequest, {
   as: 'approvalRequests',
 });
 
+// Audit log associations
+AuditLog.belongsTo(Tenant, {
+  foreignKey: 'tenantId',
+  as: 'tenant',
+});
+
+AuditLog.belongsTo(Store, {
+  foreignKey: 'storeId',
+  as: 'store',
+});
+
+AuditLog.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'user',
+});
+
+Tenant.hasMany(AuditLog, {
+  foreignKey: 'tenantId',
+  as: 'auditLogs',
+});
+
 // ReportTemplate associations
 ReportTemplate.belongsTo(Tenant, {
   foreignKey: 'tenantId',
@@ -582,6 +616,7 @@ export {
   ApprovalRequest,
   ReportTemplate,
   Theme,
+  AuditLog,
   UserRole,
   RolePermission,
 };

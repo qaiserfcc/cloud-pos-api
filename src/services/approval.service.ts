@@ -1,6 +1,6 @@
 import { Transaction } from 'sequelize';
-import { ApprovalRule, ApprovalRequest } from '../models';
-import { User, Tenant, Store } from '../models';
+import { ApprovalRule, ApprovalRequest, User, Tenant, Store } from '../db/models';
+import type { ApprovalRuleConditions } from '../db/models/ApprovalRule';
 import logger from '../config/logger';
 import { AuditService } from './audit.service';
 import { InventoryTransferService } from './inventory-transfer.service';
@@ -454,9 +454,9 @@ export class ApprovalService {
     }, transaction ? { transaction } : {});
   }
 
-  private calculateExpiryDate(conditions: any): Date | undefined {
+  private calculateExpiryDate(conditions: ApprovalRuleConditions): Date | undefined {
     // Default 7 days expiry
-    const expiryHours = conditions.expiryHours || 168; // 7 days
+    const expiryHours = conditions.expiryHours || conditions.expiresInHours || 168; // 7 days
     return new Date(Date.now() + expiryHours * 60 * 60 * 1000);
   }
 
@@ -480,8 +480,9 @@ export class ApprovalService {
       throw new Error('Approver not found');
     }
 
-    const userRoles = user.roles || [];
-    const hasRequiredRole = currentLevel.approverRoles.some(role => userRoles.includes(role));
+  const userRoles = user.roles || [];
+  const approverRoles = currentLevel.approverRoles || currentLevel.roles || [];
+  const hasRequiredRole = approverRoles.some((role: string) => userRoles.includes(role));
 
     if (!hasRequiredRole) {
       throw new Error('User does not have required role for this approval level');
@@ -503,7 +504,8 @@ export class ApprovalService {
       return false;
     }
 
-    return currentLevel.approverRoles.some(role => userRoles.includes(role));
+  const approverRoles = currentLevel.approverRoles || currentLevel.roles || [];
+  return approverRoles.some((role: string) => userRoles.includes(role));
   }
 
   private async getUserRole(userId: string): Promise<string> {

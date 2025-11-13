@@ -2,174 +2,28 @@ const fs = require('fs');
 const path = require('path');
 const swaggerJSDoc = require('swagger-jsdoc');
 
+const swaggerDefinitionPath = path.join(__dirname, '../../src/swagger/swagger-definition.json');
+const swaggerBaseDefinition = JSON.parse(fs.readFileSync(swaggerDefinitionPath, 'utf8'));
+
 const swaggerDefinition = {
-  openapi: '3.0.0',
-  info: {
-    title: 'Cloud POS API',
-    version: '1.0.0',
-    description: 'Multi-tenant Point-of-Sale API with offline synchronization',
-    contact: {
-      name: 'API Support',
-      email: 'support@cloudpos.com',
-    },
-  },
-  servers: [
-    {
-      url: process.env.API_BASE_URL || 'http://localhost:3000/api/v1',
-      description: 'Development server',
-    },
-  ],
-  components: {
-    securitySchemes: {
-      bearerAuth: {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-      },
-    },
-    schemas: {
-      Error: {
-        type: 'object',
-        properties: {
-          success: {
-            type: 'boolean',
-            example: false,
-          },
-          error: {
-            type: 'string',
-            example: 'Error message',
-          },
-        },
-      },
-      Sale: {
-        type: 'object',
-        properties: {
-          id: {
-            type: 'string',
-            format: 'uuid',
-          },
-          saleNumber: {
-            type: 'string',
-            example: 'SALE-2024-001',
-          },
-          tenantId: {
-            type: 'string',
-            format: 'uuid',
-          },
-          storeId: {
-            type: 'string',
-            format: 'uuid',
-          },
-          customerId: {
-            type: 'string',
-            format: 'uuid',
-          },
-          status: {
-            type: 'string',
-            enum: ['pending', 'completed', 'cancelled'],
-          },
-          paymentStatus: {
-            type: 'string',
-            enum: ['pending', 'partial', 'paid', 'refunded'],
-          },
-          subtotal: {
-            type: 'number',
-            example: 100.00,
-          },
-          taxAmount: {
-            type: 'number',
-            example: 10.00,
-          },
-          discountAmount: {
-            type: 'number',
-            example: 5.00,
-          },
-          totalAmount: {
-            type: 'number',
-            example: 105.00,
-          },
-          paidAmount: {
-            type: 'number',
-            example: 105.00,
-          },
-          changeAmount: {
-            type: 'number',
-            example: 0.00,
-          },
-          items: {
-            type: 'array',
-            items: {
-              type: 'object',
-              properties: {
-                productId: {
-                  type: 'string',
-                  format: 'uuid',
-                },
-                productName: {
-                  type: 'string',
-                },
-                quantity: {
-                  type: 'number',
-                },
-                unitPrice: {
-                  type: 'number',
-                },
-                discount: {
-                  type: 'number',
-                },
-                total: {
-                  type: 'number',
-                },
-              },
-            },
-          },
-          payments: {
-            type: 'array',
-            items: {
-              type: 'object',
-              properties: {
-                amount: {
-                  type: 'number',
-                },
-                method: {
-                  type: 'string',
-                  enum: ['cash', 'card', 'bank_transfer', 'digital_wallet', 'other'],
-                },
-                reference: {
-                  type: 'string',
-                },
-                processedAt: {
-                  type: 'string',
-                  format: 'date-time',
-                },
-              },
-            },
-          },
-          createdAt: {
-            type: 'string',
-            format: 'date-time',
-          },
-          updatedAt: {
-            type: 'string',
-            format: 'date-time',
-          },
-        },
-      },
-    },
-    security: [
-      {
-        bearerAuth: [],
-      },
-    ],
-  },
+  ...swaggerBaseDefinition,
+  servers: (swaggerBaseDefinition.servers || []).map((server, index) => {
+    if (index === 0) {
+      return {
+        ...server,
+        url: process.env.API_BASE_URL || 'http://localhost:3000/api/v1',
+      };
+    }
+    return server;
+  }),
 };
 
 const options = {
-  swaggerDefinition,
+  definition: swaggerDefinition,
   apis: [
     './src/controllers/*.ts',
     './src/routes/*.ts',
-    './src/models/*.ts',
+    './src/db/models/*.ts',
   ],
 };
 

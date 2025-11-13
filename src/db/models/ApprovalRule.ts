@@ -1,7 +1,52 @@
-import { DataTypes, Model } from 'sequelize';
+import { DataTypes, Model, Optional } from 'sequelize';
 import sequelize from '../../config/database';
 
-class ApprovalRule extends Model {
+export interface ApprovalLevelRule {
+  level: number;
+  roles?: string[];
+  approverRoles?: string[];
+  minApprovals: number;
+  approvers?: string[];
+}
+
+export interface ApprovalRuleConditions {
+  requiresApproval: boolean;
+  minAmount?: number;
+  maxAmount?: number;
+  approvalLevels: ApprovalLevelRule[];
+  expiresInHours?: number;
+  expiryHours?: number;
+  metadata?: Record<string, unknown>;
+  storeIds?: string[];
+}
+
+export interface ApprovalRuleAttributes {
+  id: string;
+  tenantId: string;
+  name: string;
+  description?: string;
+  objectType: 'inventory_transfer' | 'inventory_adjustment' | 'sale' | 'refund';
+  conditions: ApprovalRuleConditions;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export type ApprovalRuleCreationAttributes = Optional<
+  ApprovalRuleAttributes,
+  'id' | 'description' | 'conditions' | 'isActive' | 'createdAt' | 'updatedAt'
+>;
+
+class ApprovalRule extends Model<ApprovalRuleAttributes, ApprovalRuleCreationAttributes> implements ApprovalRuleAttributes {
+  declare id: string;
+  declare tenantId: string;
+  declare name: string;
+  declare description?: string;
+  declare objectType: 'inventory_transfer' | 'inventory_adjustment' | 'sale' | 'refund';
+  declare conditions: ApprovalRuleConditions;
+  declare isActive: boolean;
+  declare createdAt: Date;
+  declare updatedAt: Date;
 }
 
 ApprovalRule.init(

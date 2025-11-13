@@ -1,8 +1,5 @@
 import { Op, WhereOptions, IncludeOptions, Transaction } from 'sequelize';
-import { AuditLog } from '../models/audit-log.model';
-import { Tenant } from '../models/tenant.model';
-import { Store } from '../models/store.model';
-import { User } from '../models/user.model';
+import { AuditLog, Tenant, Store, User } from '../db/models';
 import logger from '../config/logger';
 
 export interface AuditLogQueryOptions {
@@ -49,6 +46,12 @@ export interface ComplianceReport {
     recommendations: string[];
   };
 }
+
+type AuditLogWithRelations = AuditLog & {
+  user?: any;
+  store?: any;
+  tenant?: any;
+};
 
 export class AuditService {
   /**
@@ -372,23 +375,27 @@ export class AuditService {
         },
         tenantId,
         summary,
-        details: logs.map(log => ({
-          id: log.id,
-          timestamp: log.changedAt,
-          action: log.action,
-          objectTable: log.objectTable,
-          objectId: log.objectId,
-          user: log.user ? {
-            id: log.user.id,
-            name: `${log.user.firstName} ${log.user.lastName}`,
-            email: log.user.email,
-          } : null,
-          store: log.store ? {
-            id: log.store.id,
-            name: log.store.name,
-          } : null,
-          data: log.data,
-        })),
+        details: logs.map(log => {
+          const logWithRelations = log as AuditLogWithRelations;
+
+          return {
+            id: log.id,
+            timestamp: log.changedAt,
+            action: log.action,
+            objectTable: log.objectTable,
+            objectId: log.objectId,
+            user: logWithRelations.user ? {
+              id: logWithRelations.user.id,
+              name: `${logWithRelations.user.firstName} ${logWithRelations.user.lastName}`,
+              email: logWithRelations.user.email,
+            } : null,
+            store: logWithRelations.store ? {
+              id: logWithRelations.store.id,
+              name: logWithRelations.store.name,
+            } : null,
+            data: logWithRelations.data,
+          };
+        }),
         compliance,
       };
     } catch (error) {
@@ -437,7 +444,9 @@ export class AuditService {
       // Top users by activity
       const userActivity = new Map<string, { userId: string; userName: string; count: number }>();
       logs.forEach(log => {
-        if (log.userId && log.user) {
+        const logWithRelations = log as AuditLogWithRelations;
+
+        if (log.userId && logWithRelations.user) {
           const key = log.userId;
           const existing = userActivity.get(key);
           if (existing) {
@@ -445,7 +454,7 @@ export class AuditService {
           } else {
             userActivity.set(key, {
               userId: log.userId,
-              userName: `${log.user.firstName} ${log.user.lastName}`,
+              userName: `${logWithRelations.user.firstName} ${logWithRelations.user.lastName}`,
               count: 1,
             });
           }

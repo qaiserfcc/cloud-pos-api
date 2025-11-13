@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "Cloud POS API",
-    "description": "Multi-tenant Point-of-Sale API with offline synchronization",
+    "description": "Multi-tenant Point-of-Sale backend API with offline synchronization support",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [

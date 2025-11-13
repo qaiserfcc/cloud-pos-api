@@ -3,7 +3,7 @@ import { validationResult } from 'express-validator';
 import { AuthRequest } from '../middlewares/auth.middleware';
 import ApprovalService, { CreateApprovalRequestData, ApprovalDecision } from '../services/approval.service';
 import logger from '../config/logger';
-import { ApprovalRule, ApprovalRequest } from '../models';
+import { ApprovalRule, ApprovalRequest } from '../db/models';
 
 export class ApprovalController {
   private approvalService: ApprovalService;
