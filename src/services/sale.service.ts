@@ -156,9 +156,9 @@ export class SaleService {
       const saleNumber = await this.generateSaleNumber(saleData.tenantId, saleData.storeId);
 
       // Calculate totals
-      let subtotal = 0;
-      let totalTax = saleData.taxAmount || 0;
-      let totalDiscount = saleData.discountAmount || 0;
+  let subtotal = 0;
+  const totalTax = saleData.taxAmount || 0;
+  const totalDiscount = saleData.discountAmount || 0;
 
       // Validate products and calculate item totals
       for (const item of saleData.saleItems) {
@@ -553,7 +553,7 @@ export class SaleService {
         paymentCreateData.notes = paymentData.notes;
       }
 
-      const payment = await Payment.create(paymentCreateData, { transaction });
+  await Payment.create(paymentCreateData, { transaction });
 
       // Update sale payment status
       const newTotalPaid = totalPaid + paymentData.amount;
@@ -737,7 +737,7 @@ export class SaleService {
       }
 
       // Create refund payment record
-      const refundPayment = await Payment.create({
+  await Payment.create({
         tenantId,
         saleId,
         paymentMethod: 'cash', // Default to cash for refunds

@@ -32,13 +32,11 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/api/v1/bulk-transfers",
+          "raw": "{{baseUrl}}/bulk-transfers",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
-            "api",
-            "v1",
             "bulk-transfers"
           ]
         },
@@ -64,13 +62,11 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/api/v1/bulk-transfers",
+          "raw": "{{baseUrl}}/bulk-transfers",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
-            "api",
-            "v1",
             "bulk-transfers"
           ],
           "query": [
@@ -130,13 +126,11 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/api/v1/bulk-transfers/{id}/submit",
+          "raw": "{{baseUrl}}/bulk-transfers/{id}/submit",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
-            "api",
-            "v1",
             "bulk-transfers",
             "{id}",
             "submit"
@@ -166,13 +160,11 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/api/v1/bulk-transfers/{id}/approve",
+          "raw": "{{baseUrl}}/bulk-transfers/{id}/approve",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
-            "api",
-            "v1",
             "bulk-transfers",
             "{id}",
             "approve"
@@ -206,13 +198,11 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/api/v1/bulk-transfers/{id}",
+          "raw": "{{baseUrl}}/bulk-transfers/{id}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
-            "api",
-            "v1",
             "bulk-transfers",
             "{id}"
           ],
@@ -241,13 +231,11 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/api/v1/bulk-transfers/{id}/cancel",
+          "raw": "{{baseUrl}}/bulk-transfers/{id}/cancel",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
-            "api",
-            "v1",
             "bulk-transfers",
             "{id}",
             "cancel"
@@ -281,13 +269,11 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/api/v1/inventory-regions",
+          "raw": "{{baseUrl}}/inventory-regions",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
-            "api",
-            "v1",
             "inventory-regions"
           ]
         }
@@ -309,13 +295,11 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/api/v1/inventory-regions",
+          "raw": "{{baseUrl}}/inventory-regions",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
-            "api",
-            "v1",
             "inventory-regions"
           ],
           "query": [
@@ -347,13 +331,11 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/api/v1/inventory-regions/{id}",
+          "raw": "{{baseUrl}}/inventory-regions/{id}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
-            "api",
-            "v1",
             "inventory-regions",
             "{id}"
           ],
@@ -382,13 +364,11 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/api/v1/inventory-regions/{id}",
+          "raw": "{{baseUrl}}/inventory-regions/{id}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
-            "api",
-            "v1",
             "inventory-regions",
             "{id}"
           ],
@@ -417,13 +397,11 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/api/v1/inventory-regions/{id}",
+          "raw": "{{baseUrl}}/inventory-regions/{id}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
-            "api",
-            "v1",
             "inventory-regions",
             "{id}"
           ],
@@ -458,13 +436,11 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/api/v1/inventory-regions/{id}/inventory",
+          "raw": "{{baseUrl}}/inventory-regions/{id}/inventory",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
-            "api",
-            "v1",
             "inventory-regions",
             "{id}",
             "inventory"
@@ -504,13 +480,11 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/api/v1/inventory-regions/{id}/stores",
+          "raw": "{{baseUrl}}/inventory-regions/{id}/stores",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
-            "api",
-            "v1",
             "inventory-regions",
             "{id}",
             "stores"
@@ -544,13 +518,11 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/api/v1/inventory-regions/{id}/stores",
+          "raw": "{{baseUrl}}/inventory-regions/{id}/stores",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
-            "api",
-            "v1",
             "inventory-regions",
             "{id}",
             "stores"
@@ -584,13 +556,11 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/api/v1/stores/{storeId}/regions",
+          "raw": "{{baseUrl}}/stores/{storeId}/regions",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
-            "api",
-            "v1",
             "stores",
             "{storeId}",
             "regions"
@@ -1623,13 +1593,11 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/api/v1/approvals/rules",
+          "raw": "{{baseUrl}}/approvals/rules",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
-            "api",
-            "v1",
             "approvals",
             "rules"
           ]
@@ -1656,13 +1624,11 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/api/v1/approvals/rules",
+          "raw": "{{baseUrl}}/approvals/rules",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
-            "api",
-            "v1",
             "approvals",
             "rules"
           ],
@@ -1695,13 +1661,11 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/api/v1/approvals/rules/{ruleId}",
+          "raw": "{{baseUrl}}/approvals/rules/{ruleId}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
-            "api",
-            "v1",
             "approvals",
             "rules",
             "{ruleId}"
@@ -1735,13 +1699,11 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/api/v1/approvals/rules/{ruleId}",
+          "raw": "{{baseUrl}}/approvals/rules/{ruleId}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
-            "api",
-            "v1",
             "approvals",
             "rules",
             "{ruleId}"
@@ -1771,13 +1733,11 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/api/v1/approvals/requests",
+          "raw": "{{baseUrl}}/approvals/requests",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
-            "api",
-            "v1",
             "approvals",
             "requests"
           ]
@@ -1804,13 +1764,11 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/api/v1/approvals/requests/pending",
+          "raw": "{{baseUrl}}/approvals/requests/pending",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
-            "api",
-            "v1",
             "approvals",
             "requests",
             "pending"
@@ -1834,13 +1792,11 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/api/v1/approvals/requests/{requestId}",
+          "raw": "{{baseUrl}}/approvals/requests/{requestId}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
-            "api",
-            "v1",
             "approvals",
             "requests",
             "{requestId}"
@@ -1870,13 +1826,11 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/api/v1/approvals/requests/{requestId}/process",
+          "raw": "{{baseUrl}}/approvals/requests/{requestId}/process",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
-            "api",
-            "v1",
             "approvals",
             "requests",
             "{requestId}",
@@ -1911,13 +1865,11 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/api/v1/approvals/requests/{requestId}/cancel",
+          "raw": "{{baseUrl}}/approvals/requests/{requestId}/cancel",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
-            "api",
-            "v1",
             "approvals",
             "requests",
             "{requestId}",
@@ -1952,13 +1904,11 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/api/v1/approvals/check-required",
+          "raw": "{{baseUrl}}/approvals/check-required",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
-            "api",
-            "v1",
             "approvals",
             "check-required"
           ]
@@ -1985,13 +1935,11 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/api/v1/approvals/statistics",
+          "raw": "{{baseUrl}}/approvals/statistics",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
-            "api",
-            "v1",
             "approvals",
             "statistics"
           ],

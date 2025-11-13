@@ -1,13 +1,12 @@
-import Permission from '../models/Permission';
+import { Permission, Tenant } from '../models';
 import logger from '../../config/logger';
 
 export const seedMissingPermissions = async (): Promise<void> => {
   try {
     logger.info('Starting missing permissions seeding...');
 
-    // Get default tenant (assuming it exists)
-    const Tenant = (await import('../models/Tenant')).default;
-    const tenant = await Tenant.findOne({ where: { name: 'Default Tenant' } });
+  // Get default tenant (assuming it exists)
+  const tenant = await Tenant.findOne({ where: { name: 'Default Tenant' } });
 
     if (!tenant) {
       throw new Error('Default tenant not found. Please run initial seed first.');
@@ -100,7 +99,7 @@ export const seedMissingPermissions = async (): Promise<void> => {
 
     // Create permissions if they don't exist
     for (const perm of allPermissions) {
-      const [permission, created] = await Permission.findOrCreate({
+  const [, created] = await Permission.findOrCreate({
         where: { name: perm.name, tenantId: tenant.dataValues.id },
         defaults: {
           ...perm,

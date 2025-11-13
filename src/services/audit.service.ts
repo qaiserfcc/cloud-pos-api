@@ -239,7 +239,7 @@ export class AuditService {
       const { tenantId, reportType, dateFrom, dateTo, storeIds, userIds } = options;
 
       let logs: AuditLog[] = [];
-      let summary = {
+      const summary = {
         totalRecords: 0,
         criticalActions: 0,
         storesAffected: 0,

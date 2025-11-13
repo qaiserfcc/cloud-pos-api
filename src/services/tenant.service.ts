@@ -230,7 +230,7 @@ export class TenantService {
     const whereClause: any = { domain };
 
     if (excludeTenantId) {
-      whereClause.id = { [require('sequelize').Op.ne]: excludeTenantId };
+      whereClause.id = { [Op.ne]: excludeTenantId };
     }
 
     const existingTenant = await Tenant.findOne({

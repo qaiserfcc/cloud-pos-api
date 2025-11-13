@@ -53,10 +53,13 @@ function convertSwaggerToPostman(swaggerSpec) {
   };
 
   // Convert paths to Postman requests
-  Object.entries(swaggerSpec.paths).forEach(([path, methods]) => {
+  Object.entries(swaggerSpec.paths).forEach(([apiPath, methods]) => {
     Object.entries(methods).forEach(([method, operation]) => {
+      // Normalize path to avoid duplicating base '/api/v1' when baseUrl already includes it
+      const normalizedPath = apiPath.replace(/^\/api\/v1(?![a-zA-Z0-9_\-])/u, '');
+      const pathSegments = normalizedPath.split('/').filter(p => p);
       const request = {
-        name: operation.summary || `${method.toUpperCase()} ${path}`,
+        name: operation.summary || `${method.toUpperCase()} ${apiPath}`,
         request: {
           method: method.toUpperCase(),
           header: [
@@ -70,9 +73,9 @@ function convertSwaggerToPostman(swaggerSpec) {
             },
           ],
           url: {
-            raw: `{{baseUrl}}${path}`,
+            raw: `{{baseUrl}}${normalizedPath}`,
             host: ['{{baseUrl}}'],
-            path: path.split('/').filter(p => p),
+            path: pathSegments,
           },
         },
         response: [],

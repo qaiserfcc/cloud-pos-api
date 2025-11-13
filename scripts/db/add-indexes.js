@@ -12,7 +12,7 @@ async function addCustomIndexes() {
     console.log('🔄 Adding custom indexes to database...');
 
     // Import the database instance that models use
-    const sequelize = require('./dist/config/database').default;
+    const sequelize = require('../../dist/config/database').default;
 
     // Test connection
     await sequelize.authenticate();
@@ -28,13 +28,13 @@ async function addCustomIndexes() {
     `);
     console.log('✅ Added unique index on roles(tenant_id, name)');
 
-    // Add unique index on permissions(tenant_id, resource, action) - only for non-deleted records
+    // Add unique index on permissions(tenant_id, name) - only for non-deleted records
     await sequelize.query(`
-      CREATE UNIQUE INDEX CONCURRENTLY IF NOT EXISTS "permissions_tenant_id_resource_action"
-      ON "permissions" ("tenant_id", "resource", "action")
+      CREATE UNIQUE INDEX CONCURRENTLY IF NOT EXISTS "permissions_tenant_id_name"
+      ON "permissions" ("tenant_id", "name")
       WHERE "deleted_at" IS NULL;
     `);
-    console.log('✅ Added unique index on permissions(tenant_id, resource, action)');
+    console.log('✅ Added unique index on permissions(tenant_id, name)');
 
     console.log('✅ All custom indexes added successfully');
 

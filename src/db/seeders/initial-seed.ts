@@ -1,9 +1,4 @@
-import Tenant from '../models/Tenant';
-import Store from '../models/Store';
-import User from '../models/User';
-import Role from '../models/Role';
-import Permission from '../models/Permission';
-import { UserRole, RolePermission } from '../models';
+import { Tenant, Store, User, Role, Permission, UserRole, RolePermission } from '../models';
 import { hashPassword } from '../../utils/jwt';
 import logger from '../../config/logger';
 
@@ -118,14 +113,16 @@ export const seedInitialData = async (): Promise<void> => {
 
     const createdPermissions = [];
     for (const perm of permissions) {
-      const [permission] = await Permission.findOrCreate({
+      let permission = await Permission.findOne({
         where: { name: perm.name, tenantId: tenant.dataValues.id } as any,
-        defaults: {
+      });
+      if (!permission) {
+        permission = await Permission.create({
           ...perm,
           tenantId: tenant.dataValues.id,
           is_system: true,
-        } as any,
-      });
+        } as any);
+      }
       createdPermissions.push(permission);
     }
 
@@ -156,7 +153,6 @@ export const seedInitialData = async (): Promise<void> => {
     logger.info('Created default roles');
 
     // Assign permissions to roles using direct SQL for many-to-many
-    const { sequelize } = await import('../models');
     for (const permission of createdPermissions) {
       await RolePermission.create({
         role_id: superAdminRole.dataValues.id,

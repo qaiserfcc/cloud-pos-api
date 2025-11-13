@@ -1,9 +1,9 @@
-import { Op, Transaction } from 'sequelize';
-import { ReportTemplate } from '../db/models';
+import { Op } from 'sequelize';
+import { ReportTemplate, User as UserModel, Tenant as TenantModel } from '../db/models';
 import { ReportService, ReportFilters } from './report.service';
 import { AuditService } from './audit.service';
 import logger from '../config/logger';
-import { v4 as uuidv4 } from 'uuid';
+// uuid not used currently; remove import to satisfy lint
 
 export interface ReportTemplateCreationData {
   tenantId: string;
@@ -93,7 +93,7 @@ export class ReportTemplateService {
         where,
         include: [
           {
-            model: require('../db/models').User,
+            model: UserModel,
             as: 'createdBy',
             attributes: ['id', 'firstName', 'lastName', 'email'],
           },
@@ -117,7 +117,7 @@ export class ReportTemplateService {
         where: { id: templateId, tenantId },
         include: [
           {
-            model: require('../db/models').User,
+            model: UserModel,
             as: 'createdBy',
             attributes: ['id', 'firstName', 'lastName', 'email'],
           },
@@ -301,7 +301,7 @@ export class ReportTemplateService {
         },
         include: [
           {
-            model: require('../db/models').Tenant,
+            model: TenantModel,
             as: 'tenant',
             attributes: ['id', 'name'],
           },
@@ -365,7 +365,7 @@ export class ReportTemplateService {
     const hours = parseInt(timeParts[0]!, 10);
     const minutes = parseInt(timeParts[1]!, 10);
 
-    let nextRun = new Date(now);
+  const nextRun = new Date(now);
     nextRun.setHours(hours, minutes, 0, 0);
 
     switch (schedule.frequency) {
@@ -375,7 +375,7 @@ export class ReportTemplateService {
         }
         break;
 
-      case 'weekly':
+      case 'weekly': {
         const targetDayOfWeek = schedule.dayOfWeek ?? 1; // Default to Monday
         const currentDayOfWeek = nextRun.getDay();
         let daysToAdd = targetDayOfWeek - currentDayOfWeek;
@@ -390,8 +390,9 @@ export class ReportTemplateService {
 
         nextRun.setDate(nextRun.getDate() + daysToAdd);
         break;
+      }
 
-      case 'monthly':
+      case 'monthly': {
         const targetDayOfMonth = schedule.dayOfMonth ?? 1;
         nextRun.setDate(targetDayOfMonth);
 
@@ -400,8 +401,9 @@ export class ReportTemplateService {
           nextRun.setDate(targetDayOfMonth);
         }
         break;
+      }
 
-      case 'quarterly':
+      case 'quarterly': {
         const currentMonth = nextRun.getMonth();
         const targetQuarterMonth = Math.floor(currentMonth / 3) * 3;
         nextRun.setMonth(targetQuarterMonth, schedule.dayOfMonth ?? 1);
@@ -411,6 +413,7 @@ export class ReportTemplateService {
           nextRun.setDate(schedule.dayOfMonth ?? 1);
         }
         break;
+      }
     }
 
     return nextRun;
@@ -466,7 +469,7 @@ export class ReportTemplateService {
   /**
    * Deliver report via email (placeholder - would integrate with email service)
    */
-  private static async deliverViaEmail(template: ReportTemplate, reportData: any): Promise<void> {
+  private static async deliverViaEmail(template: ReportTemplate, _reportData: any): Promise<void> {
     // Placeholder for email service integration
     // In a real implementation, this would use a service like SendGrid, SES, etc.
     logger.info(`Email delivery for template ${template.dataValues.id} to ${template.dataValues.delivery.email?.recipients.join(', ')}`);
@@ -512,7 +515,7 @@ export class ReportTemplateService {
   /**
    * Deliver report via export (placeholder - would save to storage)
    */
-  private static async deliverViaExport(template: ReportTemplate, reportData: any): Promise<void> {
+  private static async deliverViaExport(template: ReportTemplate, _reportData: any): Promise<void> {
     // Placeholder for export service integration
     // In a real implementation, this would generate and save files
     logger.info(`Export delivery for template ${template.dataValues.id} as ${template.dataValues.delivery.export?.format}`);

@@ -1,9 +1,9 @@
-import { Transaction } from 'sequelize';
-import { ApprovalRule, ApprovalRequest, User, Tenant, Store } from '../db/models';
+import { Transaction, Op, fn, col, literal } from 'sequelize';
+import { ApprovalRule, ApprovalRequest, User } from '../db/models';
 import type { ApprovalRuleConditions } from '../db/models/ApprovalRule';
 import logger from '../config/logger';
 import { AuditService } from './audit.service';
-import { InventoryTransferService } from './inventory-transfer.service';
+// Use dynamic import for inventory-transfer.service only when needed to avoid circular deps
 
 export interface CreateApprovalRequestData {
   tenantId: string;
@@ -333,7 +333,7 @@ export class ApprovalService {
       const whereClause: any = { tenantId };
       if (dateRange) {
         whereClause.createdAt = {
-          [require('sequelize').Op.between]: [dateRange.start, dateRange.end],
+          [Op.between]: [dateRange.start, dateRange.end],
         };
       }
 
@@ -341,30 +341,30 @@ export class ApprovalService {
         where: whereClause,
         attributes: [
           [
-            require('sequelize').fn('COUNT', require('sequelize').col('id')),
+            fn('COUNT', col('id')),
             'totalRequests',
           ],
           [
-            require('sequelize').fn('COUNT',
-              require('sequelize').literal('CASE WHEN status = \'approved\' THEN 1 END')
+            fn('COUNT',
+              literal('CASE WHEN status = \'approved\' THEN 1 END')
             ),
             'approvedRequests',
           ],
           [
-            require('sequelize').fn('COUNT',
-              require('sequelize').literal('CASE WHEN status = \'rejected\' THEN 1 END')
+            fn('COUNT',
+              literal('CASE WHEN status = \'rejected\' THEN 1 END')
             ),
             'rejectedRequests',
           ],
           [
-            require('sequelize').fn('COUNT',
-              require('sequelize').literal('CASE WHEN status = \'pending\' THEN 1 END')
+            fn('COUNT',
+              literal('CASE WHEN status = \'pending\' THEN 1 END')
             ),
             'pendingRequests',
           ],
           [
-            require('sequelize').fn('AVG',
-              require('sequelize').literal('EXTRACT(EPOCH FROM (approved_at - created_at))/3600')
+            fn('AVG',
+              literal('EXTRACT(EPOCH FROM (approved_at - created_at))/3600')
             ),
             'avgApprovalTimeHours',
           ],

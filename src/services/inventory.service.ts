@@ -684,7 +684,7 @@ export class InventoryService {
         ];
       }
 
-      let includeConditions: any[] = [
+      const includeConditions: any[] = [
         {
           model: Product,
           as: 'product',

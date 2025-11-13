@@ -401,7 +401,7 @@ export class UserService {
   static async isEmailAvailable(email: string, excludeUserId?: string): Promise<boolean> {
     const whereClause: any = { email };
     if (excludeUserId) {
-      whereClause.id = { [require('sequelize').Op.ne]: excludeUserId };
+      whereClause.id = { [Op.ne]: excludeUserId };
     }
 
     const existingUser = await User.findOne({ where: whereClause });

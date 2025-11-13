@@ -6,7 +6,7 @@ import expressWinston from 'express-winston';
 import rateLimit from 'express-rate-limit';
 
 import logger from './config/logger';
-import { testConnection } from './config/database';
+// import { testConnection } from './config/database';
 
 // Import models and setup associations
 import { setupDbAssociations } from './db/models';
@@ -36,6 +36,8 @@ import reportRoutes from './routes/report.routes';
 import reportTemplateRoutes from './routes/report-template.routes';
 import automatedReorderRuleRoutes from './routes/automated-reorder-rule.routes';
 import swaggerBaseDefinition from './swagger/swagger-definition.json';
+import swaggerUi from 'swagger-ui-express';
+import swaggerJSDoc from 'swagger-jsdoc';
 
 // Import middlewares
 // import { errorHandler } from './middlewares/error.middleware';
@@ -132,7 +134,7 @@ app.use(expressWinston.logger({
   msg: 'HTTP {{req.method}} {{req.url}}',
   expressFormat: true,
   colorize: false,
-  ignoreRoute: (req, res) => false,
+  ignoreRoute: (_req, _res) => false,
 }));
 
 // Health check endpoint
@@ -170,8 +172,6 @@ app.use('/api/v1/automated-reorder-rules', automatedReorderRuleRoutes);
 
 // Swagger documentation
 if (process.env.NODE_ENV !== 'production') {
-  const swaggerUi = require('swagger-ui-express');
-  const swaggerJSDoc = require('swagger-jsdoc');
 
   const swaggerDefinition = {
     ...swaggerBaseDefinition,

@@ -1,5 +1,5 @@
 import { Op } from 'sequelize';
-import { Theme } from '../db/models';
+import { Theme, User as UserModel } from '../db/models';
 import logger from '../config/logger';
 
 export interface ThemeCreationData {
@@ -334,7 +334,7 @@ export class ThemeService {
         where,
         include: [
           {
-            model: require('../db/models').User,
+            model: UserModel,
             as: 'createdBy',
             attributes: ['id', 'firstName', 'lastName', 'email'],
           },
@@ -382,7 +382,7 @@ export class ThemeService {
         where: { id: themeId, tenantId },
         include: [
           {
-            model: require('../db/models').User,
+            model: UserModel,
             as: 'createdBy',
             attributes: ['id', 'firstName', 'lastName', 'email'],
           },
@@ -430,7 +430,7 @@ export class ThemeService {
         where: { tenantId, isDefault: true, isActive: true },
         include: [
           {
-            model: require('../db/models').User,
+            model: UserModel,
             as: 'createdBy',
             attributes: ['id', 'firstName', 'lastName', 'email'],
           },

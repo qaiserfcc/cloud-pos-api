@@ -1,4 +1,4 @@
-import { Sale, Customer, Product, Inventory, User } from '../db/models';
+import { Sale, Customer, Product, Inventory, User, Store } from '../db/models';
 import { Op, fn, col, literal } from 'sequelize';
 import logger from '../config/logger';
 import { SaleService } from './sale.service';
@@ -296,7 +296,7 @@ export class ReportService {
         ],
         include: [
           {
-            model: require('../db/models').Store,
+            model: Store,
             as: 'store',
             attributes: ['id', 'name', 'location'],
           },
@@ -363,7 +363,7 @@ export class ReportService {
   /**
    * Generate regional inventory dashboard
    */
-  static async generateRegionalInventoryDashboard(tenantId: string, filters: ReportFilters = {}): Promise<any> {
+  static async generateRegionalInventoryDashboard(tenantId: string, _filters: ReportFilters = {}): Promise<any> {
     try {
       // Get inventory data grouped by store
       const storeInventory = await Inventory.findAll({
@@ -376,7 +376,7 @@ export class ReportService {
         ],
         include: [
           {
-            model: require('../db/models').Store,
+            model: Store,
             as: 'store',
             attributes: ['id', 'name', 'location'],
           },
@@ -401,7 +401,7 @@ export class ReportService {
             attributes: ['id', 'name', 'sku'],
           },
           {
-            model: require('../db/models').Store,
+            model: Store,
             as: 'store',
             attributes: ['id', 'name'],
           },
@@ -423,7 +423,7 @@ export class ReportService {
             attributes: ['id', 'name', 'sku'],
           },
           {
-            model: require('../db/models').Store,
+            model: Store,
             as: 'store',
             attributes: ['id', 'name'],
           },
@@ -503,17 +503,15 @@ export class ReportService {
         ],
         include: [
           {
-            model: require('../db/models').Store,
+            model: Store,
             as: 'store',
             attributes: ['id', 'name', 'location'],
           },
         ],
         group: ['storeId', 'store.id', 'store.name', 'store.location'],
         raw: true,
-      });
-
-      // Get customer metrics by store
-      const customerMetrics = await Customer.findAll({
+  });
+  const customerMetrics = await Customer.findAll({
         where: { tenantId },
         attributes: [
           'storeId',
@@ -524,7 +522,7 @@ export class ReportService {
         ],
         include: [
           {
-            model: require('../db/models').Store,
+            model: Store,
             as: 'store',
             attributes: ['id', 'name'],
           },
@@ -772,15 +770,14 @@ export class ReportService {
     return alerts;
   }
 
-  private static async getInventoryCategories(tenantId: string, filters: ReportFilters): Promise<any[]> {
-    const { storeId } = filters;
+  private static async getInventoryCategories(_tenantId: string, _filters: ReportFilters): Promise<any[]> {
 
     // This would require joining with categories through products
     // For now, return placeholder
     return [];
   }
 
-  private static async getCustomerData(tenantId: string, filters: ReportFilters): Promise<any[]> {
+  private static async getCustomerData(tenantId: string, _filters: ReportFilters): Promise<any[]> {
     const customers = await Customer.findAll({
       where: { tenantId },
       attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'totalSpent', 'loyaltyPoints', 'createdAt'],
@@ -799,7 +796,7 @@ export class ReportService {
     }));
   }
 
-  private static async getLoyaltyStats(tenantId: string, filters: ReportFilters): Promise<any> {
+  private static async getLoyaltyStats(tenantId: string, _filters: ReportFilters): Promise<any> {
     const customers = await Customer.findAll({
       where: { tenantId },
       attributes: ['loyaltyPoints', 'totalSpent'],
@@ -815,7 +812,7 @@ export class ReportService {
     };
   }
 
-  private static async getProductData(tenantId: string, filters: ReportFilters): Promise<any[]> {
+  private static async getProductData(tenantId: string, _filters: ReportFilters): Promise<any[]> {
     const products = await Product.findAll({
       where: { tenantId },
       attributes: ['id', 'name', 'sku', 'description'],
@@ -831,13 +828,13 @@ export class ReportService {
     }));
   }
 
-  private static async getTopSellingProducts(tenantId: string, filters: ReportFilters): Promise<any[]> {
+  private static async getTopSellingProducts(_tenantId: string, _filters: ReportFilters): Promise<any[]> {
     // This would require aggregating sale items
     // For now, return placeholder
     return [];
   }
 
-  private static async getCategoryPerformance(tenantId: string, filters: ReportFilters): Promise<any[]> {
+  private static async getCategoryPerformance(_tenantId: string, _filters: ReportFilters): Promise<any[]> {
     // This would require joining products and sale items
     // For now, return placeholder
     return [];
