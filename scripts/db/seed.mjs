@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 import 'dotenv/config';
-import { seedInitialData } from './initial-seed.js';
-import sequelize from '../src/config/database.ts';
-import logger from '../src/config/logger.ts';
+import { seedInitialData } from './src/db/seeders/initial-seed.ts';
+import sequelize from './src/config/database.ts';
+import logger from './src/config/logger.ts';
 
 const runSeeder = async () => {
   try {

@@ -12,7 +12,7 @@ async function addCustomIndexes() {
     console.log('🔄 Adding custom indexes to database...');
 
     // Import the database instance that models use
-    const sequelize = require('../dist/config/database').default;
+    const sequelize = require('./dist/config/database').default;
 
     // Test connection
     await sequelize.authenticate();
